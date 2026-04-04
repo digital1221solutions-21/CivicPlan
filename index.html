@@ -97,6 +97,18 @@
     .btn.outline { background: transparent; border: 2px solid var(--line); color: var(--brand); }
     .btn.small { padding: 8px 16px; font-size: 14px; }
     .btn.danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+    .btn-fancy {
+      background: linear-gradient(135deg, #0165fc, #8b5cf6);
+      box-shadow: 0 20px 35px -8px rgba(1,101,252,0.4);
+      font-size: 1.3rem;
+      padding: 1rem 2.5rem;
+      border-radius: 60px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-fancy:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 28px 40px -12px rgba(1,101,252,0.5);
+    }
     input, select, textarea { width: 100%; padding: 14px 18px; border-radius: 12px; border: 2px solid var(--line); background: #fff; font-size: 16px; margin-top: 8px; outline: none; transition: all 0.3s; }
     input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(95, 220, 247, 0.2); }
     label { display: block; font-weight: 700; color: var(--brand); margin-top: 1.5rem; margin-bottom: 6px; }
@@ -319,7 +331,6 @@
       color: var(--brand);
       box-shadow: 0 2px 6px rgba(95,220,247,0.3);
     }
-    /* Certificate layout */
     .certificate-container {
       background: #fff;
       padding: 2rem;
@@ -367,22 +378,80 @@
       border-radius: 12px;
       background: #fafafa;
     }
+    .certificate-actions {
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:1.5rem;
+      justify-content:center;
+    }
+    .certificate-counter-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:12px;
+      margin-top:1.25rem;
+    }
+    .certificate-counter-card {
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      background:#f8fafc;
+      text-align:center;
+    }
+    .account-access-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:1rem;
+      margin-top:1rem;
+    }
+    .credential-box {
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:1rem;
+      background:#f8fafc;
+    }
+    .credential-value {
+      font-size:1.1rem;
+      font-weight:800;
+      margin-top:8px;
+      word-break:break-word;
+    }
+    .certificate-neighbor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .neighbor-box {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+      border-left: 6px solid;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .neighbor-box.north { border-left-color: var(--north); }
+    .neighbor-box.south { border-left-color: var(--south); }
+    .neighbor-box.east { border-left-color: var(--east); }
+    .neighbor-box.west { border-left-color: var(--west); }
+    .neighbor-box strong { display: block; font-size: 1.1rem; margin-bottom: 6px; }
     @media (max-width: 768px) {
       .dash-grid { grid-template-columns: 1fr; }
       .hamburger { display: block; }
       .nav { display: none; }
       .visual-container { height: 350px; }
       .certificate-profile { width: 60px; height: 60px; }
+      .certificate-neighbor-grid { grid-template-columns: 1fr; }
     }
     @media print {
       body * { visibility: hidden; }
       .certificate-container, .certificate-container * { visibility: visible; }
       .certificate-container { position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 20px; }
-      .btn, .close-modal, .print-certificate-btn { display: none !important; }
+      .btn, .close-modal { display: none !important; }
     }
   </style>
 </head>
-<body onclick="closeAllPopups()">
+<body onclick="closeAllPopups(event)">
 
 <header>
   <div class="topbar">
@@ -409,7 +478,14 @@
 </div>
 
 <main>
-  <section id="view-home" class="card"><h1><i class="fas fa-globe-americas"></i> Multi-City Land & Structural Records</h1><p>Unified digital system for property registration.</p><div class="divider"></div><div class="grid"><div class="card highlight"><h2>Citizens</h2><p>Register for your Tracking ID and manage all assets.</p><button class="btn accent" onclick="go('auth')">Get Registered</button></div><div class="card"><h2>Administration</h2><p>Secure document lifecycle & auditing.</p><div style="padding:12px; background:#f8fafc; border-radius:10px;">Admin: Admin / admin123</div></div></div><div class="divider"></div><h2>System Statistics</h2><div class="grid"><div class="stat-card"><div class="stat-label">Registrations</div><div class="stat-value" id="totalRegistrations">0</div></div><div class="stat-card"><div class="stat-label">Active Cities</div><div class="stat-value" id="activeCities">1</div></div><div class="stat-card"><div class="stat-label">Documents</div><div class="stat-value" id="totalDocuments">0</div></div></div><div class="recommendations"><h3><i class="fas fa-lightbulb"></i> Recommendations</h3><div id="recommendationsContainer" class="recommendation-grid"></div></div></section>
+  <!-- Clean front page: only the main card with a centered fancy Get Registered button -->
+  <section id="view-home" class="card" style="text-align: center;">
+    <h1><i class="fas fa-globe-americas"></i> Multi-City Land & Structural Records</h1>
+    <p style="font-size: 1.2rem; max-width: 600px; margin: 1rem auto;">Unified digital system for property registration, tracking, and certificate management.</p>
+    <div style="margin-top: 2.5rem;">
+      <button class="btn btn-fancy" onclick="go('auth')"><i class="fas fa-id-card"></i> Get Registered</button>
+    </div>
+  </section>
 
   <section id="view-auth" class="hidden"><div class="auth-container"><div class="auth-tabs"><button id="tab-login" class="auth-tab active" onclick="setAuthMode('login')"><i class="fas fa-right-to-bracket"></i>&nbsp; Login</button><button id="tab-register" class="auth-tab" onclick="setAuthMode('register')"><i class="fas fa-id-card"></i>&nbsp; Registration</button></div><div id="form-login" class="card"><h2>Sign In</h2><label>Phone Number</label><input id="loginPhone" placeholder="Registered phone"><label>Password</label><input id="loginPass" type="password"><button class="btn accent hero-btn" style="margin-top:2rem;" onclick="login()"><i class="fas fa-door-open"></i> Enter Portal</button><button class="btn outline hero-btn" style="margin-top:0.85rem;" onclick="fillAdmin()"><i class="fas fa-user-shield"></i> Admin Login</button><div id="loginMsg" class="msg-feedback"></div></div><div id="form-register" class="card hidden"><h2>Create Account</h2><label>City</label><input id="regCity"><label>First Name</label><input id="regFirst"><div class="grid"><div><label>Middle</label><input id="regMiddle"></div><div><label>Last Name</label><input id="regLast"></div></div><label>Passport Photo</label><div class="passport-upload-container" id="passportUploadBox" onclick="document.getElementById('passportPhoto').click()"><div class="upload-label-badge"><i class="fas fa-camera-retro"></i><span id="passportUploadLabel">Upload passport-size photo</span></div><div class="upload-helper">Click the button area to upload. After upload, click the current photo to replace it.</div><img id="passportPreview" class="passport-preview" alt="Passport preview"></div><input type="file" id="passportPhoto" accept="image/*" style="display:none;" onchange="handlePassportUpload(event)"><label>Phone (Login ID)</label><input id="regPhone"><label>Email (Optional)</label><input id="regEmail" oninput="toggleRegPass()"><div id="regPassContainer"><label>Create Password</label><input id="regPass" type="password" placeholder="Create password for future sign in"><div class="info-note" style="margin-top:10px;">An 8-digit Citizen ID will be generated automatically when you click <strong>Generate Tracking ID</strong>. If you leave the password blank, the portal will use the last 4 digits of your phone number as a temporary password.</div></div><button class="btn accent hero-btn" style="margin-top:2rem;" onclick="registerOwner()"><i class="fas fa-fingerprint"></i> Generate Tracking ID</button><div id="regMsg" class="msg-feedback"></div></div></div></section>
 
@@ -420,7 +496,6 @@
       <h1><i class="fas fa-home"></i> Register Property Asset</h1>
       <div class="grid"><div><label>Site Address</label><input id="sAddress"></div><div><label>Category</label><select id="sType"><option>RESIDENTIAL</option><option>COMMERCIAL</option><option>LAND</option><option>INDUSTRIAL</option></select></div></div>
 
-      <!-- Enhanced Manual Drawing Section -->
       <div style="margin:2rem 0;">
         <h3><i class="fas fa-pen-nib"></i> Property Sketch (Manual Drawing)</h3>
         <div class="toolbar-compact" id="drawingToolsBar">
@@ -498,6 +573,7 @@
 <div id="certificateModal" class="modal-overlay" onclick="closeCertificateModal(event)"><div class="modal-content" style="max-width:900px;" onclick="event.stopPropagation()"><button class="close-modal" onclick="closeCertificateModal()">×</button><div id="certificateBody"></div></div></div>
 <div id="sketchModal" class="modal-overlay" onclick="closeSketchModal(event)"><div class="modal-content" style="max-width:800px;"><button class="close-modal" onclick="closeSketchModal()">×</button><h3><i class="fas fa-drafting-compass"></i> Property Sketch Preview</h3><canvas id="sketchPreviewCanvas" width="700" height="500" style="width:100%; height:auto; border:1px solid #ccc; border-radius:12px;"></canvas></div></div>
 <div id="resetModal" class="modal-overlay" onclick="closeResetModal(event)"><div class="modal-content"><h2>Master Data Reset</h2><div class="reset-warning"><p>⚠️ Deletes all data. Admin password required.</p><input type="password" id="resetPassword" placeholder="Admin password"><button class="btn danger" onclick="confirmMasterReset()">Reset All</button><div id="resetMsg"></div></div></div></div>
+<div id="renameModal" class="modal-overlay" onclick="closeRenameModal(event)"><div class="modal-content" onclick="event.stopPropagation()"><button class="close-modal" onclick="closeRenameModal()">×</button><h3>Rename Document</h3><input type="text" id="renameInput" placeholder="Enter new file name" autocomplete="off"><div style="display:flex; gap:12px; justify-content:flex-end; margin-top:1.5rem;"><button class="btn outline" onclick="closeRenameModal()">Cancel</button><button class="btn accent" id="renameConfirmBtn">Save</button></div></div></div>
 
 <script>
 // ------------------------- FULLY FUNCTIONAL MANUAL DRAWING ENGINE -------------------------
@@ -854,7 +930,7 @@ class EnhancedSketch {
   setTool(tool) { this.currentTool = tool; }
 }
 
-// ------------------------- Core App -------------------------
+// ------------------------- Core App (Full Implementation) -------------------------
 const STORE_KEY = "CIVIC_DB_V22";
 const SESSION_KEY = "CIVIC_SESS_V22";
 const LAST_REGISTRATION_KEY = "CIVIC_LAST_REG_V22";
@@ -864,6 +940,7 @@ let pendingFiles = [];
 let passportPhoto = null;
 let currentEditingPlanId = null;
 let sketch = null;
+let renameCallback = null;
 
 function $(id) { return document.getElementById(id); }
 function nowISO() { return new Date().toISOString(); }
@@ -874,6 +951,9 @@ function formatCoordinateDisplay(value){ const raw=String(value ?? '').trim(); r
 function isTransferredPlan(plan){ return String(plan?.status || '').toUpperCase().startsWith('TRANSFERRED'); }
 function getOwnershipOrdinal(count){ const n=Number(count||1); if(n%100>=11 && n%100<=13) return n + 'th'; if(n%10===1) return n + 'st'; if(n%10===2) return n + 'nd'; if(n%10===3) return n + 'rd'; return n + 'th'; }
 function verifyStatusChangePass(actionLabel){ const pass=prompt(`Enter master reset password to ${actionLabel.toLowerCase()}`,''); if(pass===null) return false; if(pass!==ADMIN_RESET_PASS){ alert('Incorrect master reset password.'); return false; } return true; }
+function getDefaultPhonePassword(user){ const raw = normalizePhone(user?.rawPhone || user?.phone || ''); return raw ? raw.slice(-4) : '—'; }
+function maskPhoneValue(value){ const raw = String(value || '').trim(); if(!raw) return '—'; const digits = normalizePhone(raw); if(digits.length <= 4) return raw; return `${raw.slice(0, Math.max(0, raw.length - 4))}${raw.slice(-4).replace(/./g,'•')}`; }
+function ensureCertificateStats(plan){ if(!plan.certificateStats || typeof plan.certificateStats !== 'object') plan.certificateStats = { downloads: 0, prints: 0 }; plan.certificateStats.downloads = Number(plan.certificateStats.downloads || 0); plan.certificateStats.prints = Number(plan.certificateStats.prints || 0); return plan.certificateStats; }
 function syncSketchFromPlan(plan){ if(!sketch || !plan) return; sketch.clear(); if(Array.isArray(plan.manualShapes) && plan.manualShapes.length && typeof sketch.loadShapes === 'function'){ sketch.loadShapes(JSON.parse(JSON.stringify(plan.manualShapes))); return; } if(plan.manualDrawingImage){ const img=new Image(); img.onload=()=>{ sketch.ctx.drawImage(img,0,0,sketch.canvas.width,sketch.canvas.height); }; img.src=plan.manualDrawingImage; } }
 function loadStore() { let raw = localStorage.getItem(STORE_KEY); if(raw) try { let parsed=JSON.parse(raw); (parsed.plans||[]).forEach(p=>normalizePlanFiles(p)); return parsed; } catch(e){} let def={ users:[{ id:"u_admin", role:"admin", firstName:"Admin", lastName:"User", phone:"Admin", pass:"admin123", city:"Federal", trackingId:"00000000", email:"admin@civicplan.gov", registeredAt:nowISO(), passportPhoto:null }], plans:[], audit:[] }; saveStore(def); return def; }
 function saveStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); updateStatistics(); updateUserProfile(); return true; } catch(err){ console.error("Save store failed", err); return false; } }
@@ -892,727 +972,121 @@ function updateNav(){ let sess=loadSession(); let nav=$("navLinks"); if(!sess){ 
 function saveSession(sess){ try { localStorage.setItem(SESSION_KEY, JSON.stringify(sess)); return true; } catch(err){ console.error("Save session failed", err); return false; } }
 function normalizePhone(value){ return String(value || "").replace(/\D/g, ""); }
 function clearSession(){ localStorage.removeItem(SESSION_KEY); }
-function saveLastRegistration(data){
-  try {
-    localStorage.setItem(LAST_REGISTRATION_KEY, JSON.stringify(data));
-    return true;
-  } catch(err){
-    console.error("Save last registration failed", err);
-    return false;
-  }
-}
-function loadLastRegistration(){
-  try {
-    const raw = localStorage.getItem(LAST_REGISTRATION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch(err){
-    return null;
-  }
-}
-function clearLastRegistration(){
-  localStorage.removeItem(LAST_REGISTRATION_KEY);
-}
-function saveActionNotice(message, type='success'){
-  try { localStorage.setItem(LAST_ACTION_NOTICE_KEY, JSON.stringify({ message, type, at: nowISO() })); return true; } catch(e){ return false; }
-}
-function consumeActionNotice(){
-  try {
-    const raw = localStorage.getItem(LAST_ACTION_NOTICE_KEY);
-    if(!raw) return null;
-    localStorage.removeItem(LAST_ACTION_NOTICE_KEY);
-    return JSON.parse(raw);
-  } catch(e){
-    localStorage.removeItem(LAST_ACTION_NOTICE_KEY);
-    return null;
-  }
-}
-function fillRegistrationForm(data){
-  if(!data) return;
-  if($("regCity")) $("regCity").value = data.city || "";
-  if($("regFirst")) $("regFirst").value = data.firstName || "";
-  if($("regMiddle")) $("regMiddle").value = data.middleName || "";
-  if($("regLast")) $("regLast").value = data.lastName || "";
-  if($("regPhone")) $("regPhone").value = data.rawPhone || data.phone || "";
-  if($("regEmail")) $("regEmail").value = data.email || "";
-  if($("regPass")) $("regPass").value = data.pass || "";
-  passportPhoto = data.passportPhoto || null;
-  if($("passportPreview")){
-    if(passportPhoto){
-      $("passportPreview").src = passportPhoto;
-      $("passportPreview").style.display = "block";
-      $("passportUploadBox")?.classList.add("has-image");
-      $("passportUploadLabel").textContent = "Passport photo ready — click photo to replace";
-    } else {
-      $("passportPreview").removeAttribute("src");
-      $("passportPreview").style.display = "none";
-      $("passportUploadBox")?.classList.remove("has-image");
-      $("passportUploadLabel").textContent = "Upload passport-size photo";
-    }
-  }
-}
+function saveLastRegistration(data){ try { localStorage.setItem(LAST_REGISTRATION_KEY, JSON.stringify(data)); return true; } catch(err){ return false; } }
+function loadLastRegistration(){ try { const raw = localStorage.getItem(LAST_REGISTRATION_KEY); return raw ? JSON.parse(raw) : null; } catch(err){ return null; } }
+function clearLastRegistration(){ localStorage.removeItem(LAST_REGISTRATION_KEY); }
+function saveActionNotice(message, type='success'){ try { localStorage.setItem(LAST_ACTION_NOTICE_KEY, JSON.stringify({ message, type, at: nowISO() })); return true; } catch(e){ return false; } }
+function consumeActionNotice(){ try { const raw = localStorage.getItem(LAST_ACTION_NOTICE_KEY); if(!raw) return null; localStorage.removeItem(LAST_ACTION_NOTICE_KEY); return JSON.parse(raw); } catch(e){ return null; } }
+function fillRegistrationForm(data){ if(!data) return; if($("regCity")) $("regCity").value = data.city || ""; if($("regFirst")) $("regFirst").value = data.firstName || ""; if($("regMiddle")) $("regMiddle").value = data.middleName || ""; if($("regLast")) $("regLast").value = data.lastName || ""; if($("regPhone")) $("regPhone").value = data.rawPhone || data.phone || ""; if($("regEmail")) $("regEmail").value = data.email || ""; if($("regPass")) $("regPass").value = data.pass || ""; passportPhoto = data.passportPhoto || null; if($("passportPreview")){ if(passportPhoto){ $("passportPreview").src = passportPhoto; $("passportPreview").style.display = "block"; $("passportUploadBox")?.classList.add("has-image"); $("passportUploadLabel").textContent = "Passport photo ready — click photo to replace"; } else { $("passportPreview").removeAttribute("src"); $("passportPreview").style.display = "none"; $("passportUploadBox")?.classList.remove("has-image"); $("passportUploadLabel").textContent = "Upload passport-size photo"; } } }
 
 const FILES_DB_NAME = "CivicPlanFilesDB";
 const FILES_STORE_NAME = "files";
-function openFilesDb(){
-  return new Promise((resolve, reject) => {
-    if(!window.indexedDB){
-      reject(new Error('IndexedDB is not available in this browser context'));
-      return;
-    }
-    const req = indexedDB.open(FILES_DB_NAME, 1);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if(!db.objectStoreNames.contains(FILES_STORE_NAME)){
-        const store = db.createObjectStore(FILES_STORE_NAME, { keyPath: 'id' });
-        store.createIndex('planId', 'planId', { unique: false });
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error || new Error('Failed to open IndexedDB'));
-  });
-}
-async function putFileBlob(record){
-  const db = await openFilesDb();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(FILES_STORE_NAME, 'readwrite');
-    tx.objectStore(FILES_STORE_NAME).put(record);
-    tx.oncomplete = () => resolve(true);
-    tx.onerror = () => reject(tx.error || new Error('Failed to save file blob'));
-  });
-}
-async function getFileBlob(fileId){
-  try {
-    const db = await openFilesDb();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(FILES_STORE_NAME, 'readonly');
-      const req = tx.objectStore(FILES_STORE_NAME).get(fileId);
-      req.onsuccess = () => resolve(req.result || null);
-      req.onerror = () => reject(req.error || new Error('Failed to read file blob'));
-    });
-  } catch(err){
-    console.warn('IndexedDB read unavailable', err);
-    return null;
-  }
-}
-async function deleteFileBlob(fileId){
-  try {
-    const db = await openFilesDb();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(FILES_STORE_NAME, 'readwrite');
-      tx.objectStore(FILES_STORE_NAME).delete(fileId);
-      tx.oncomplete = () => resolve(true);
-      tx.onerror = () => reject(tx.error || new Error('Failed to delete file blob'));
-    });
-  } catch(err){
-    console.warn('IndexedDB delete unavailable', err);
-    return false;
-  }
-}
-function blobToDataUrl(blob){
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error || new Error('Failed to convert file'));
-    reader.readAsDataURL(blob);
-  });
-}
-function stripFileForStore(file){
-  return {
-    id: file.id,
-    name: file.name,
-    type: file.type || 'application/octet-stream',
-    size: file.size || 0,
-    status: file.status || 'active',
-    uploadedAt: file.uploadedAt || nowISO(),
-    downloadCount: file.downloadCount || 0,
-    visibility: file.visibility || 'owner-view',
-    storage: file.storage || 'indexeddb',
-    hasBlob: file.hasBlob !== false,
-    data: file.data || null
-  };
-}
-async function persistPendingFiles(planId, files){
-  for(const file of (files || [])){
-    if(!(file.fileObject instanceof Blob)) continue;
-    const normalizedType = file.type || file.fileObject.type || 'application/octet-stream';
-    const normalizedSize = file.size || file.fileObject.size || 0;
-    try {
-      await putFileBlob({
-        id: file.id,
-        planId,
-        name: file.name,
-        type: normalizedType,
-        size: normalizedSize,
-        blob: file.fileObject,
-        updatedAt: nowISO()
-      });
-      file.storage = 'indexeddb';
-      file.hasBlob = true;
-      file.data = null;
-    } catch(err){
-      console.warn('IndexedDB save failed, falling back to inline storage', err);
-      const dataUrl = await blobToDataUrl(file.fileObject);
-      file.storage = 'inline';
-      file.hasBlob = true;
-      file.data = dataUrl;
-      file.type = normalizedType;
-      file.size = normalizedSize;
-    }
-    delete file.fileObject;
-  }
-}
-async function resolveFileData(file){
-  if(file?.data) return { url: file.data, revoke: null };
-  if(file?.storage === 'indexeddb' && file?.id){
-    const record = await getFileBlob(file.id);
-    if(record?.blob){
-      const url = URL.createObjectURL(record.blob);
-      return { url, revoke: () => URL.revokeObjectURL(url), blob: record.blob };
-    }
-  }
-  return { url: null, revoke: null, blob: null };
-}
-function generateTrackingId(){
-  const store = loadStore();
-  const usedIds = new Set((store.users || []).map(u => String(u.trackingId || '')));
-  for(let i=0;i<500;i++){
-    let candidate = String(Math.floor(10000000 + Math.random()*90000000));
-    if(!usedIds.has(candidate)) return candidate;
-  }
-  let fallback = String(Date.now()).slice(-8);
-  while(usedIds.has(fallback)) fallback = String(Math.floor(10000000 + Math.random()*90000000));
-  return fallback;
-}
-function setAuthMode(mode){
-  const isLogin = mode !== "register";
-  $("tab-login")?.classList.toggle("active", isLogin);
-  $("tab-register")?.classList.toggle("active", !isLogin);
-  $("form-login")?.classList.toggle("hidden", !isLogin);
-  $("form-register")?.classList.toggle("hidden", isLogin);
-  toggleRegPass();
-  showMsg("loginMsg","","");
-  showMsg("regMsg","","");
-}
-function toggleRegPass(){
-  const box = $("regPassContainer");
-  if(box) box.classList.remove("hidden");
-  const passInput = $("regPass");
-  if(passInput && !passInput.placeholder) passInput.placeholder = "Create password for future sign in";
-}
-function fillAdmin(){
-  setAuthMode("login");
-  $("loginPhone").value = "Admin";
-  $("loginPass").value = "admin123";
-  showMsg("loginMsg","Admin credentials filled. Click Enter Portal.","success");
-}
-function handlePassportUpload(event){
-  const file = event?.target?.files?.[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    passportPhoto = reader.result;
-    const img = $("passportPreview");
-    const label = $("passportUploadLabel");
-    if(img){ img.src = passportPhoto; img.style.display = 'block'; }
-    if($("passportUploadBox")) $("passportUploadBox").classList.add('has-image');
-    if(label) label.textContent = 'Passport photo ready — click photo to replace';
-  };
-  reader.readAsDataURL(file);
-}
-function editProfilePhoto(){
-  const sess = loadSession();
-  if(!sess) return;
-  const picker = document.createElement('input');
-  picker.type = 'file';
-  picker.accept = 'image/*';
-  picker.onchange = (event) => {
-    const file = event.target.files && event.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const store = loadStore();
-      const user = store.users.find(u => u.id === sess.id);
-      if(!user) return;
-      user.passportPhoto = reader.result;
-      saveStore(store);
-      saveSession({ ...sess, passportPhoto: reader.result });
-      updateUserProfile();
-      showMsg('loginMsg','Profile photo updated.','success');
-    };
-    reader.readAsDataURL(file);
-  };
-  picker.click();
-}
+function openFilesDb(){ return new Promise((resolve, reject) => { if(!window.indexedDB){ reject(new Error('IndexedDB not available')); return; } const req = indexedDB.open(FILES_DB_NAME, 1); req.onupgradeneeded = () => { const db = req.result; if(!db.objectStoreNames.contains(FILES_STORE_NAME)){ db.createObjectStore(FILES_STORE_NAME, { keyPath: 'id' }).createIndex('planId', 'planId'); } }; req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); }); }
+async function putFileBlob(record){ const db = await openFilesDb(); return new Promise((resolve, reject) => { const tx = db.transaction(FILES_STORE_NAME, 'readwrite'); tx.objectStore(FILES_STORE_NAME).put(record); tx.oncomplete = () => resolve(true); tx.onerror = () => reject(tx.error); }); }
+async function getFileBlob(fileId){ try { const db = await openFilesDb(); return new Promise((resolve, reject) => { const tx = db.transaction(FILES_STORE_NAME, 'readonly'); const req = tx.objectStore(FILES_STORE_NAME).get(fileId); req.onsuccess = () => resolve(req.result || null); req.onerror = () => reject(req.error); }); } catch(err){ return null; } }
+async function deleteFileBlob(fileId){ try { const db = await openFilesDb(); return new Promise((resolve, reject) => { const tx = db.transaction(FILES_STORE_NAME, 'readwrite'); tx.objectStore(FILES_STORE_NAME).delete(fileId); tx.oncomplete = () => resolve(true); tx.onerror = () => reject(tx.error); }); } catch(err){ return false; } }
+function blobToDataUrl(blob){ return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(reader.error); reader.readAsDataURL(blob); }); }
+function stripFileForStore(file){ return { id: file.id, name: file.name, type: file.type || 'application/octet-stream', size: file.size || 0, status: file.status || 'active', uploadedAt: file.uploadedAt || nowISO(), downloadCount: file.downloadCount || 0, visibility: file.visibility || 'owner-view', storage: file.storage || 'indexeddb', hasBlob: file.hasBlob !== false, data: file.data || null }; }
+async function persistPendingFiles(planId, files){ for(const file of (files || [])){ if(!(file.fileObject instanceof Blob)) continue; const normalizedType = file.type || file.fileObject.type || 'application/octet-stream'; const normalizedSize = file.size || file.fileObject.size || 0; try { await putFileBlob({ id: file.id, planId, name: file.name, type: normalizedType, size: normalizedSize, blob: file.fileObject, updatedAt: nowISO() }); file.storage = 'indexeddb'; file.hasBlob = true; file.data = null; } catch(err){ const dataUrl = await blobToDataUrl(file.fileObject); file.storage = 'inline'; file.hasBlob = true; file.data = dataUrl; file.type = normalizedType; file.size = normalizedSize; } delete file.fileObject; } }
+async function resolveFileData(file){ if(file?.data) return { url: file.data, revoke: null }; if(file?.storage === 'indexeddb' && file?.id){ const record = await getFileBlob(file.id); if(record?.blob){ const url = URL.createObjectURL(record.blob); return { url, revoke: () => URL.revokeObjectURL(url), blob: record.blob }; } } return { url: null, revoke: null, blob: null }; }
+function generateTrackingId(){ const store = loadStore(); const usedIds = new Set((store.users || []).map(u => String(u.trackingId || ''))); for(let i=0;i<500;i++){ let candidate = String(Math.floor(10000000 + Math.random()*90000000)); if(!usedIds.has(candidate)) return candidate; } return String(Date.now()).slice(-8); }
+function setAuthMode(mode){ const isLogin = mode !== "register"; $("tab-login")?.classList.toggle("active", isLogin); $("tab-register")?.classList.toggle("active", !isLogin); $("form-login")?.classList.toggle("hidden", !isLogin); $("form-register")?.classList.toggle("hidden", isLogin); toggleRegPass(); showMsg("loginMsg","",""); showMsg("regMsg","",""); }
+function toggleRegPass(){ const box = $("regPassContainer"); if(box) box.classList.remove("hidden"); const passInput = $("regPass"); if(passInput && !passInput.placeholder) passInput.placeholder = "Create password for future sign in"; }
+function fillAdmin(){ setAuthMode("login"); $("loginPhone").value = "Admin"; $("loginPass").value = "admin123"; showMsg("loginMsg","Admin credentials filled. Click Enter Portal.","success"); }
+function handlePassportUpload(event){ const file = event?.target?.files?.[0]; if(!file) return; const reader = new FileReader(); reader.onload = () => { passportPhoto = reader.result; const img = $("passportPreview"); const label = $("passportUploadLabel"); if(img){ img.src = passportPhoto; img.style.display = 'block'; } if($("passportUploadBox")) $("passportUploadBox").classList.add('has-image'); if(label) label.textContent = 'Passport photo ready — click photo to replace'; }; reader.readAsDataURL(file); }
+function editProfilePhoto(){ const sess = loadSession(); if(!sess) return; const picker = document.createElement('input'); picker.type = 'file'; picker.accept = 'image/*'; picker.onchange = (event) => { const file = event.target.files && event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = () => { const store = loadStore(); const user = store.users.find(u => u.id === sess.id); if(!user) return; user.passportPhoto = reader.result; saveStore(store); saveSession({ ...sess, passportPhoto: reader.result }); updateUserProfile(); showMsg('loginMsg','Profile photo updated.','success'); }; reader.readAsDataURL(file); }; picker.click(); }
 
-function getUserDisplayName(user){
-  if(!user) return 'Unknown user';
-  const fullName = [user.firstName, user.middleName, user.lastName]
-    .filter(v => typeof v === 'string' && v.trim())
-    .map(v => v.trim())
-    .join(' ')
-    .trim();
-  if(fullName) return fullName;
-  if(user.name && String(user.name).trim()) return String(user.name).trim();
-  if(user.username && String(user.username).trim()) return String(user.username).trim();
-  if(user.role === 'admin') return 'Admin User';
-  if(user.trackingId) return 'User ' + String(user.trackingId);
-  return 'Unknown user';
-}
+function getUserDisplayName(user){ if(!user) return 'Unknown user'; const fullName = [user.firstName, user.middleName, user.lastName].filter(v => typeof v === 'string' && v.trim()).map(v => v.trim()).join(' ').trim(); if(fullName) return fullName; if(user.name && String(user.name).trim()) return String(user.name).trim(); if(user.username && String(user.username).trim()) return String(user.username).trim(); if(user.role === 'admin') return 'Admin User'; if(user.trackingId) return 'User ' + String(user.trackingId); return 'Unknown user'; }
 
-function updateUserProfile(){
-  const sess = loadSession();
-  const wrap = $("profileContainer");
-  const brandTitle = $("brandTitle");
-  if(brandTitle) brandTitle.textContent = sess && sess.city ? sess.city : 'CivicPlan Portal';
-  if(!wrap) return;
-  if(!sess){
-    wrap.classList.add('hidden');
-    return;
-  }
-  wrap.classList.remove('hidden');
-  const name = [sess.firstName, sess.middleName, sess.lastName].filter(Boolean).join(' ').trim() || 'Administrator';
-  const detail = sess.role === 'admin' ? `Administrator • ${sess.city || 'Federal'}` : `Tracking ID: ${sess.trackingId || '—'} • ${sess.city || ''}`;
-  if($("userName")) $("userName").textContent = name;
-  if($("userDetails")) $("userDetails").textContent = detail;
-  const photo = $("userPhoto");
-  const ph = $("userPhotoPlaceholder");
-  if(sess.passportPhoto){
-    if(photo){ photo.src = sess.passportPhoto; photo.style.display = 'block'; }
-    if(ph) ph.style.display = 'none';
-  } else {
-    if(photo) photo.style.display = 'none';
-    if(ph) ph.style.display = 'grid';
-  }
-}
-function collectRegistrationDraft(){
-  return {
-    city: $("regCity")?.value?.trim() || "",
-    firstName: $("regFirst")?.value?.trim() || "",
-    middleName: $("regMiddle")?.value?.trim() || "",
-    lastName: $("regLast")?.value?.trim() || "",
-    rawPhone: $("regPhone")?.value?.trim() || "",
-    phone: normalizePhone($("regPhone")?.value?.trim() || ""),
-    email: $("regEmail")?.value?.trim() || "",
-    pass: $("regPass")?.value || "",
-    passportPhoto: passportPhoto || null
-  };
-}
-function persistRegistrationDraft(){
-  const draft = collectRegistrationDraft();
-  const hasValue = Object.values(draft).some(v => !!v);
-  if(hasValue) saveLastRegistration(draft);
-}
-function bindRegistrationDraftPersistence(){
-  ["regCity","regFirst","regMiddle","regLast","regPhone","regEmail","regPass"].forEach(id => {
-    const el = $(id);
-    if(el) el.addEventListener("input", persistRegistrationDraft);
-  });
-}
-function registerOwner(){
-  const city = $("regCity").value.trim();
-  const firstName = $("regFirst").value.trim();
-  const middleName = $("regMiddle").value.trim();
-  const lastName = $("regLast").value.trim();
-  const rawPhone = $("regPhone").value.trim();
-  const phone = normalizePhone(rawPhone);
-  const email = $("regEmail").value.trim();
-  const passInput = $("regPass");
-  let pass = passInput ? passInput.value.trim() : "";
-  const registerBtn = document.querySelector('#form-register button.btn.accent.hero-btn');
-
-  if(registerBtn){
-    registerBtn.disabled = true;
-    registerBtn.dataset.originalHtml = registerBtn.dataset.originalHtml || registerBtn.innerHTML;
-    registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Citizen ID...';
-  }
-
-  try {
-    if(!city || !firstName || !lastName || !rawPhone){ showMsg('regMsg','Please complete city, first name, last name, and phone.','error'); return; }
-    if(phone.length < 8){ showMsg('regMsg','Please enter a valid phone number or login ID with at least 8 digits.','error'); return; }
-    if(!pass) pass = phone.slice(-4);
-    if(pass.length < 4){ showMsg('regMsg','Password must contain at least 4 characters.','error'); return; }
-
-    const store = loadStore();
-    const duplicateUser = (store.users || []).find(u => normalizePhone(u.phone) === phone || normalizePhone(u.rawPhone) === phone);
-    if(duplicateUser){ showMsg('regMsg','This phone/login ID is already registered. Please sign in instead.','error'); return; }
-
-    let citizenId = generateTrackingId();
-    while((store.users || []).some(u => String(u.trackingId) === String(citizenId))){
-      citizenId = generateTrackingId();
-    }
-
-    const user = {
-      id: 'u_'+Date.now()+'_'+Math.floor(Math.random()*1000),
-      role: 'owner',
-      city,
-      firstName,
-      middleName,
-      lastName,
-      phone,
-      rawPhone,
-      email,
-      pass,
-      trackingId: String(citizenId),
-      registeredAt: nowISO(),
-      passportPhoto: passportPhoto || null
-    };
-
-    const registrationSnapshot = {
-      city,
-      firstName,
-      middleName,
-      lastName,
-      rawPhone,
-      phone,
-      email,
-      pass,
-      passportPhoto: passportPhoto || null,
-      trackingId: String(citizenId),
-      registeredAt: user.registeredAt
-    };
-
-    store.users.unshift(user);
-    store.audit.unshift({ id:'a_'+Date.now(), userId:user.id, action:'USER_REGISTERED', details:`Registered ${firstName} ${lastName} with Citizen ID ${citizenId}`, timestamp:nowISO() });
-
-    const savedStore = saveStore(store);
-    const savedSession = saveSession(user);
-    const savedSnapshot = saveLastRegistration(registrationSnapshot);
-    const verifyStore = loadStore();
-    const persistedUser = (verifyStore.users || []).find(u => u.id === user.id && String(u.trackingId) === String(citizenId));
-
-    if(!savedStore || !savedSession || !savedSnapshot || !persistedUser){
-      showMsg('regMsg','Registration could not be saved in browser storage. Try removing some large attachments or use the Master Reset if browser storage is full.','error');
-      return;
-    }
-
-    fillRegistrationForm(registrationSnapshot);
-    const tempPassNote = passInput && passInput.value.trim() ? '' : ` Temporary password: ${pass}.`;
-    showMsg('regMsg',`Saved successfully. Your unique 8-digit Citizen ID is ${citizenId}.${tempPassNote} Your completed registration details were kept in browser storage and on the form.`,'success');
-    updateUserProfile();
-    updateOwnerStats();
-    setTimeout(()=>go('owner'), 1200);
-  } finally {
-    if(registerBtn){
-      registerBtn.disabled = false;
-      registerBtn.innerHTML = registerBtn.dataset.originalHtml || '<i class="fas fa-fingerprint"></i> Generate Tracking ID';
-    }
-  }
-}
-function login(){
-  const phoneInput = $("loginPhone").value.trim();
-  const pass = $("loginPass").value.trim();
-  if(!phoneInput || !pass){ showMsg('loginMsg','Enter your login ID and password.','error'); return; }
-  const phone = normalizePhone(phoneInput);
-  const store = loadStore();
-  const user = store.users.find(u => {
-    const storedPhone = normalizePhone(u.phone || '');
-    const storedRaw = normalizePhone(u.rawPhone || '');
-    const phoneMatch = phoneInput.toLowerCase() === String(u.phone || '').toLowerCase() || storedPhone === phone || storedRaw === phone;
-    const fallbackPass = storedRaw.slice(-4) || storedPhone.slice(-4);
-    const passMatch = String(u.pass || '') === pass || (!!fallbackPass && fallbackPass === pass);
-    return phoneMatch && passMatch;
-  });
-  if(!user){ showMsg('loginMsg','Invalid credentials. Use your registered phone number and password, or the last 4 digits of the phone as the default password.','error'); return; }
-  if((!user.pass || String(user.pass).trim() === '') && phone){
-    user.pass = phone.slice(-4);
-    const saveStoreRef = loadStore();
-    const target = saveStoreRef.users.find(u => u.id === user.id);
-    if(target) target.pass = user.pass;
-    saveStore(saveStoreRef);
-  }
-  saveSession(user);
-  updateUserProfile();
-  showMsg('loginMsg',`Welcome ${user.firstName || 'back'}!`,'success');
-  if(user.role === 'admin') go('admin'); else { updateOwnerStats(); go('owner'); }
-}
-function handleLogout(){
-  clearSession();
-  updateNav();
-  updateUserProfile();
-  go('home');
-}
-function displayActionNotice(targetId){
-  const target = $(targetId);
-  if(!target) return;
-  const notice = consumeActionNotice();
-  if(!notice || !notice.message){ target.innerHTML = ''; return; }
-  target.innerHTML = `<div class="msg-feedback ${notice.type||'success'}" style="margin-bottom:1rem;">${notice.message}</div>`;
-}
-function renderOwnerDash(){
-  const sess = loadSession();
-  if(!sess) return;
-  if($("kpiCitizenId")) $("kpiCitizenId").textContent = sess.trackingId || '—';
-  if($("ownerSearchResult")) $("ownerSearchResult").innerHTML = '<div class="info-note">Search with your Tracking ID or Plan ID to quickly open a property record.</div>';
-  displayActionNotice("ownerNotice");
-}
-function renderMyPortfolio(){
-  const sess = loadSession();
-  const wrap = $("myPlansTableContainer");
-  const profileWrap = $("portfolioProfileCard");
-  if(!wrap) return;
-  if(!sess){
-    if(profileWrap) profileWrap.innerHTML = '';
-    wrap.innerHTML = '<div class="card">Please sign in first.</div>';
-    return;
-  }
-  const store = loadStore();
-  const owner = (store.users || []).find(u => u.id === sess.id) || sess;
-  const plans = store.plans.filter(p => p.ownerId === sess.id || String(p.ownerTrackingId||'') === String(sess.trackingId||''));
-  if(profileWrap){
-    const photoHtml = owner.passportPhoto ? `<img src="${owner.passportPhoto}" alt="Passport photo" style="width:110px;height:135px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">` : `<div style="width:110px;height:135px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--muted);font-weight:700;">No Photo</div>`;
-    profileWrap.innerHTML = `<div class="card" style="margin-bottom:1rem;"><h2><i class="fas fa-address-card"></i> Registration Details</h2><div class="certificate-detail-grid" style="align-items:start;"><div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">${photoHtml}<div><div><strong>Tracking ID:</strong> ${owner.trackingId || '—'}</div><div><strong>First Name:</strong> ${owner.firstName || ''}</div><div><strong>Middle Name:</strong> ${owner.middleName || '—'}</div><div><strong>Last Name:</strong> ${owner.lastName || ''}</div><div><strong>City:</strong> ${owner.city || '—'}</div></div></div><div><div><strong>Phone / Login ID:</strong> ${owner.rawPhone || owner.phone || '—'}</div><div><strong>Email:</strong> ${owner.email || '—'}</div><div><strong>Registered:</strong> ${owner.registeredAt ? fmtDate(owner.registeredAt) : '—'}</div><div><strong>Total Properties:</strong> ${plans.length}</div></div></div><div class="info-note" style="margin-top:1rem;">This section shows the user registration data saved in browser storage. Property records are listed below.</div></div>`;
-  }
-  if(!plans.length){
-    wrap.innerHTML = '<div class="card">No property records yet.</div>';
-    return;
-  }
-  wrap.innerHTML = `<div class="card"><div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Type</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Updated</th><th style="text-align:left;padding:12px;">Action</th> </thead><tbody>${plans.map(p=>`<tr><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.type}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${fmtDate(p.lastUpdated||p.createdAt)}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`).join('')}</tbody> </table></div></div>`;
-}
-function ownerSearch(){
-  const q = $("ownerSearchId").value.trim();
-  const target = $("ownerSearchResult");
-  const sess = loadSession();
-  if(!target) return;
-  if(!q){ target.innerHTML = '<div class="info-note">Enter your Tracking ID or a Plan ID.</div>'; return; }
-  const plans = loadStore().plans.filter(p => (p.ownerId === sess?.id || String(p.ownerTrackingId||'') === String(sess?.trackingId||'')) && (String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q)));
-  if(!plans.length){ target.innerHTML = '<div class="info-note">No matching record found.</div>'; return; }
-  target.innerHTML = plans.map(p => `<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">View record</button></div></div>`).join('');
-}
-function renderAdmin(){
-  const wrap = $("adminTableContainer");
-  if(!wrap) return;
-  const store = loadStore();
-  const plans = store.plans;
-  if(!plans.length){ wrap.innerHTML = '<div class="info-note">No filings yet.</div>'; return; }
-  wrap.innerHTML = `<div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Tracking ID</th><th style="text-align:left;padding:12px;">Owner</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Docs</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>{ const owner = store.users.find(u=>u.id===p.ownerId) || {}; return `<tr class="${isTransferredPlan(p)?'record-transferred':''}"><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.ownerTrackingId || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${[owner.firstName, owner.lastName].filter(Boolean).join(' ') || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.files?.length||0}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`; }).join('')}</tbody> </table></div>`;
-}
-function adminSearch(){
-  const q = $("adminSearchId").value.trim();
-  const target = $("adminSearchResult");
-  if(!target) return;
-  if(!q){ target.innerHTML = '<div class="info-note">Enter a Tracking ID or Plan ID.</div>'; return; }
-  const store = loadStore();
-  const plans = store.plans.filter(p => String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q));
-  if(!plans.length){ target.innerHTML = '<div class="info-note">No result found.</div>'; return; }
-  target.innerHTML = plans.map(p=>`<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open record</button></div></div>`).join('');
-}
-function adminGenerateReport(){
-  const store = loadStore();
-  const totalUsers = store.users.filter(u => u.role !== 'admin').length;
-  const totalPlans = store.plans.length;
-  const totalDocs = store.plans.reduce((sum,p)=>sum + (p.files?.length || 0), 0);
-  $("modalBody").innerHTML = `<h2>Administrative Summary Report</h2><div class="grid"><div class="stat-card"><div class="stat-label">Registered Users</div><div class="stat-value">${totalUsers}</div></div><div class="stat-card"><div class="stat-label">Property Filings</div><div class="stat-value">${totalPlans}</div></div><div class="stat-card"><div class="stat-label">Documents</div><div class="stat-value">${totalDocs}</div></div></div><div class="info-note" style="margin-top:1rem;">This report is generated from the browser data store for local testing.</div>`;
-  $("propertyModal").style.display = 'flex';
-}
-function adminViewAuditLog(){
-  const rows = loadStore().audit.slice(0,50);
-  $("modalBody").innerHTML = `<h2>Audit Log</h2>${rows.length ? `<div style="display:grid;gap:12px;">${rows.map(a=>`<div class="card"><strong>${a.action}</strong><div>${a.details}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${fmtDate(a.timestamp)}</div></div>`).join('')}</div>` : '<div class="info-note">No audit entries yet.</div>'}`;
-  $("propertyModal").style.display = 'flex';
-}
-function showCertificate(id){
-  const store = loadStore();
-  const plan = store.plans.find(p=>p.id===id);
-  if(!plan) return;
-  const owner = store.users.find(u=>u.id===plan.ownerId) || {};
-  const ownerName = [owner.firstName, owner.middleName, owner.lastName].filter(Boolean).join(' ');
-  const photoHtml = owner.passportPhoto ? `<div class="certificate-profile"><img src="${owner.passportPhoto}" alt="Passport photo"></div>` : `<div class="certificate-profile" style="display:flex;align-items:center;justify-content:center;background:#f5f8ff;color:#5b6780;font-size:12px;text-align:center;">No Photo</div>`;
-  const sketchHtml = plan.manualDrawingImage ? `<div class="certificate-sketch"><img src="${plan.manualDrawingImage}" alt="Manual sketch"></div>` : '';
-  $("certificateBody").innerHTML = `<div class="certificate-container"><div class="certificate-header"><div><h1 style="margin:0;">Property Registration Certificate</h1><div class="info-note" style="margin-top:8px;">This is a local demo certificate for review and testing.</div></div>${photoHtml}</div><div class="divider"></div><div class="certificate-detail-grid"><div><p><strong>Owner:</strong> ${ownerName}</p><p><strong>Tracking ID:</strong> ${plan.ownerTrackingId}</p><p><strong>Plan ID:</strong> #${plan.planNumber}</p><p><strong>Address:</strong> ${plan.address}</p><p><strong>Status:</strong> ${plan.status || 'ACTIVE'}</p></div><div><p><strong>Category:</strong> ${plan.type}</p><p><strong>Area:</strong> ${Number(plan.area||0).toFixed(2)} m²</p><p><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</p><p><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</p><p><strong>Created:</strong> ${fmtDate(plan.createdAt)}</p><p><strong>Last Edited:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}</p><p><strong>Edited By:</strong> ${plan.lastEditedByName || ownerName}</p></div></div>${sketchHtml}<div style="margin-top: 2rem; text-align: center;"><button class="btn accent print-certificate-btn" onclick="window.print();"><i class="fas fa-print"></i> Print Certificate (One Page)</button></div></div>`;
-  $("certificateModal").style.display = 'flex';
-}
+function updateUserProfile(){ const sess = loadSession(); const wrap = $("profileContainer"); const brandTitle = $("brandTitle"); if(brandTitle) brandTitle.textContent = sess && sess.city ? sess.city : 'CivicPlan Portal'; if(!wrap) return; if(!sess){ wrap.classList.add('hidden'); return; } wrap.classList.remove('hidden'); const name = [sess.firstName, sess.middleName, sess.lastName].filter(Boolean).join(' ').trim() || 'Administrator'; const detail = sess.role === 'admin' ? `Administrator • ${sess.city || 'Federal'}` : `Tracking ID: ${sess.trackingId || '—'} • ${sess.city || ''}`; if($("userName")) $("userName").textContent = name; if($("userDetails")) $("userDetails").textContent = detail; const photo = $("userPhoto"); const ph = $("userPhotoPlaceholder"); if(sess.passportPhoto){ if(photo){ photo.src = sess.passportPhoto; photo.style.display = 'block'; } if(ph) ph.style.display = 'none'; } else { if(photo) photo.style.display = 'none'; if(ph) ph.style.display = 'grid'; } }
+function collectRegistrationDraft(){ return { city: $("regCity")?.value?.trim() || "", firstName: $("regFirst")?.value?.trim() || "", middleName: $("regMiddle")?.value?.trim() || "", lastName: $("regLast")?.value?.trim() || "", rawPhone: $("regPhone")?.value?.trim() || "", phone: normalizePhone($("regPhone")?.value?.trim() || ""), email: $("regEmail")?.value?.trim() || "", pass: $("regPass")?.value || "", passportPhoto: passportPhoto || null }; }
+function persistRegistrationDraft(){ const draft = collectRegistrationDraft(); const hasValue = Object.values(draft).some(v => !!v); if(hasValue) saveLastRegistration(draft); }
+function bindRegistrationDraftPersistence(){ ["regCity","regFirst","regMiddle","regLast","regPhone","regEmail","regPass"].forEach(id => { const el = $(id); if(el) el.addEventListener("input", persistRegistrationDraft); }); }
+function registerOwner(){ const city = $("regCity").value.trim(); const firstName = $("regFirst").value.trim(); const middleName = $("regMiddle").value.trim(); const lastName = $("regLast").value.trim(); const rawPhone = $("regPhone").value.trim(); const phone = normalizePhone(rawPhone); const email = $("regEmail").value.trim(); const passInput = $("regPass"); let pass = passInput ? passInput.value.trim() : ""; const registerBtn = document.querySelector('#form-register button.btn.accent.hero-btn'); if(registerBtn){ registerBtn.disabled = true; registerBtn.dataset.originalHtml = registerBtn.dataset.originalHtml || registerBtn.innerHTML; registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Citizen ID...'; } try { if(!city || !firstName || !lastName || !rawPhone){ showMsg('regMsg','Please complete city, first name, last name, and phone.','error'); return; } if(phone.length < 8){ showMsg('regMsg','Please enter a valid phone number or login ID with at least 8 digits.','error'); return; } if(!pass) pass = phone.slice(-4); if(pass.length < 4){ showMsg('regMsg','Password must contain at least 4 characters.','error'); return; } const store = loadStore(); const duplicateUser = (store.users || []).find(u => normalizePhone(u.phone) === phone || normalizePhone(u.rawPhone) === phone); if(duplicateUser){ showMsg('regMsg','This phone/login ID is already registered. Please sign in instead.','error'); return; } let citizenId = generateTrackingId(); while((store.users || []).some(u => String(u.trackingId) === String(citizenId))){ citizenId = generateTrackingId(); } const user = { id: 'u_'+Date.now()+'_'+Math.floor(Math.random()*1000), role: 'owner', city, firstName, middleName, lastName, phone, rawPhone, email, pass, trackingId: String(citizenId), registeredAt: nowISO(), passportPhoto: passportPhoto || null }; const registrationSnapshot = { city, firstName, middleName, lastName, rawPhone, phone, email, pass, passportPhoto: passportPhoto || null, trackingId: String(citizenId), registeredAt: user.registeredAt }; store.users.unshift(user); store.audit.unshift({ id:'a_'+Date.now(), userId:user.id, action:'USER_REGISTERED', details:`Registered ${firstName} ${lastName} with Citizen ID ${citizenId}`, timestamp:nowISO() }); const savedStore = saveStore(store); const savedSession = saveSession(user); const savedSnapshot = saveLastRegistration(registrationSnapshot); const verifyStore = loadStore(); const persistedUser = (verifyStore.users || []).find(u => u.id === user.id && String(u.trackingId) === String(citizenId)); if(!savedStore || !savedSession || !savedSnapshot || !persistedUser){ showMsg('regMsg','Registration could not be saved in browser storage. Try removing some large attachments or use the Master Reset if browser storage is full.','error'); return; } fillRegistrationForm(registrationSnapshot); const tempPassNote = passInput && passInput.value.trim() ? '' : ` Temporary password: ${pass}.`; showMsg('regMsg',`Saved successfully. Your unique 8-digit Citizen ID is ${citizenId}.${tempPassNote} Your completed registration details were kept in browser storage and on the form.`,'success'); updateUserProfile(); updateOwnerStats(); setTimeout(()=>go('owner'), 1200); } finally { if(registerBtn){ registerBtn.disabled = false; registerBtn.innerHTML = registerBtn.dataset.originalHtml || '<i class="fas fa-fingerprint"></i> Generate Tracking ID'; } } }
+function login(){ const phoneInput = $("loginPhone").value.trim(); const pass = $("loginPass").value.trim(); if(!phoneInput || !pass){ showMsg('loginMsg','Enter your login ID and password.','error'); return; } const phone = normalizePhone(phoneInput); const store = loadStore(); const user = store.users.find(u => { const storedPhone = normalizePhone(u.phone || ''); const storedRaw = normalizePhone(u.rawPhone || ''); const phoneMatch = phoneInput.toLowerCase() === String(u.phone || '').toLowerCase() || storedPhone === phone || storedRaw === phone; const fallbackPass = storedRaw.slice(-4) || storedPhone.slice(-4); const passMatch = String(u.pass || '') === pass || (!!fallbackPass && fallbackPass === pass); return phoneMatch && passMatch; }); if(!user){ showMsg('loginMsg','Invalid credentials. Use your registered phone number and password, or the last 4 digits of the phone as the default password.','error'); return; } if((!user.pass || String(user.pass).trim() === '') && phone){ user.pass = phone.slice(-4); const saveStoreRef = loadStore(); const target = saveStoreRef.users.find(u => u.id === user.id); if(target) target.pass = user.pass; saveStore(saveStoreRef); } saveSession(user); updateUserProfile(); showMsg('loginMsg',`Welcome ${user.firstName || 'back'}!`,'success'); if(user.role === 'admin') go('admin'); else { updateOwnerStats(); go('owner'); } }
+function handleLogout(){ clearSession(); updateNav(); updateUserProfile(); go('home'); }
+function displayActionNotice(targetId){ const target = $(targetId); if(!target) return; const notice = consumeActionNotice(); if(!notice || !notice.message){ target.innerHTML = ''; return; } target.innerHTML = `<div class="msg-feedback ${notice.type||'success'}" style="margin-bottom:1rem;">${notice.message}</div>`; }
+function renderOwnerDash(){ const sess = loadSession(); if(!sess) return; if($("kpiCitizenId")) $("kpiCitizenId").textContent = sess.trackingId || '—'; if($("ownerSearchResult")) $("ownerSearchResult").innerHTML = '<div class="info-note">Search with your Tracking ID or Plan ID to quickly open a property record.</div>'; displayActionNotice("ownerNotice"); }
+function renderMyPortfolio(){ const sess = loadSession(); const wrap = $("myPlansTableContainer"); const profileWrap = $("portfolioProfileCard"); if(!wrap) return; if(!sess){ if(profileWrap) profileWrap.innerHTML = ''; wrap.innerHTML = '<div class="card">Please sign in first.</div>'; return; } const store = loadStore(); const owner = (store.users || []).find(u => u.id === sess.id) || sess; const plans = store.plans.filter(p => p.ownerId === sess.id || String(p.ownerTrackingId||'') === String(sess.trackingId||'')); if(profileWrap){ const photoHtml = owner.passportPhoto ? `<img src="${owner.passportPhoto}" alt="Passport photo" style="width:110px;height:135px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">` : `<div style="width:110px;height:135px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--muted);font-weight:700;">No Photo</div>`; profileWrap.innerHTML = `<div class="card" style="margin-bottom:1rem;"><h2><i class="fas fa-address-card"></i> Registration Details</h2><div class="certificate-detail-grid" style="align-items:start;"><div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">${photoHtml}<div><div><strong>Tracking ID:</strong> ${owner.trackingId || '—'}</div><div><strong>First Name:</strong> ${owner.firstName || ''}</div><div><strong>Middle Name:</strong> ${owner.middleName || '—'}</div><div><strong>Last Name:</strong> ${owner.lastName || ''}</div><div><strong>City:</strong> ${owner.city || '—'}</div></div></div><div><div><strong>Phone / Login ID:</strong> ${owner.rawPhone || owner.phone || '—'}</div><div><strong>Email:</strong> ${owner.email || '—'}</div><div><strong>Registered:</strong> ${owner.registeredAt ? fmtDate(owner.registeredAt) : '—'}</div><div><strong>Total Properties:</strong> ${plans.length}</div></div></div><div class="info-note" style="margin-top:1rem;">This section shows the user registration data saved in browser storage. The default login password is always the last 4 digits of the current login phone number.</div><div class="file-action-row" style="margin-top:1rem;"><button class="btn outline small" onclick="openAccountAccess('${owner.id}')"><i class="fas fa-id-badge"></i> View / Edit Login Access</button></div></div>`; } if(!plans.length){ wrap.innerHTML = '<div class="card">No property records yet.</div>'; return; } wrap.innerHTML = `<div class="card"><div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Type</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Updated</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>`<tr><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.type}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${fmtDate(p.lastUpdated||p.createdAt)}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`).join('')}</tbody></table></div></div>`; }
+function ownerSearch(){ const q = $("ownerSearchId").value.trim(); const target = $("ownerSearchResult"); const sess = loadSession(); if(!target) return; if(!q){ target.innerHTML = '<div class="info-note">Enter your Tracking ID or a Plan ID.</div>'; return; } const plans = loadStore().plans.filter(p => (p.ownerId === sess?.id || String(p.ownerTrackingId||'') === String(sess?.trackingId||'')) && (String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q))); if(!plans.length){ target.innerHTML = '<div class="info-note">No matching record found.</div>'; return; } target.innerHTML = plans.map(p => `<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">View record</button></div></div>`).join(''); }
+function renderAdmin(){ const wrap = $("adminTableContainer"); if(!wrap) return; const store = loadStore(); const plans = store.plans; if(!plans.length){ wrap.innerHTML = '<div class="info-note">No filings yet.</div>'; return; } wrap.innerHTML = `<div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Tracking ID</th><th style="text-align:left;padding:12px;">Owner</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Docs</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>{ const owner = store.users.find(u=>u.id===p.ownerId) || {}; return `<tr class="${isTransferredPlan(p)?'record-transferred':''}"><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.ownerTrackingId || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${[owner.firstName, owner.lastName].filter(Boolean).join(' ') || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.files?.length||0}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`; }).join('')}</tbody><table></div>`; }
+function adminSearch(){ const q = $("adminSearchId").value.trim(); const target = $("adminSearchResult"); if(!target) return; if(!q){ target.innerHTML = '<div class="info-note">Enter a Tracking ID or Plan ID.</div>'; return; } const store = loadStore(); const plans = store.plans.filter(p => String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q)); if(!plans.length){ target.innerHTML = '<div class="info-note">No result found.</div>'; return; } target.innerHTML = plans.map(p=>`<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open record</button></div></div>`).join(''); }
+function adminGenerateReport(){ const store = loadStore(); const totalUsers = store.users.filter(u => u.role !== 'admin').length; const totalPlans = store.plans.length; const totalDocs = store.plans.reduce((sum,p)=>sum + (p.files?.length || 0), 0); $("modalBody").innerHTML = `<h2>Administrative Summary Report</h2><div class="grid"><div class="stat-card"><div class="stat-label">Registered Users</div><div class="stat-value">${totalUsers}</div></div><div class="stat-card"><div class="stat-label">Property Filings</div><div class="stat-value">${totalPlans}</div></div><div class="stat-card"><div class="stat-label">Documents</div><div class="stat-value">${totalDocs}</div></div></div><div class="info-note" style="margin-top:1rem;">This report is generated from the browser data store for local testing.</div>`; $("propertyModal").style.display = 'flex'; }
+function adminViewAuditLog(){ const rows = loadStore().audit.slice(0,50); $("modalBody").innerHTML = `<h2>Audit Log</h2>${rows.length ? `<div style="display:grid;gap:12px;">${rows.map(a=>`<div class="card"><strong>${a.action}</strong><div>${a.details}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${fmtDate(a.timestamp)}</div></div>`).join('')}</div>` : '<div class="info-note">No audit entries yet.</div>'}`; $("propertyModal").style.display = 'flex'; }
+function buildCertificateHtml(plan, owner){ if(!plan || !owner) return ''; ensureCertificateStats(plan); const ownerName = [owner.firstName, owner.middleName, owner.lastName].filter(Boolean).join(' '); const photoHtml = owner.passportPhoto ? `<div class="certificate-profile"><img src="${owner.passportPhoto}" alt="Passport photo"></div>` : `<div class="certificate-profile" style="display:flex;align-items:center;justify-content:center;background:#f5f8ff;color:#5b6780;font-size:12px;text-align:center;">No Photo</div>`; const sketchHtml = plan.manualDrawingImage ? `<div class="certificate-sketch"><img src="${plan.manualDrawingImage}" alt="Manual sketch"></div>` : ''; const neighborHtml = `<div class="certificate-neighbor-grid">
+        <div class="neighbor-box north"><strong><i class="fas fa-arrow-up"></i> North</strong> ${plan.neighbors?.n || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.n || 0} m</span></div>
+        <div class="neighbor-box south"><strong><i class="fas fa-arrow-down"></i> South</strong> ${plan.neighbors?.s || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.s || 0} m</span></div>
+        <div class="neighbor-box east"><strong><i class="fas fa-arrow-right"></i> East</strong> ${plan.neighbors?.e || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.e || 0} m</span></div>
+        <div class="neighbor-box west"><strong><i class="fas fa-arrow-left"></i> West</strong> ${plan.neighbors?.w || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.w || 0} m</span></div>
+      </div>`; return `<div class="certificate-container compact-certificate" id="certificatePrintableArea"><div class="certificate-header"><div><h1 style="margin:0;">Property Registration Certificate</h1><div class="certificate-subtitle">Official property record summary for local review and printing.</div></div>${photoHtml}</div><div class="divider"></div><div class="certificate-detail-grid"><div><p><strong>Owner:</strong> ${ownerName}</p><p><strong>Tracking ID:</strong> ${plan.ownerTrackingId}</p><p><strong>Plan ID:</strong> #${plan.planNumber}</p><p><strong>Address:</strong> ${plan.address}</p><p><strong>Status:</strong> ${plan.status || 'ACTIVE'}</p></div><div><p><strong>Category:</strong> ${plan.type}</p><p><strong>Area:</strong> ${Number(plan.area||0).toFixed(2)} m²</p><p><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</p><p><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</p><p><strong>Created:</strong> ${fmtDate(plan.createdAt)}</p><p><strong>Last Edited:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}</p><p><strong>Edited By:</strong> ${plan.lastEditedByName || ownerName}</p></div></div>${neighborHtml}${sketchHtml}<div class="certificate-actions"><button class="btn outline" onclick="downloadCertificate('${plan.id}')"><i class="fas fa-download"></i> Download Certificate</button><button class="btn accent" onclick="printCertificate('${plan.id}')"><i class="fas fa-print"></i> Print Certificate</button></div></div>`; }
+function refreshCertificateCounters(plan){ return; }
+function showCertificate(id){ const store = loadStore(); const plan = store.plans.find(p=>p.id===id); if(!plan) return; normalizePlanFiles(plan); const owner = store.users.find(u=>u.id===plan.ownerId) || {}; $("certificateBody").innerHTML = buildCertificateHtml(plan, owner); refreshCertificateCounters(plan); $("certificateModal").style.display = 'flex'; }
+function updateCertificateRequestCount(planId, type){ const store = loadStore(); const plan = store.plans.find(p=>p.id===planId); if(!plan) return null; const stats = ensureCertificateStats(plan); if(type === 'download') stats.downloads += 1; if(type === 'print') stats.prints += 1; const sess = loadSession(); const actorName = getUserDisplayName(sess || {}); store.audit.unshift({ id:'a_'+Date.now(), userId:sess?.id || 'guest', action:type === 'download' ? 'CERTIFICATE_DOWNLOADED' : 'CERTIFICATE_PRINT_REQUESTED', details:`${type === 'download' ? 'Downloaded' : 'Printed'} certificate for #${plan.planNumber} by ${actorName || 'Unknown user'}`, timestamp:nowISO() }); saveStore(store); refreshCertificateCounters(plan); return plan; }
+function buildCertificateStandaloneDocument(plan, owner, mode='print'){ const printableHtml = buildCertificateHtml(plan, owner).replace(/<div class="certificate-actions">[\s\S]*?<\/div>\s*<\/div>$/, '</div>'); return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate #${plan.planNumber}</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><style>@page{size:A4 portrait;margin:8mm}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#eef3f8;color:#0f172a;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}body{padding:10px}.print-shell{max-width:190mm;margin:0 auto}.certificate-container{background:#fff;padding:14px 16px;border-radius:16px;border:2px solid #5fdcf7;box-shadow:0 8px 24px rgba(15,23,42,.08);page-break-inside:avoid;break-inside:avoid}.certificate-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:2px solid #5fdcf7;margin-bottom:12px;padding-bottom:10px}.certificate-profile{width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid #5fdcf7;background:#f0f0f0;flex:0 0 80px}.certificate-profile img{width:100%;height:100%;object-fit:cover;display:block}.certificate-subtitle{margin-top:6px;font-size:12px;color:#475569}.certificate-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:10px 0}.certificate-detail-grid p{margin:0 0 7px 0;line-height:1.35;font-size:14px}.certificate-sketch{text-align:center;margin:12px 0 0}.certificate-sketch img{max-width:100%;max-height:88mm;border:1px solid #dbe4f0;border-radius:10px;background:#fafafa;display:inline-block}.divider{height:1px;background:#e2e8f0;margin:12px 0}.certificate-actions,.certificate-counter-grid,.info-note{display:none!important}h1{font-size:24px;line-height:1.15}p,strong{font-size:14px}.certificate-neighbor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.5rem 0}.neighbor-box{background:#f8fafc;border-radius:16px;padding:1rem;text-align:center;border-left:6px solid}.neighbor-box.north{border-left-color:#f87171}.neighbor-box.south{border-left-color:#60a5fa}.neighbor-box.east{border-left-color:#34d399}.neighbor-box.west{border-left-color:#a78bfa}.neighbor-box strong{display:block;font-size:1rem;margin-bottom:6px}@media (max-width:700px){body{padding:0}.print-shell{max-width:none}.certificate-container{padding:12px}.certificate-header{flex-direction:column-reverse;align-items:center;text-align:center}.certificate-detail-grid{grid-template-columns:1fr}.certificate-sketch img{max-height:60mm}.certificate-neighbor-grid{grid-template-columns:1fr}}@media print{html,body{background:#fff!important;width:210mm;height:297mm;overflow:hidden}body{padding:0}.print-shell{max-width:none}.certificate-container{min-height:0;border:none;border-radius:0;box-shadow:none;padding:10mm 8mm 8mm;overflow:hidden}}</style></head><body><div class="print-shell">${printableHtml}</div>${mode==='print' ? `<script>window.addEventListener('load',()=>{const imgs=Array.from(document.images);Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=img.onerror=()=>resolve();}))).then(()=>setTimeout(()=>window.print(),300));});window.addEventListener('afterprint',()=>window.close());<\/script>` : ''}</body></html>`; }
+function downloadCertificate(planId){ const store = loadStore(); const plan = store.plans.find(p=>p.id===planId); if(!plan) return; const updatedPlan = updateCertificateRequestCount(planId, 'download') || plan; const owner = loadStore().users.find(u=>u.id===updatedPlan.ownerId) || {}; const html = buildCertificateStandaloneDocument(updatedPlan, owner, 'download'); const blob = new Blob([html], { type:'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `property-certificate-${updatedPlan.planNumber}.html`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 30000); }
+function printCertificate(planId){ const store = loadStore(); const existingPlan = store.plans.find(p=>p.id===planId); if(!existingPlan) return; const updatedPlan = updateCertificateRequestCount(planId, 'print') || existingPlan; const owner = loadStore().users.find(u=>u.id===updatedPlan.ownerId) || {}; const printWindow = window.open('', '_blank', 'width=1024,height=900'); if(!printWindow){ alert('Please allow pop-ups to preview and print the certificate.'); return; } printWindow.document.open(); printWindow.document.write(buildCertificateStandaloneDocument(updatedPlan, owner, 'print')); printWindow.document.close(); }
+function openAccountAccess(userId){ const store = loadStore(); const user = (store.users || []).find(u=>u.id===userId); if(!user) return; const defaultPass = getDefaultPhonePassword(user); $("modalBody").innerHTML = `<h2><i class="fas fa-id-badge"></i> Account Access</h2><div class="info-note">The login password is automatically synced to the last 4 digits of the current login phone number. Use the edit button below to change the phone number.</div><div class="account-access-grid"><div class="credential-box"><div><strong>Registered Name</strong></div><div class="credential-value">${[user.firstName,user.middleName,user.lastName].filter(Boolean).join(' ') || '—'}</div></div><div class="credential-box"><div><strong>Current Login Phone / ID</strong></div><div class="credential-value">${user.rawPhone || user.phone || '—'}</div></div><div class="credential-box"><div><strong>Default Login Password</strong></div><div class="credential-value">${defaultPass}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">Last 4 digits of the login phone number.</div></div><div class="credential-box"><div><strong>Masked View</strong></div><div class="credential-value">${maskPhoneValue(user.rawPhone || user.phone || '')}</div></div></div><div class="file-action-row" style="margin-top:1.25rem;"><button class="btn outline" onclick="alert('Login phone / ID: ${String(user.rawPhone || user.phone || '—').replace(/'/g, "\\'")}')"><i class="fas fa-eye"></i> View Login ID</button><button class="btn accent" onclick="editLoginAccess('${user.id}')"><i class="fas fa-pen-to-square"></i> Edit Login ID</button></div>`; $("propertyModal").style.display = 'flex'; }
+function editLoginAccess(userId){ const store = loadStore(); const user = (store.users || []).find(u=>u.id===userId); if(!user) return; const nextRaw = prompt('Enter the new login phone number / member phone ID', user.rawPhone || user.phone || ''); if(nextRaw === null) return; const trimmed = nextRaw.trim(); const normalized = normalizePhone(trimmed); if(!trimmed || normalized.length < 8){ alert('Please enter a valid login phone number with at least 8 digits.'); return; } const duplicate = (store.users || []).find(u => u.id !== userId && (normalizePhone(u.rawPhone || '') === normalized || normalizePhone(u.phone || '') === normalized)); if(duplicate){ alert('That phone / login ID is already being used by another account.'); return; } user.rawPhone = trimmed; user.phone = normalized; user.pass = normalized.slice(-4); store.audit.unshift({ id:'a_'+Date.now(), userId:user.id, action:'LOGIN_ACCESS_UPDATED', details:`Updated login phone for ${[user.firstName,user.lastName].filter(Boolean).join(' ') || user.trackingId}; password reset to last 4 digits`, timestamp:nowISO() }); saveStore(store); const sess = loadSession(); if(sess && sess.id === user.id){ sess.rawPhone = user.rawPhone; sess.phone = user.phone; sess.pass = user.pass; saveSession(sess); updateUserProfile(); } renderMyPortfolio(); renderAdmin(); openAccountAccess(userId); alert(`Login phone updated successfully. New default password: ${user.pass}`); }
 function closeCertificateModal(event){ if(!event || event.target === $("certificateModal")) $("certificateModal").style.display = 'none'; }
-function showSketchPreview(){
-  if(!sketch) return;
-  const modal = $("sketchModal");
-  const preview = $("sketchPreviewCanvas");
-  if(!modal || !preview) return;
-  const ctx = preview.getContext('2d');
-  const img = new Image();
-  img.onload = () => {
-    ctx.clearRect(0,0,preview.width,preview.height);
-    const scale = Math.min(preview.width / img.width, preview.height / img.height);
-    const w = img.width * scale;
-    const h = img.height * scale;
-    const x = (preview.width - w) / 2;
-    const y = (preview.height - h) / 2;
-    ctx.drawImage(img, x, y, w, h);
-    modal.style.display = 'flex';
-  };
-  img.src = sketch.getImageData();
-}
+function showSketchPreview(){ if(!sketch) return; const modal = $("sketchModal"); const preview = $("sketchPreviewCanvas"); if(!modal || !preview) return; const ctx = preview.getContext('2d'); const img = new Image(); img.onload = () => { ctx.clearRect(0,0,preview.width,preview.height); const scale = Math.min(preview.width / img.width, preview.height / img.height); const w = img.width * scale; const h = img.height * scale; const x = (preview.width - w) / 2; const y = (preview.height - h) / 2; ctx.drawImage(img, x, y, w, h); modal.style.display = 'flex'; }; img.src = sketch.getImageData(); }
 function closeSketchModal(event){ if(!event || event.target === $("sketchModal")) $("sketchModal").style.display = 'none'; }
 function openMasterReset(){ $("resetModal").style.display = 'flex'; }
 function closeResetModal(event){ if(!event || event.target === $("resetModal")) { $("resetModal").style.display = 'none'; showMsg('resetMsg','', ''); } }
-function confirmMasterReset(){
-  const pass = $("resetPassword").value;
-  if(pass !== ADMIN_RESET_PASS){ showMsg('resetMsg','Incorrect master reset password.','error'); return; }
-  localStorage.removeItem(STORE_KEY);
-  localStorage.removeItem(SESSION_KEY);
-  passportPhoto = null;
-  pendingFiles = [];
-  currentEditingPlanId = null;
-  $("resetPassword").value = '';
-  closeResetModal();
-  loadStore();
-  updateStatistics();
-  updateNav();
-  updateUserProfile();
-  go('home');
-}
+function confirmMasterReset(){ const pass = $("resetPassword").value; if(pass !== ADMIN_RESET_PASS){ showMsg('resetMsg','Incorrect master reset password.','error'); return; } localStorage.removeItem(STORE_KEY); localStorage.removeItem(SESSION_KEY); passportPhoto = null; pendingFiles = []; currentEditingPlanId = null; $("resetPassword").value = ''; closeResetModal(); loadStore(); updateStatistics(); updateNav(); updateUserProfile(); go('home'); }
 
 function resetForm(){ pendingFiles=[]; currentEditingPlanId=null; ["sAddress","sAreaM","sAreaFt","sDimNorth","sDimSouth","sDimEast","sDimWest","sNorth","sSouth","sEast","sWest","calcLength","calcWidth","sLatitude","sLongitude"].forEach(id=>{ let el=$(id); if(el) el.value=""; }); $("sType").value="RESIDENTIAL"; $("areaResult").style.display="none"; renderEnhancedFolderView(); if(sketch) sketch.clear(); let btn=$("submitBtn"); if(btn){ btn.innerHTML='<i class="fas fa-check-circle"></i> Complete Registration &amp; Save'; btn.dataset.action='submit'; btn.disabled=false; btn.style.pointerEvents='auto'; } showMsg('submitMsg','',''); }
 function fileSizeLabel(size){ if(!size && size!==0) return '—'; const units=['B','KB','MB','GB']; let s=size, idx=0; while(s>=1024 && idx<units.length-1){ s/=1024; idx++; } return (idx===0?Math.round(s):s.toFixed(1))+' '+units[idx]; }
-function normalizePlanFiles(plan){ if(!plan.files) plan.files=[]; plan.files=plan.files.map(f=>({ downloadCount:0, visibility:'owner-view', ...f })); if(!plan.editHistory) plan.editHistory=[]; if(!Array.isArray(plan.transferHistory)) plan.transferHistory=[]; if(!plan.ownershipSequence) plan.ownershipSequence=1; if(!plan.rootPlanNumber) plan.rootPlanNumber=plan.planNumber; return plan.files; }
+function normalizePlanFiles(plan){ if(!plan.files) plan.files=[]; plan.files=plan.files.map(f=>({ downloadCount:0, visibility:'owner-view', ...f })); if(!plan.editHistory) plan.editHistory=[]; if(!Array.isArray(plan.transferHistory)) plan.transferHistory=[]; if(!plan.ownershipSequence) plan.ownershipSequence=1; if(!plan.rootPlanNumber) plan.rootPlanNumber=plan.planNumber; ensureCertificateStats(plan); return plan.files; }
 function canAdminManage(){ let sess=loadSession(); return !!(sess && sess.role==='admin'); }
 function renderEnhancedFolderView(){ let c=$("folderContainer"); if(!c) return; if(pendingFiles.length===0){ c.innerHTML='<div class="empty-folder"><i class="fas fa-folder-open"></i><p>No documents</p></div>'; return; } let html=`<div class="folder-header-main"><i class="fas fa-archive"></i> Documents (${pendingFiles.length})</div><div class="folder-grid">`; let groups={}; pendingFiles.forEach((f,i)=>{ let cat=(f.type||'').includes("pdf")?"PDF":(f.type||'').includes("image")?"Images":"Other"; if(!groups[cat]) groups[cat]=[]; groups[cat].push({...f,idx:i}); }); for(let cat in groups){ html+=`<div class="folder-card"><div class="folder-card-header"><i class="fas fa-folder"></i> ${cat}</div><div class="folder-card-content">`; groups[cat].forEach(f=>{ html+=`<div class="folder-file-item"><div><i class="fas fa-file"></i> ${f.name}<div style="font-size:12px;color:var(--muted);margin-top:4px;">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn outline small" onclick="renamePending(${f.idx})"><i class="fas fa-i-cursor"></i> Rename</button><button class="dots-btn" onclick="removePending(${f.idx})" title="Remove">✖</button></div></div>`; }); html+=`</div></div>`; } html+=`</div>`; c.innerHTML=html; }
-function renamePending(idx){ const file=pendingFiles[idx]; if(!file) return; const next=prompt('Rename file', file.name||''); if(next===null) return; const cleaned=next.trim(); if(!cleaned) return; pendingFiles[idx].name=cleaned; renderEnhancedFolderView(); }
+function renamePending(idx){ const file=pendingFiles[idx]; if(!file) return; renameCallback = (newName) => { pendingFiles[idx].name = newName; renderEnhancedFolderView(); renameCallback = null; }; $("renameInput").value = file.name; $("renameModal").style.display = 'flex'; }
 function removePending(idx){ pendingFiles.splice(idx,1); renderEnhancedFolderView(); }
 async function handleFileSelection(){ let input=$("sFiles"); let files=Array.from(input.files||[]); if(!files.length) return; let timestamp=Date.now(); let newFiles=files.map((f,index)=>({ id:"f_"+timestamp+"_"+index+"_"+Math.random().toString(16).slice(2), name:f.name, type:f.type||'application/octet-stream', status:"active", uploadedAt:nowISO(), size:f.size, downloadCount:0, visibility:'owner-view', storage:'indexeddb', hasBlob:true, fileObject:f })); pendingFiles.push(...newFiles); input.value=''; renderEnhancedFolderView(); }
 async function submitPlan(){
   const btn = $("submitBtn");
   try {
-    if(btn){
-      btn.disabled = true;
-      btn.style.pointerEvents = "none";
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-    }
-
-    const sess = loadSession();
-    const store = loadStore();
-    if(!sess){
-      showMsg("submitMsg","Login first","error");
-      return false;
-    }
-
+    if(btn){ btn.disabled = true; btn.style.pointerEvents = "none"; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...'; }
+    const sess = loadSession(); const store = loadStore();
+    if(!sess){ showMsg("submitMsg","Login first","error"); return false; }
     const addr = $("sAddress").value.trim();
-    if(!addr){
-      showMsg("submitMsg","Address required","error");
-      return false;
-    }
-
+    if(!addr){ showMsg("submitMsg","Address required","error"); return false; }
     const planNumber = Math.floor(10000000 + Math.random()*90000000).toString();
     const planId = "p_" + Date.now();
     const manualImage = sketch ? sketch.getImageData() : "";
     const manualShapes = sketch ? sketch.getShapes() : [];
-
-    try {
-      if(pendingFiles.length){
-        await persistPendingFiles(planId, pendingFiles);
-      }
-    } catch(err){
-      console.error(err);
-      showMsg("submitMsg","Documents could not be saved. Please try smaller files or images.","error");
-      return false;
-    }
-
+    try { if(pendingFiles.length){ await persistPendingFiles(planId, pendingFiles); } } catch(err){ console.error(err); showMsg("submitMsg","Documents could not be saved. Please try smaller files or images.","error"); return false; }
     const storedFiles = pendingFiles.map(stripFileForStore);
     const stamp = nowISO();
     const editorName = getUserDisplayName(sess);
     const newPlan = {
-      id: planId,
-      planNumber,
-      ownerId: sess.id,
-      ownerTrackingId: sess.trackingId,
-      city: sess.city,
-      address: addr,
-      type: $("sType").value,
-      area: $("sAreaM").value || "0",
-      manualDrawingImage: manualImage,
-      manualShapes: manualShapes,
-      files: storedFiles,
-      neighbors: {
-        n: $("sNorth").value,
-        s: $("sSouth").value,
-        e: $("sEast").value,
-        w: $("sWest").value
-      },
-      dims: {
-        n: $("sDimNorth").value,
-        s: $("sDimSouth").value,
-        e: $("sDimEast").value,
-        w: $("sDimWest").value
-      },
-      coordinates: {
-        latitude: asDegree(stripDegree($("sLatitude").value)),
-        longitude: asDegree(stripDegree($("sLongitude").value))
-      },
-      ownershipSequence: 1,
-      rootPlanNumber: planNumber,
-      createdAt: stamp,
-      status: "ACTIVE",
-      lastUpdated: stamp,
-      createdBy: sess.id,
-      createdByName: editorName,
-      lastEditedBy: sess.id,
-      lastEditedByName: editorName,
-      editHistory: [{
-        userId: sess.id,
-        editorName: editorName,
-        action: 'CREATED',
-        timestamp: stamp,
-        summary: 'Initial property registration'
-      }]
+      id: planId, planNumber, ownerId: sess.id, ownerTrackingId: sess.trackingId, city: sess.city,
+      address: addr, type: $("sType").value, area: $("sAreaM").value || "0",
+      manualDrawingImage: manualImage, manualShapes: manualShapes, files: storedFiles,
+      neighbors: { n: $("sNorth").value, s: $("sSouth").value, e: $("sEast").value, w: $("sWest").value },
+      dims: { n: $("sDimNorth").value, s: $("sDimSouth").value, e: $("sDimEast").value, w: $("sDimWest").value },
+      coordinates: { latitude: asDegree(stripDegree($("sLatitude").value)), longitude: asDegree(stripDegree($("sLongitude").value)) },
+      ownershipSequence: 1, rootPlanNumber: planNumber, createdAt: stamp, status: "ACTIVE", lastUpdated: stamp,
+      createdBy: sess.id, createdByName: editorName, lastEditedBy: sess.id, lastEditedByName: editorName,
+      certificateStats: { downloads: 0, prints: 0 },
+      editHistory: [{ userId: sess.id, editorName: editorName, action: 'CREATED', timestamp: stamp, summary: 'Initial property registration' }]
     };
-
     store.plans.unshift(newPlan);
-    store.audit.unshift({
-      id: "a_" + Date.now(),
-      userId: sess.id,
-      action: "PROPERTY_REGISTERED",
-      details: `Registered ${addr} with plan #${planNumber}`,
-      timestamp: nowISO()
-    });
-
+    store.audit.unshift({ id: "a_" + Date.now(), userId: sess.id, action: "PROPERTY_REGISTERED", details: `Registered ${addr} with plan #${planNumber}`, timestamp: nowISO() });
     const saved = saveStore(store);
     const verifiedStore = loadStore();
     const verified = verifiedStore.plans.find(p => p.id === planId);
-
-    if(!saved || !verified){
-      showMsg("submitMsg","Property details could not be saved in browser storage.","error");
-      return false;
-    }
-
+    if(!saved || !verified){ showMsg("submitMsg","Property details could not be saved in browser storage.","error"); return false; }
     showMsg("submitMsg","Saved successfully. Property registered! Plan ID: #" + planNumber + ".", "success");
     saveActionNotice("Saved successfully. Plan ID #" + planNumber + " was recorded and is now available in your portfolio.", "success");
-    updateStatistics();
-    updateOwnerStats();
-    renderMyPortfolio();
-    renderAdmin();
-
-    setTimeout(() => {
-      resetForm();
-      go("myplans");
-    }, 900);
-
+    updateStatistics(); updateOwnerStats(); renderMyPortfolio(); renderAdmin();
+    setTimeout(() => { resetForm(); go("myplans"); }, 900);
     return true;
-  } catch(err){
-    console.error("Submit registration failed", err);
-    showMsg("submitMsg","An unexpected error blocked saving. Check the browser console and try again.","error");
-    return false;
-  } finally {
-    if(btn){
-      btn.disabled = false;
-      btn.style.pointerEvents = "auto";
-      if((btn.dataset.action || 'submit') === 'update'){
-        btn.innerHTML = '<i class="fas fa-save"></i> Update Property';
-      } else {
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Registration &amp; Save';
-      }
-    }
-  }
+  } catch(err){ console.error("Submit registration failed", err); showMsg("submitMsg","An unexpected error blocked saving. Check the browser console and try again.","error"); return false; }
+  finally { if(btn){ btn.disabled = false; btn.style.pointerEvents = "auto"; if((btn.dataset.action || 'submit') === 'update'){ btn.innerHTML = '<i class="fas fa-save"></i> Update Property'; } else { btn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Registration &amp; Save'; } } }
 }
-function handleCompleteRegistration(event){
-  if(event) event.preventDefault();
-  if(event && typeof event.stopPropagation === "function") event.stopPropagation();
-  return submitPlan();
-}
+function handleCompleteRegistration(event){ if(event) event.preventDefault(); if(event && typeof event.stopPropagation === "function") event.stopPropagation(); return submitPlan(); }
 
-function statusBadgeLabel(status){
-  const normalized = String(status || 'ACTIVE').toUpperCase();
-  if(normalized.startsWith('TRANSFERRED')) return status;
-  if(normalized === 'DEACTIVATED') return 'DEACTIVATED';
-  return 'ACTIVE';
-}
+function statusBadgeLabel(status){ const normalized = String(status || 'ACTIVE').toUpperCase(); if(normalized.startsWith('TRANSFERRED')) return status; if(normalized === 'DEACTIVATED') return 'DEACTIVATED'; return 'ACTIVE'; }
 function showPropertyDetail(id){
   let store = loadStore(), plan = store.plans.find(p=>p.id===id), owner = store.users.find(u=>u.id===plan?.ownerId);
   if(!plan || !owner) return;
@@ -1627,12 +1101,11 @@ function showPropertyDetail(id){
   let historyHtml = history.length
     ? history.map(item=>`<div class="card" style="padding:12px;"><strong>${item.action}</strong><div>${item.summary||''}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${item.editorName||'Unknown user'} · ${fmtDate(item.timestamp)}</div></div>`).join('')
     : '<div class="info-note">No edit history yet.</div>';
-  let statusMenu = admin ? `<div style="position:relative;"><button class="btn outline small" onclick="toggleStatusMenu(event, '${plan.id}')"><i class="fas fa-ellipsis-vertical"></i> Status Options</button><div class="popup-menu" id="statusMenu_${plan.id}"><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','ACTIVE')"><i class="fas fa-circle-check"></i> Active</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','DEACTIVATED')"><i class="fas fa-ban"></i> Deactivated</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="promptTransferPlan('${plan.id}')"><i class="fas fa-right-left"></i> Transfer to new owner</button></div></div>` : '';
-  $("modalBody").innerHTML = `<h2>${plan.address}</h2><div class="certificate-detail-grid"><div><strong>Owner:</strong> ${owner.firstName} ${owner.lastName}<br><strong>Tracking ID:</strong> ${plan.ownerTrackingId}<br><strong>Plan ID:</strong> #${plan.planNumber}<br><strong>Ownership Order:</strong> ${getOwnershipOrdinal(plan.ownershipSequence || 1)} owner record<br><strong>Category:</strong> ${plan.type}<br><strong>Area:</strong> ${Number(plan.area).toFixed(2)} m²</div><div><strong>Status:</strong> ${statusBadgeLabel(plan.status)}<br><strong>Created:</strong> ${fmtDate(plan.createdAt)}<br><strong>Last Updated:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}<br><strong>Last Edited By:</strong> ${plan.lastEditedByName||owner.firstName+' '+owner.lastName}<br><strong>City:</strong> ${plan.city}</div></div>${plan.transferredFromPlanId ? `<div class="info-note" style="margin-top:12px;">Transferred from previous owner record #${plan.transferredFromPlanNumber || '—'}.</div>` : ''}<div class="divider"></div><h3><i class="fas fa-location-dot"></i> Coordinates</h3><div class="grid"><div class="card" style="padding:12px;"><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</div><div class="card" style="padding:12px;"><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</div></div><div class="divider"></div><h3><i class="fas fa-folder-open"></i> Attached Documents</h3><div class="info-note">${admin?'Admin can add, rename, remove, and download documents.':'End users can preview documents only. Downloads are restricted to administrators.'}</div>${admin?`<div class="file-action-row"><button class="btn accent small" onclick="openAdminAttachmentPicker('${plan.id}')"><i class="fas fa-paperclip"></i> Add / Update Documents</button><input id="adminFilePicker" type="file" multiple style="display:none" onchange="handleAdminFileSelection('${plan.id}', event)"></div>`:''}<div class="folder-grid" style="margin-top:1rem;">${docsHtml}</div><div class="divider"></div><h3>Edit Traceability</h3><div class="info-note">Every property update stores the edit date and who performed it.</div><div style="display:grid;gap:10px;margin-top:12px;">${historyHtml}${plan.deactivatedAt ? `<div class="info-note">Deactivated by ${plan.deactivatedByName || 'Unknown'} on ${fmtDate(plan.deactivatedAt)}.</div>` : ''}${plan.reactivatedAt ? `<div class="info-note">Reactivated by ${plan.reactivatedByName || 'Unknown'} on ${fmtDate(plan.reactivatedAt)}.</div>` : ''}${Array.isArray(plan.transferHistory) && plan.transferHistory.length ? `<div class="info-note">Latest transfer: ${plan.transferHistory[0].toOwnerName || '—'} · ${plan.transferHistory[0].by || 'Unknown'} · ${fmtDate(plan.transferHistory[0].timestamp)}</div>` : ''}</div><div class="divider"></div><h3>Neighbors</h3><div class="grid"><div class="boundary-group north"><strong>North:</strong> ${plan.neighbors.n}<br><strong>Length:</strong> ${plan.dims.n}m</div><div class="boundary-group south"><strong>South:</strong> ${plan.neighbors.s}<br><strong>Length:</strong> ${plan.dims.s}m</div><div class="boundary-group east"><strong>East:</strong> ${plan.neighbors.e}<br><strong>Length:</strong> ${plan.dims.e}m</div><div class="boundary-group west"><strong>West:</strong> ${plan.neighbors.w}<br><strong>Length:</strong> ${plan.dims.w}m</div></div><div class="divider"></div><div class="file-action-row">${ownerCanEdit?`<button class="btn outline" onclick="editProperty('${id}')"><i class="fas fa-pen-to-square"></i> Edit Property</button>`:''}${statusMenu}<button class="btn accent" onclick="showCertificate('${id}')"><i class="fas fa-certificate"></i> Certificate</button></div>${isTransferredPlan(plan) ? `<div class="divider"></div><div class="info-note">This is a previous owner record and has been grayed out for traceability. The newest transfer creates a separate active owner record.</div>` : ''}<div class="divider"></div><div class="certificate-sketch"><h4>Manual Sketch</h4>${plan.manualDrawingImage?`<img src="${plan.manualDrawingImage}" style="max-width:100%;border:1px solid #ddd;border-radius:12px;">`:'<div>No sketch uploaded.</div>'}</div>`;
+  let statusMenu = admin ? `<div style="position:relative; display:inline-block;"><button class="btn outline small" onclick="toggleStatusMenu(event, '${plan.id}')"><i class="fas fa-ellipsis-vertical"></i> Status Options</button><div class="popup-menu" id="statusMenu_${plan.id}" style="display:none; position:absolute; right:0; top:100%;"><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','ACTIVE')"><i class="fas fa-circle-check"></i> Active</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','DEACTIVATED')"><i class="fas fa-ban"></i> Deactivated</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="promptTransferPlan('${plan.id}')"><i class="fas fa-right-left"></i> Transfer to new owner</button></div></div>` : '';
+  $("modalBody").innerHTML = `<h2>${plan.address}</h2><div class="certificate-detail-grid"><div><strong>Owner:</strong> ${owner.firstName} ${owner.lastName}<br><strong>Tracking ID:</strong> ${plan.ownerTrackingId}<br><strong>Plan ID:</strong> #${plan.planNumber}<br><strong>Ownership Order:</strong> ${getOwnershipOrdinal(plan.ownershipSequence || 1)} owner record<br><strong>Category:</strong> ${plan.type}<br><strong>Area:</strong> ${Number(plan.area).toFixed(2)} m²</div><div><strong>Status:</strong> ${statusBadgeLabel(plan.status)}<br><strong>Created:</strong> ${fmtDate(plan.createdAt)}<br><strong>Last Updated:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}<br><strong>Last Edited By:</strong> ${plan.lastEditedByName||owner.firstName+' '+owner.lastName}<br><strong>City:</strong> ${plan.city}</div></div>${plan.transferredFromPlanId ? `<div class="info-note" style="margin-top:12px;">Transferred from previous owner record #${plan.transferredFromPlanNumber || '—'}.</div>` : ''}<div class="divider"></div><h3><i class="fas fa-location-dot"></i> Coordinates</h3><div class="grid"><div class="card" style="padding:12px;"><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</div><div class="card" style="padding:12px;"><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</div></div><div class="divider"></div><h3><i class="fas fa-folder-open"></i> Attached Documents</h3><div class="info-note">${admin?'Admin can add, rename, remove, and download documents.':'End users can preview documents only. Downloads are restricted to administrators.'}</div>${admin?`<div class="file-action-row"><button class="btn accent small" onclick="openAdminAttachmentPicker('${plan.id}')"><i class="fas fa-paperclip"></i> Add / Update Documents</button><input id="adminFilePicker" type="file" multiple style="display:none" onchange="handleAdminFileSelection('${plan.id}', event)"></div>`:''}<div class="folder-grid" style="margin-top:1rem;">${docsHtml}</div><div class="divider"></div><h3>Edit Traceability</h3><div class="info-note">Every property update stores the edit date and who performed it.</div><div style="display:grid;gap:10px;margin-top:12px;">${historyHtml}${plan.deactivatedAt ? `<div class="info-note">Deactivated by ${plan.deactivatedByName || 'Unknown'} on ${fmtDate(plan.deactivatedAt)}.</div>` : ''}${plan.reactivatedAt ? `<div class="info-note">Reactivated by ${plan.reactivatedByName || 'Unknown'} on ${fmtDate(plan.reactivatedAt)}.</div>` : ''}${Array.isArray(plan.transferHistory) && plan.transferHistory.length ? `<div class="info-note">Latest transfer: ${plan.transferHistory[0].toOwnerName || '—'} · ${plan.transferHistory[0].by || 'Unknown'} · ${fmtDate(plan.transferHistory[0].timestamp)}</div>` : ''}</div><div class="divider"></div><h3>Neighbors</h3><div class="grid"><div class="boundary-group north"><strong>North:</strong> ${plan.neighbors.n}<br><strong>Length:</strong> ${plan.dims.n}m</div><div class="boundary-group south"><strong>South:</strong> ${plan.neighbors.s}<br><strong>Length:</strong> ${plan.dims.s}m</div><div class="boundary-group east"><strong>East:</strong> ${plan.neighbors.e}<br><strong>Length:</strong> ${plan.dims.e}m</div><div class="boundary-group west"><strong>West:</strong> ${plan.neighbors.w}<br><strong>Length:</strong> ${plan.dims.w}m</div></div><div class="divider"></div><div class="file-action-row">${ownerCanEdit?`<button class="btn outline" onclick="editProperty('${id}')"><i class="fas fa-pen-to-square"></i> Edit Property</button>`:''}${statusMenu}<button class="btn accent" onclick="showCertificate('${id}')"><i class="fas fa-certificate"></i> Certificate</button><button class="btn outline" onclick="openAccountAccess('${owner.id}')"><i class="fas fa-id-badge"></i> Login Access</button></div>${isTransferredPlan(plan) ? `<div class="divider"></div><div class="info-note">This is a previous owner record and has been grayed out for traceability. The newest transfer creates a separate active owner record.</div>` : ''}<div class="divider"></div><div class="certificate-sketch"><h4>Manual Sketch</h4>${plan.manualDrawingImage?`<img src="${plan.manualDrawingImage}" style="max-width:100%;border:1px solid #ddd;border-radius:12px;">`:'<div>No sketch uploaded.</div>'}</div>`;
   $("propertyModal").style.display = "flex";
 }
-function toggleStatusMenu(event, planId){ if(event) event.stopPropagation(); closeAllPopups(); const menu=$("statusMenu_"+planId); if(menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; }
-
+function toggleStatusMenu(event, planId){ if(event) event.stopPropagation(); closeAllPopups(event); const menu=$("statusMenu_"+planId); if(menu){ const isVisible = menu.style.display === 'block'; menu.style.display = isVisible ? 'none' : 'block'; } }
 function setPlanStatus(planId, nextStatus, transferName=''){
   const sess = loadSession();
   if(!sess || sess.role !== 'admin'){ alert('Only admin can update status.'); return; }
@@ -1790,49 +1263,21 @@ async function updatePlan(){
   return true;
 }
 
-async function renamePlanFile(planId, fileIdx){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can rename documents.'); return; } let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan||!plan.files||!plan.files[fileIdx]) return; let file=plan.files[fileIdx]; let next=prompt('Rename file', file.name||''); if(next===null) return; next=next.trim(); if(!next) return; let oldName=file.name; file.name=next; let stamp=nowISO(); let editorName=getUserDisplayName(sess); plan.lastUpdated=stamp; plan.lastEditedBy=sess.id; plan.lastEditedByName=editorName; if(!Array.isArray(plan.editHistory)) plan.editHistory=[]; plan.editHistory.unshift({ userId:sess.id, editorName:editorName, action:'DOCUMENT_RENAMED', timestamp:stamp, summary:`Renamed document ${oldName} → ${next}` }); store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENT_RENAMED', details:`Renamed ${oldName} to ${next} for #${plan.planNumber}`, timestamp:stamp }); saveStore(store); showPropertyDetail(planId); }
-
+async function renamePlanFile(planId, fileIdx){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can rename documents.'); return; } let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan||!plan.files||!plan.files[fileIdx]) return; let file=plan.files[fileIdx]; renameCallback = async (newName) => { let oldName=file.name; file.name=newName; let stamp=nowISO(); let editorName=getUserDisplayName(sess); plan.lastUpdated=stamp; plan.lastEditedBy=sess.id; plan.lastEditedByName=editorName; if(!Array.isArray(plan.editHistory)) plan.editHistory=[]; plan.editHistory.unshift({ userId:sess.id, editorName, action:'DOCUMENT_RENAMED', timestamp:stamp, summary:`Renamed ${oldName} → ${newName}` }); store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENT_RENAMED', details:`Renamed ${oldName} to ${newName} for #${plan.planNumber}`, timestamp:stamp }); saveStore(store); showPropertyDetail(planId); renameCallback=null; }; $("renameInput").value = file.name; $("renameModal").style.display = 'flex'; }
 async function previewPlanFile(planId, fileIdx){ let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan||!plan.files||!plan.files[fileIdx]) return; let file=plan.files[fileIdx]; let resolved=await resolveFileData(file); let fileUrl=resolved.url; let content = !fileUrl ? `<div class="card"><h3>${file.name}</h3><p>Preview is not available because the file content could not be loaded.</p></div>` : (file.type && file.type.startsWith('image/') ? `<img src="${fileUrl}" style="max-width:100%;border-radius:14px;border:1px solid var(--line);">` : (file.type && file.type.includes('pdf') ? `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:1px solid var(--line);border-radius:12px;"></iframe>` : `<div class="card"><h3>${file.name}</h3><p>Preview is not available for this file type.</p><p>Only administrators can download files.</p></div>`)); $("modalBody").innerHTML=`<h2>${file.name}</h2><div style="margin-top:1rem;">${content}</div><div class="info-note" style="margin-top:1rem;">Preview mode only.</div>`; $("propertyModal").style.display='flex'; if(resolved.revoke){ setTimeout(()=>resolved.revoke(), 60000); } }
 async function downloadPlanFile(planId, fileIdx){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can download documents.'); return; } let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan||!plan.files||!plan.files[fileIdx]) return; let file=plan.files[fileIdx]; let resolved=await resolveFileData(file); if(!resolved.url){ alert('This document is not available for download.'); return; } file.downloadCount=(file.downloadCount||0)+1; store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENT_DOWNLOADED', details:`Downloaded ${file.name} from #${plan.planNumber}`, timestamp:nowISO() }); saveStore(store); let a=document.createElement('a'); a.href=resolved.url; a.download=file.name||('document_'+fileIdx); document.body.appendChild(a); a.click(); a.remove(); if(resolved.revoke){ setTimeout(()=>resolved.revoke(), 30000); } showPropertyDetail(planId); }
-async function removePlanFile(planId, fileIdx){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can update documents.'); return; } let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan||!plan.files||!plan.files[fileIdx]) return; const removed=plan.files.splice(fileIdx,1)[0]; if(removed?.storage === 'indexeddb' && removed?.id){ try { await deleteFileBlob(removed.id); } catch(err){ console.error(err); } } let stamp=nowISO(); let editorName=getUserDisplayName(sess); plan.lastUpdated=stamp; plan.lastEditedBy=sess.id; plan.lastEditedByName=editorName; if(!Array.isArray(plan.editHistory)) plan.editHistory=[]; plan.editHistory.unshift({ userId:sess.id, editorName:editorName, action:'DOCUMENT_REMOVED', timestamp:stamp, summary:`Removed document ${removed.name}` }); store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENT_REMOVED', details:`Removed ${removed.name} from #${plan.planNumber}`, timestamp:stamp }); saveStore(store); showPropertyDetail(planId); }
+async function removePlanFile(planId, fileIdx){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can update documents.'); return; } let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan||!plan.files||!plan.files[fileIdx]) return; const removed=plan.files.splice(fileIdx,1)[0]; if(removed?.storage === 'indexeddb' && removed?.id){ try { await deleteFileBlob(removed.id); } catch(err){ console.error(err); } } let stamp=nowISO(); let editorName=getUserDisplayName(sess); plan.lastUpdated=stamp; plan.lastEditedBy=sess.id; plan.lastEditedByName=editorName; if(!Array.isArray(plan.editHistory)) plan.editHistory=[]; plan.editHistory.unshift({ userId:sess.id, editorName, action:'DOCUMENT_REMOVED', timestamp:stamp, summary:`Removed document ${removed.name}` }); store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENT_REMOVED', details:`Removed ${removed.name} from #${plan.planNumber}`, timestamp:stamp }); saveStore(store); showPropertyDetail(planId); }
 function openAdminAttachmentPicker(planId){ let picker=$("adminFilePicker"); if(!picker) return; picker.dataset.planId=planId; picker.click(); }
-async function handleAdminFileSelection(planId, event){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can update documents.'); return; } let target=event.target; let files=Array.from(target.files||[]); if(!files.length) return; let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan) return; normalizePlanFiles(plan); let timestamp=Date.now(); let newFiles=files.map((f,index)=>({ id:'f_'+timestamp+'_'+index+'_'+Math.random().toString(16).slice(2), name:f.name, type:f.type||'application/octet-stream', status:'active', uploadedAt:nowISO(), size:f.size, downloadCount:0, visibility:'owner-view', storage:'indexeddb', hasBlob:true, fileObject:f })); try { await persistPendingFiles(planId, newFiles); } catch(err){ console.error(err); alert('Documents could not be saved. Please try smaller files or images.'); return; } plan.files.push(...newFiles.map(stripFileForStore)); let stamp=nowISO(); let editorName=getUserDisplayName(sess); plan.lastUpdated=stamp; plan.lastEditedBy=sess.id; plan.lastEditedByName=editorName; if(!Array.isArray(plan.editHistory)) plan.editHistory=[]; plan.editHistory.unshift({ userId:sess.id, editorName:editorName, action:'DOCUMENTS_UPDATED', timestamp:stamp, summary:`Added ${newFiles.length} document(s)` }); store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENTS_UPDATED', details:`Added ${newFiles.length} document(s) to #${plan.planNumber}`, timestamp:stamp }); saveStore(store); target.value=''; showPropertyDetail(planId); }
+async function handleAdminFileSelection(planId, event){ let sess=loadSession(); if(!sess || sess.role!=='admin'){ alert('Only admin can update documents.'); return; } let target=event.target; let files=Array.from(target.files||[]); if(!files.length) return; let store=loadStore(), plan=store.plans.find(p=>p.id===planId); if(!plan) return; normalizePlanFiles(plan); let timestamp=Date.now(); let newFiles=files.map((f,index)=>({ id:'f_'+timestamp+'_'+index+'_'+Math.random().toString(16).slice(2), name:f.name, type:f.type||'application/octet-stream', status:'active', uploadedAt:nowISO(), size:f.size, downloadCount:0, visibility:'owner-view', storage:'indexeddb', hasBlob:true, fileObject:f })); try { await persistPendingFiles(planId, newFiles); } catch(err){ console.error(err); alert('Documents could not be saved. Please try smaller files or images.'); return; } plan.files.push(...newFiles.map(stripFileForStore)); let stamp=nowISO(); let editorName=getUserDisplayName(sess); plan.lastUpdated=stamp; plan.lastEditedBy=sess.id; plan.lastEditedByName=editorName; if(!Array.isArray(plan.editHistory)) plan.editHistory=[]; plan.editHistory.unshift({ userId:sess.id, editorName, action:'DOCUMENTS_UPDATED', timestamp:stamp, summary:`Added ${newFiles.length} document(s)` }); store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'DOCUMENTS_UPDATED', details:`Added ${newFiles.length} document(s) to #${plan.planNumber}`, timestamp:stamp }); saveStore(store); target.value=''; showPropertyDetail(planId); }
 
-function openSupportingDocumentsPicker(){
-  const input=$("sFiles");
-  if(input) input.click();
-}
-function bindSubmitAndAttachmentButtons(){
-  const attachBtn=$("attachDocsBtn");
-  if(attachBtn) attachBtn.onclick=openSupportingDocumentsPicker;
-  const submitBtn=$("submitBtn");
-  if(submitBtn){
-    submitBtn.onclick=async ()=>{
-      if(submitBtn.disabled) return;
-      const action=submitBtn.dataset.action||'submit';
-      if(action==='update') return updatePlan();
-      return submitPlan();
-    };
-  }
-}
-function getCurrentCoordinates(){
-  if(!navigator.geolocation){
-    showMsg('submitMsg','Geolocation is not supported by this browser.','error');
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      if($("sLatitude")) $("sLatitude").value = asDegree(Number(position.coords.latitude).toFixed(6));
-      if($("sLongitude")) $("sLongitude").value = asDegree(Number(position.coords.longitude).toFixed(6));
-      showMsg('submitMsg','Coordinates captured successfully.','success');
-    },
-    () => showMsg('submitMsg','Unable to capture your current coordinates. Please allow location access or enter them manually.','error'),
-    { enableHighAccuracy:true, timeout:10000, maximumAge:0 }
-  );
-}
+function openSupportingDocumentsPicker(){ const input=$("sFiles"); if(input) input.click(); }
+function bindSubmitAndAttachmentButtons(){ const attachBtn=$("attachDocsBtn"); if(attachBtn) attachBtn.onclick=openSupportingDocumentsPicker; const submitBtn=$("submitBtn"); if(submitBtn){ submitBtn.onclick=async ()=>{ if(submitBtn.disabled) return; const action=submitBtn.dataset.action||'submit'; if(action==='update') return updatePlan(); return submitPlan(); }; } }
+function getCurrentCoordinates(){ if(!navigator.geolocation){ showMsg('submitMsg','Geolocation is not supported by this browser.','error'); return; } navigator.geolocation.getCurrentPosition( position => { if($("sLatitude")) $("sLatitude").value = asDegree(Number(position.coords.latitude).toFixed(6)); if($("sLongitude")) $("sLongitude").value = asDegree(Number(position.coords.longitude).toFixed(6)); showMsg('submitMsg','Coordinates captured successfully.','success'); }, () => showMsg('submitMsg','Unable to capture your current coordinates. Please allow location access or enter them manually.','error'), { enableHighAccuracy:true, timeout:10000, maximumAge:0 } ); }
 function closeModal(e){ if(!e || e.target===$("propertyModal")) $("propertyModal").style.display="none"; }
-function closeAllPopups(){ document.querySelectorAll(".popup-menu").forEach(p=>p.style.display="none"); }
+function closeAllPopups(e){ if(e && e.target.closest && (e.target.closest('.popup-menu') || e.target.closest('.dots-btn'))) return; document.querySelectorAll(".popup-menu").forEach(p=>p.style.display="none"); }
 function toggleMobileNav(e){ if(e) e.stopPropagation(); $("mobileNav").classList.toggle("show"); }
+function closeRenameModal(e){ if(e && e.target !== $("renameModal") && e.target !== $("renameModal").querySelector('.modal-content')) return; $("renameModal").style.display = 'none'; renameCallback = null; }
+function confirmRename(){ let newName = $("renameInput").value.trim(); if(newName && renameCallback){ renameCallback(newName); } closeRenameModal(); }
 
 // init sketch and tools
 window.onload=()=>{ loadStore(); let sess=loadSession(); if(sess){ if(sess.role==="admin") go("admin"); else go("owner"); } else go("home"); updateStatistics(); sketch=new EnhancedSketch("manualCanvas"); 
@@ -1846,6 +1291,7 @@ window.onload=()=>{ loadStore(); let sess=loadSession(); if(sess){ if(sess.role=
   $("clearSketchBtn").onclick=()=>{ if(sketch) sketch.clear(); };
   $("skColor").addEventListener("input",e=>{ if(sketch) sketch.color=e.target.value; });
   bindSubmitAndAttachmentButtons();
+  document.getElementById("renameConfirmBtn").onclick = confirmRename;
 };
 </script>
 </body>
