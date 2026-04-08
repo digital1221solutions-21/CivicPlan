@@ -1,12 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CivicPlan Multi-City Portal</title>
+  <title>CivicProperty Multi-City Portal</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    /* ========== GLOBAL VARIABLES & RESETS ========== */
     :root {
       --bg: #f8fafc;
       --card: rgba(255, 255, 255, 0.98);
@@ -20,16 +22,12 @@
       --ok: #10b981;
       --warn: #f59e0b;
       --bad: #ef4444;
-      --deactivated-bg: #fee2e2;
-      --deactivated-border: #fecaca;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
       --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.12);
       --radius: 16px;
       --radius-lg: 20px;
       --header-color: #0165fc;
       --gradient-primary: linear-gradient(135deg, #0165fc 0%, #0150cc 100%);
-      --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-      --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
       --north: #f87171;
       --south: #60a5fa;
       --east: #34d399;
@@ -44,11 +42,323 @@
       min-height: 100vh;
       line-height: 1.6;
       font-size: 16px;
+      border: 8px solid #e2e8f0;
     }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
+    /* Hide all icons (keep text only) */
+    .brand i, .btn i, .nav a i, .card h1 i, .card h2 i, .card h3 i, .card h4 i, .boundary-label i, .folder-card-header i, .certificate-actions i, .tool-pill i, .stat-card i, .info-note i, .msg-feedback i {
+      display: none;
+    }
+    .btn, .tool-pill, .auth-tab {
+      gap: 0;
+    }
+    /* Blue buttons (solid) */
+    .btn:not(.outline):not(.danger):not(.btn-attach):not(.btn-location):not(.btn-fancy) {
+      background: #0165fc;
+      color: white;
+    }
+    .btn:not(.outline):not(.danger):not(.btn-attach):not(.btn-location):not(.btn-fancy):hover {
+      background: #0150cc;
+    }
+    .btn-open {
+      background: #5fdcf7;
+      color: #0f172a;
+      border: none;
+    }
+    .btn-open:hover {
+      background: #4cc8e3;
+    }
+    .btn-fancy {
+      background: #1ba1e2;
+      box-shadow: 0 20px 35px -8px rgba(27,161,226,0.4);
+      font-size: 1.3rem;
+      padding: 1rem 2.5rem;
+      border-radius: 60px;
+    }
+    .btn-fancy:hover {
+      background: #1ba1e2;
+      transform: translateY(-3px);
+      box-shadow: 0 28px 40px -12px rgba(27,161,226,0.5);
+    }
+    /* Admin cards grid with gap */
+    .admin-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .admin-cards-grid .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      margin: 0;
+    }
+    /* Boundaries grid */
+    .boundaries-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 640px) {
+      .boundaries-grid { grid-template-columns: 1fr; }
+    }
+    .boundary-group {
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-left: 6px solid;
+      transition: transform 0.2s;
+    }
+    .boundary-group:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .boundary-group.north { border-left-color: var(--north); }
+    .boundary-group.south { border-left-color: var(--south); }
+    .boundary-group.east { border-left-color: var(--east); }
+    .boundary-group.west { border-left-color: var(--west); }
+    .boundary-group input:first-of-type { width: 100%; margin-bottom: 8px; }
+    .dimension-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .dimension-input-group input {
+      width: 50%;
+      margin: 0;
+    }
+    .unit-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .area-input-short {
+      width: 50% !important;
+      margin-left: auto;
+      margin-right: auto;
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+    .coord-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .coord-input {
+      width: 80% !important;
+      text-align: center;
+    }
+    .attach-button-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .btn-attach {
+      background: rgb(0, 171, 169);
+      border: none;
+      color: white;
+    }
+    .btn-attach:hover {
+      background: rgb(0, 150, 148);
+    }
+    .action-buttons-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .action-buttons-column .btn {
+      min-width: 240px;
+    }
+    .btn-location {
+      background: #5fdcf7;
+      color: var(--brand);
+      border: none;
+    }
+    .btn-location:hover {
+      background: #4cc8e3;
+    }
+    /* Certificate */
+    .certificate-profile {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--accent);
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .certificate-profile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .certificate-container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 20px;
+      border: 2px solid var(--accent);
+      position: relative;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 90vh;
+    }
+    .certificate-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-top: 1rem;
+    }
+    .certificate-city {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .certificate-detail-card {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .certificate-detail-card p {
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+    }
+    .certificate-detail-card strong {
+      font-weight: 700;
+      color: var(--brand);
+    }
+    .certificate-sketch {
+      text-align: center;
+      margin: 1.5rem 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .certificate-sketch img {
+      max-width: 100%;
+      max-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fafafa;
+      object-fit: contain;
+    }
+    .area-anchor {
+      cursor: pointer;
+    }
+    .visual-container {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      margin: 1rem 0;
+      height: 500px;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+    #manualCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: crosshair;
+      background: #ffffff;
+    }
+    /* Three-dots menu for documents */
+    .file-menu-container {
+      position: relative;
+      display: inline-block;
+    }
+    .dots-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 5px;
+      border-radius: 6px;
+      font-size: 1.2rem;
+    }
+    .file-popup-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: white;
+      min-width: 120px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      display: none;
+    }
+    .file-popup-menu button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .file-popup-menu button:hover {
+      background: var(--accent-light);
+    }
+    /* Two-column document grid (fancy cards) */
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .doc-card {
+      background: white;
+      border-radius: 16px;
+      padding: 0.8rem;
+      border: 1px solid var(--line);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .doc-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .doc-card .doc-name {
+      font-weight: 600;
+      word-break: break-word;
+      margin-bottom: 0.25rem;
+    }
+    .doc-card .doc-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .doc-card .doc-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    /* For the folder container in submission page, use same grid */
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    @media (max-width: 640px) {
+      .documents-grid, .folder-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Rest of base styles */
     header {
       background: var(--header-color);
       color: white;
@@ -69,17 +379,51 @@
       align-items: center;
       gap: 1.5rem;
     }
-    .brand { font-weight: 900; font-size: 1.8rem; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
-    .brand i { font-size: 1.6rem; }
+    .brand {
+      font-weight: 900;
+      font-size: clamp(1.2rem, 5vw, 1.8rem);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .spacer { flex: 1; }
     .nav { display: flex; align-items: center; gap: 1.5rem; }
     .nav a { color: white; text-decoration: none; font-weight: 600; cursor: pointer; padding: 8px 0; position: relative; }
     .nav a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: white; transition: width 0.3s; }
     .nav a:hover::after { width: 100%; }
     .hamburger { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    .mobile-nav { display: none; position: absolute; top: 80px; right: 0; background: white; z-index: 999; box-shadow: var(--shadow-lg); border-radius: 0 0 12px 12px; overflow: hidden; min-width: 200px; }
+    .mobile-nav { 
+      display: none; 
+      position: absolute; 
+      top: 80px; 
+      right: 0; 
+      background: white; 
+      z-index: 999; 
+      box-shadow: var(--shadow-lg); 
+      border-radius: 0 0 12px 12px; 
+      overflow: hidden; 
+      min-width: 200px;
+    }
     .mobile-nav.show { display: block; }
-    .mobile-nav a { display: block; color: var(--brand); text-decoration: none; padding: 1rem 1.5rem; font-weight: 600; border-bottom: 1px solid var(--line); }
+    .mobile-nav a { 
+      display: block; 
+      color: var(--brand); 
+      text-decoration: none; 
+      padding: 1rem 1.5rem; 
+      font-weight: 600; 
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+    .mobile-nav .close-mobile {
+      display: block;
+      text-align: right;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--brand);
+    }
     .profile-container { background: var(--card); border-bottom: 1px solid var(--line); padding: 1rem 0; }
     .profile-content { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
     .user-photo-container { width: 120px; height: 150px; border-radius: 8px; overflow: hidden; border: 3px solid white; box-shadow: var(--shadow); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer; }
@@ -92,161 +436,43 @@
     .card { background: var(--card); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 2rem; border: 1px solid #bfe9ff; position: relative; overflow: hidden; margin-bottom: 10px; }
     .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gradient-primary); }
     .dash-grid { display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; align-items: start; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 12px; font-weight: 700; gap: 10px; cursor: pointer; border: none; background: var(--brand); color: white; transition: all 0.3s ease; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 12px; font-weight: 700; gap: 10px; cursor: pointer; border: none; transition: all 0.3s ease; }
     .btn.accent { background: var(--gradient-primary); }
     .btn.outline { background: transparent; border: 2px solid var(--line); color: var(--brand); }
     .btn.small { padding: 8px 16px; font-size: 14px; }
     .btn.danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-    .btn-fancy {
-      background: linear-gradient(135deg, #0165fc, #8b5cf6);
-      box-shadow: 0 20px 35px -8px rgba(1,101,252,0.4);
-      font-size: 1.3rem;
-      padding: 1rem 2.5rem;
-      border-radius: 60px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .btn-fancy:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 28px 40px -12px rgba(1,101,252,0.5);
-    }
     input, select, textarea { width: 100%; padding: 14px 18px; border-radius: 12px; border: 2px solid var(--line); background: #fff; font-size: 16px; margin-top: 8px; outline: none; transition: all 0.3s; }
     input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(95, 220, 247, 0.2); }
     label { display: block; font-weight: 700; color: var(--brand); margin-top: 1.5rem; margin-bottom: 6px; }
-
     .auth-container { max-width: 680px; margin: 0 auto; }
-    .auth-tabs {
-      display: flex;
-      width: 100%;
-      gap: 16px;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
-      padding: 12px;
-      border-radius: 24px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
-    }
-    .auth-tab {
-      flex: 1 1 0;
-      min-height: 68px;
-      border: none;
-      border-radius: 18px;
-      font-weight: 800;
-      font-size: 1.05rem;
-      cursor: pointer;
-      color: var(--brand);
-      background: rgba(255,255,255,0.95);
-      box-shadow: 0 10px 18px rgba(15,23,42,0.08);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      letter-spacing: 0.2px;
-    }
+    .auth-tabs { display: flex; width: 100%; gap: 16px; margin-bottom: 1.25rem; background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%); padding: 12px; border-radius: 24px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
+    .auth-tab { flex: 1 1 0; min-height: 68px; border: none; border-radius: 18px; font-weight: 800; font-size: 1.05rem; cursor: pointer; color: var(--brand); background: rgba(255,255,255,0.95); box-shadow: 0 10px 18px rgba(15,23,42,0.08); display: inline-flex; align-items: center; justify-content: center; letter-spacing: 0.2px; }
     .auth-tab:hover { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(15,23,42,0.12); }
-    .auth-tab.active {
-      color: white;
-      background: linear-gradient(135deg, #0165fc 0%, #5b7cff 100%);
-      box-shadow: 0 18px 30px rgba(1,101,252,0.28);
-    }
-    .hero-btn {
-      width: 100%;
-      min-height: 58px;
-      border-radius: 16px;
-      font-size: 1rem;
-      font-weight: 800;
-      box-shadow: 0 14px 24px rgba(15,23,42,0.12);
-    }
+    .auth-tab.active { color: white; background: linear-gradient(135deg, #0165fc 0%, #5b7cff 100%); box-shadow: 0 18px 30px rgba(1,101,252,0.28); }
+    .hero-btn { width: 100%; min-height: 58px; border-radius: 16px; font-size: 1rem; font-weight: 800; box-shadow: 0 14px 24px rgba(15,23,42,0.12); }
     .hero-btn:hover { transform: translateY(-2px); }
-    .passport-upload-container {
-      margin-top: 8px;
-      min-height: 150px;
-      border: 2px dashed #93c5fd;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-weight: 700;
-      color: #0f172a;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
-    }
+    .passport-upload-container { margin-top: 8px; min-height: 150px; border: 2px dashed #93c5fd; border-radius: 22px; background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-weight: 700; color: #0f172a; cursor: pointer; position: relative; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
     .passport-upload-container:hover { border-color: #0165fc; transform: translateY(-1px); }
-    .passport-upload-container.has-image {
-      border-style: solid;
-      padding: 10px;
-      justify-content: flex-end;
-      align-items: stretch;
-      min-height: 190px;
-    }
-    .passport-upload-container .upload-label-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.96);
-      box-shadow: 0 10px 16px rgba(15,23,42,0.12);
-      z-index: 2;
-    }
-    .passport-preview {
-      width: 100%;
-      max-height: 170px;
-      object-fit: cover;
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,0.35);
-      box-shadow: var(--shadow);
-      display: none;
-    }
-    .upload-helper {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 600;
-      text-align: center;
-    }
-    .file-action-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
+    .passport-upload-container.has-image { border-style: solid; padding: 10px; justify-content: flex-end; align-items: stretch; min-height: 190px; }
+    .passport-upload-container .upload-label-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: rgba(255,255,255,0.96); box-shadow: 0 10px 16px rgba(15,23,42,0.12); z-index: 2; }
+    .passport-preview { width: 100%; max-height: 170px; object-fit: cover; border-radius: 16px; border: 1px solid rgba(148,163,184,0.35); box-shadow: var(--shadow); display: none; }
+    .upload-helper { font-size: 12px; color: var(--muted); font-weight: 600; text-align: center; }
+    .file-action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
     .page-stack > * { margin-top: 10px; }
     .record-transferred, .record-transferred td { background: #f1f5f9 !important; color: #64748b; }
     .record-transferred { opacity: 0.82; filter: grayscale(0.12); }
-    .record-transferred .cell-link, .record-transferred .status-pill { opacity: 0.95; }
     .admin-all-filings { margin-top: 24px; }
-    .info-note {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e3a8a;
-      padding: 12px 14px;
-      border-radius: 12px;
-      margin-top: 12px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
+    .info-note { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 12px 14px; border-radius: 12px; margin-top: 12px; font-size: 14px; font-weight: 600; }
     .divider { height: 1px; background: var(--line); margin: 2rem 0; }
     table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
     th { text-align: left; padding: 16px; font-size: 13px; color: var(--muted); text-transform: uppercase; font-weight: 800; background: #f8fafc; }
     td { background: #fff; padding: 20px 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     tr:hover td { background: #f8fafc; }
-    .cell-link { color: var(--accent); font-weight: 700; cursor: pointer; border-bottom: 2px dashed transparent; }
-    .cell-link:hover { border-bottom-color: var(--accent); }
     .folder-header-main { background: var(--gradient-primary); color: white; padding: 1rem 1.5rem; border-radius: 12px 12px 0 0; display: flex; align-items: center; gap: 10px; font-weight: 700; }
-    .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; padding: 1.5rem; background: #f8fafc; border-radius: 0 0 12px 12px; border: 2px solid var(--line); border-top: none; }
-    .folder-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--line); }
-    .folder-card-header { background: var(--accent-light); padding: 1rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); font-weight: 600; }
-    .folder-file-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
-    .dots-btn { background: none; border: none; cursor: pointer; color: var(--muted); padding: 5px; border-radius: 6px; }
     .popup-menu { position: absolute; right: 0; top: 100%; background: #fff; min-width: 160px; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 100; display: none; }
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; }
     .modal-content { background: #fff; width: 95%; max-width: 1000px; padding: 2rem; border-radius: 24px; max-height: 90vh; overflow-y: auto; position: relative; }
     .close-modal { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; cursor: pointer; background: none; border: none; width: 40px; height: 40px; border-radius: 50%; }
-    .tag { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; }
-    .tag.ok { background: #dcfce7; color: #166534; }
     .msg-feedback { font-size: 15px; margin-top: 1rem; padding: 12px 16px; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
     .success { color: #166534; background: #dcfce7; }
     .error { color: #991b1b; background: #fee2e2; }
@@ -254,200 +480,100 @@
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
     .stat-card { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow); text-align: center; }
     .stat-value { font-size: 2.2rem; font-weight: 900; color: var(--brand); margin: 10px 0; }
-    .boundary-group {
-      background: #fff;
-      border-radius: 16px;
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border-left: 6px solid;
-      transition: transform 0.2s;
-    }
-    .boundary-group:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-    .boundary-group.north { border-left-color: var(--north); }
-    .boundary-group.south { border-left-color: var(--south); }
-    .boundary-group.east { border-left-color: var(--east); }
-    .boundary-group.west { border-left-color: var(--west); }
-    .boundary-label { display: flex; align-items: center; gap: 8px; font-weight: 800; margin-bottom: 12px; font-size: 1.1rem; }
-    .dimension-input-group { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-    .dimension-input-group input { margin: 0; flex: 1; }
-    .unit-label { font-size: 13px; color: var(--muted); font-weight: 600; }
-    .area-anchor {
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
-    .area-anchor:hover {
-      background: var(--accent-light);
-      text-decoration: underline;
-      transform: scale(1.02);
-    }
-    .visual-container {
-      border: 2px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
-      background: #fff;
-      margin: 1rem 0;
-      height: 500px;
-      position: relative;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
-    }
-    #manualCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      touch-action: none;
-      cursor: crosshair;
-      background: #ffffff;
-    }
-    .toolbar-compact {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin: 1rem 0;
-      padding: 12px;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }
-    .tool-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 40px;
-      background: white;
-      border: 1px solid var(--line);
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tool-pill.active {
-      background: var(--accent-light);
-      border-color: var(--accent);
-      color: var(--brand);
-      box-shadow: 0 2px 6px rgba(95,220,247,0.3);
-    }
-    .certificate-container {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 20px;
-      border: 2px solid var(--accent);
-      position: relative;
-      font-family: 'Inter', sans-serif;
-    }
-    .certificate-header {
-      text-align: center;
-      border-bottom: 2px solid var(--accent);
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      position: relative;
-    }
-    .certificate-profile {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid var(--accent);
-      background: #f0f0f0;
-    }
-    .certificate-profile img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .certificate-detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .certificate-sketch {
-      text-align: center;
-      margin: 1.5rem 0;
-    }
-    .certificate-sketch img {
-      max-width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: #fafafa;
-    }
-    .certificate-actions {
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin-top:1.5rem;
-      justify-content:center;
-    }
-    .certificate-counter-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:12px;
-      margin-top:1.25rem;
-    }
-    .certificate-counter-card {
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px 14px;
-      background:#f8fafc;
-      text-align:center;
-    }
-    .account-access-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:1rem;
-      margin-top:1rem;
-    }
-    .credential-box {
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:1rem;
-      background:#f8fafc;
-    }
-    .credential-value {
-      font-size:1.1rem;
-      font-weight:800;
-      margin-top:8px;
-      word-break:break-word;
-    }
-    .certificate-neighbor-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    .neighbor-box {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 1rem;
-      text-align: center;
-      border-left: 6px solid;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
+    .stat-card-clickable { background: #666666; color: white; cursor: pointer; transition: 0.2s; }
+    .stat-card-clickable:hover { background: #555555; transform: translateY(-2px); }
+    .stat-card-clickable .stat-label, .stat-card-clickable .stat-value { color: white; }
+    .admin-table-wrapper { max-height: 300px; overflow-y: auto; transition: max-height 0.3s ease; }
+    .admin-table-wrapper.collapsed { max-height: 200px; overflow-y: hidden; }
+    .accordion-toggle { margin-top: 10px; text-align: center; }
+    .toolbar-compact { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 1rem 0; padding: 12px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--line); }
+    .tool-pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 40px; background: white; border: 1px solid var(--line); font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .tool-pill.active { background: var(--accent-light); border-color: var(--accent); color: var(--brand); box-shadow: 0 2px 6px rgba(95,220,247,0.3); }
+    .certificate-neighbor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+    .neighbor-box { background: #f8fafc; border-radius: 16px; padding: 1rem; text-align: center; border-left: 6px solid; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
     .neighbor-box.north { border-left-color: var(--north); }
     .neighbor-box.south { border-left-color: var(--south); }
     .neighbor-box.east { border-left-color: var(--east); }
     .neighbor-box.west { border-left-color: var(--west); }
     .neighbor-box strong { display: block; font-size: 1.1rem; margin-bottom: 6px; }
+    .portfolio-profile-layout {
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-photo-top {
+      margin-bottom: 1rem;
+    }
+    .details-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    /* Two-row property details */
+    .property-details-two-rows {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .property-detail-item {
+      background: #f8fafc;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+    .property-detail-item strong {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .property-detail-item span {
+      font-weight: 600;
+    }
     @media (max-width: 768px) {
       .dash-grid { grid-template-columns: 1fr; }
       .hamburger { display: block; }
       .nav { display: none; }
-      .visual-container { height: 350px; }
-      .certificate-profile { width: 60px; height: 60px; }
+      .certificate-profile { width: 72px; height: 72px; top: 0.5rem; left: 0.5rem; }
       .certificate-neighbor-grid { grid-template-columns: 1fr; }
+      .certificate-container { min-height: auto; }
+      .visual-container { height: 350px; }
+      .details-2col { grid-template-columns: 1fr; }
+      .modal-actions { flex-direction: column; align-items: center; }
+      .property-details-two-rows { grid-template-columns: 1fr; }
     }
     @media print {
       body * { visibility: hidden; }
       .certificate-container, .certificate-container * { visibility: visible; }
       .certificate-container { position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 20px; }
       .btn, .close-modal { display: none !important; }
+      .certificate-profile {
+        position: relative;
+        margin: 0 auto 1rem auto;
+        width: 80px;
+        height: 80px;
+        top: 0;
+        left: 0;
+      }
+      .certificate-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .certificate-detail-card {
+        background: #f8fafc;
+        break-inside: avoid;
+      }
     }
   </style>
 </head>
@@ -455,22 +581,24 @@
 
 <header>
   <div class="topbar">
-    <div class="brand"><i class="fas fa-city"></i><span id="brandTitle">CivicPlan Portal</span></div>
+    <div class="brand"><span id="brandTitle">CivicProperty Portal</span></div>
     <div class="spacer"></div>
     <nav class="nav" id="navLinks">
       <a onclick="go('home')">Overview</a>
       <a onclick="go('auth')">Sign In</a>
     </nav>
-    <button class="btn accent small hidden" id="btnLogout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
-    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav(event)"><i class="fas fa-bars"></i></button>
+    <button class="btn accent small hidden" id="btnLogout" onclick="handleLogout()">Logout</button>
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileNav(event)">☰</button>
   </div>
-  <div class="mobile-nav" id="mobileNav"></div>
+  <div class="mobile-nav" id="mobileNav">
+    <div class="close-mobile" onclick="toggleMobileNav(event)">✕ Close</div>
+  </div>
 </header>
 
 <div class="profile-container hidden" id="profileContainer">
   <div class="profile-content">
     <div class="user-photo-container" onclick="editProfilePhoto()">
-      <div class="user-photo-placeholder" id="userPhotoPlaceholder"><i class="fas fa-user"></i></div>
+      <div class="user-photo-placeholder" id="userPhotoPlaceholder">👤</div>
       <img id="userPhoto" class="user-photo" style="display: none;">
     </div>
     <div class="user-info"><h3 id="userName">Guest</h3><p id="userDetails">Sign in to access</p></div>
@@ -478,39 +606,38 @@
 </div>
 
 <main>
-  <!-- Clean front page: only the main card with a centered fancy Get Registered button -->
   <section id="view-home" class="card" style="text-align: center;">
-    <h1><i class="fas fa-globe-americas"></i> Multi-City Land & Structural Records</h1>
-    <p style="font-size: 1.2rem; max-width: 600px; margin: 1rem auto;">Unified digital system for property registration, tracking, and certificate management.</p>
+    <h1>Multi-City Property Records</h1>
+    <p style="font-size: 1.2rem; max-width: 600px; margin: 1rem auto;">Digital system for property registration, tracking, and certificate management.</p>
     <div style="margin-top: 2.5rem;">
-      <button class="btn btn-fancy" onclick="go('auth')"><i class="fas fa-id-card"></i> Get Registered</button>
+      <button class="btn btn-fancy" onclick="go('auth')">Get Registered</button>
     </div>
   </section>
 
-  <section id="view-auth" class="hidden"><div class="auth-container"><div class="auth-tabs"><button id="tab-login" class="auth-tab active" onclick="setAuthMode('login')"><i class="fas fa-right-to-bracket"></i>&nbsp; Login</button><button id="tab-register" class="auth-tab" onclick="setAuthMode('register')"><i class="fas fa-id-card"></i>&nbsp; Registration</button></div><div id="form-login" class="card"><h2>Sign In</h2><label>Phone Number</label><input id="loginPhone" placeholder="Registered phone"><label>Password</label><input id="loginPass" type="password"><button class="btn accent hero-btn" style="margin-top:2rem;" onclick="login()"><i class="fas fa-door-open"></i> Enter Portal</button><button class="btn outline hero-btn" style="margin-top:0.85rem;" onclick="fillAdmin()"><i class="fas fa-user-shield"></i> Admin Login</button><div id="loginMsg" class="msg-feedback"></div></div><div id="form-register" class="card hidden"><h2>Create Account</h2><label>City</label><input id="regCity"><label>First Name</label><input id="regFirst"><div class="grid"><div><label>Middle</label><input id="regMiddle"></div><div><label>Last Name</label><input id="regLast"></div></div><label>Passport Photo</label><div class="passport-upload-container" id="passportUploadBox" onclick="document.getElementById('passportPhoto').click()"><div class="upload-label-badge"><i class="fas fa-camera-retro"></i><span id="passportUploadLabel">Upload passport-size photo</span></div><div class="upload-helper">Click the button area to upload. After upload, click the current photo to replace it.</div><img id="passportPreview" class="passport-preview" alt="Passport preview"></div><input type="file" id="passportPhoto" accept="image/*" style="display:none;" onchange="handlePassportUpload(event)"><label>Phone (Login ID)</label><input id="regPhone"><label>Email (Optional)</label><input id="regEmail" oninput="toggleRegPass()"><div id="regPassContainer"><label>Create Password</label><input id="regPass" type="password" placeholder="Create password for future sign in"><div class="info-note" style="margin-top:10px;">An 8-digit Citizen ID will be generated automatically when you click <strong>Generate Tracking ID</strong>. If you leave the password blank, the portal will use the last 4 digits of your phone number as a temporary password.</div></div><button class="btn accent hero-btn" style="margin-top:2rem;" onclick="registerOwner()"><i class="fas fa-fingerprint"></i> Generate Tracking ID</button><div id="regMsg" class="msg-feedback"></div></div></div></section>
+  <section id="view-auth" class="hidden"><div class="auth-container"><div class="auth-tabs"><button id="tab-login" class="auth-tab active" onclick="setAuthMode('login')">Login</button><button id="tab-register" class="auth-tab" onclick="setAuthMode('register')">Registration</button></div><div id="form-login" class="card"><h2>Sign In</h2><label>Phone Number</label><input id="loginPhone" placeholder="Registered phone"><label>Password</label><input id="loginPass" type="password"><button class="btn accent hero-btn" style="margin-top:2rem;" onclick="login()">Enter Portal</button><button class="btn outline hero-btn" style="margin-top:0.85rem;" onclick="fillAdmin()">Admin Login</button><div id="loginMsg" class="msg-feedback"></div></div><div id="form-register" class="card hidden"><h2>Create Account</h2><label>City</label><input id="regCity"><label>First Name</label><input id="regFirst"><div class="grid"><div><label>Middle</label><input id="regMiddle"></div><div><label>Last Name</label><input id="regLast"></div></div><label>Passport Photo</label><div class="passport-upload-container" id="passportUploadBox" onclick="document.getElementById('passportPhoto').click()"><div class="upload-label-badge"><span id="passportUploadLabel">Upload passport-size photo</span></div><div class="upload-helper">Click the button area to upload. After upload, click the current photo to replace it.</div><img id="passportPreview" class="passport-preview" alt="Passport preview"></div><input type="file" id="passportPhoto" accept="image/*" style="display:none;" onchange="handlePassportUpload(event)"><label>Phone (Login ID)</label><input id="regPhone"><label>Email (Optional)</label><input id="regEmail" oninput="toggleRegPass()"><div id="regPassContainer"><label>Create Password</label><input id="regPass" type="password" placeholder="Create password for future sign in"></div><button class="btn accent hero-btn" style="margin-top:2rem;" onclick="registerOwner()">Generate Tracking ID</button><div id="regMsg" class="msg-feedback"></div></div></div></section>
 
   <section id="view-owner" class="hidden"><h1>Dashboard</h1><div id="ownerNotice"></div><div class="dash-grid"><div><div class="card"><div style="font-size:13px;">Tracking ID</div><div id="kpiCitizenId" style="font-size:1.8rem;font-weight:900;">—</div></div><div class="card"><h3>Quick Actions</h3><button class="btn small accent" onclick="go('submit')">New Registration</button><button class="btn outline small" onclick="go('myplans')">My Portfolio</button><div style="margin-top:1rem;"><h4>Your Stats</h4><div class="grid"><div class="stat-card"><div>Properties</div><div id="ownerPropertyCount">0</div></div><div class="stat-card"><div>Documents</div><div id="ownerDocumentCount">0</div></div></div></div></div></div><div class="card"><h2>Universal Search</h2><div style="display:flex;gap:10px;"><input id="ownerSearchId" placeholder="Tracking ID or Plan ID"><button class="btn small accent" onclick="ownerSearch()">Search</button></div><div id="ownerSearchResult"></div></div></div></section>
 
   <section id="view-submit" class="hidden">
     <div class="card" style="max-width:1000px;margin:0 auto;">
-      <h1><i class="fas fa-home"></i> Register Property Asset</h1>
+      <h1>Register Property Asset</h1>
       <div class="grid"><div><label>Site Address</label><input id="sAddress"></div><div><label>Category</label><select id="sType"><option>RESIDENTIAL</option><option>COMMERCIAL</option><option>LAND</option><option>INDUSTRIAL</option></select></div></div>
 
       <div style="margin:2rem 0;">
-        <h3><i class="fas fa-pen-nib"></i> Property Sketch (Manual Drawing)</h3>
+        <h3>Property Sketch (Manual Drawing)</h3>
         <div class="toolbar-compact" id="drawingToolsBar">
-          <div class="tool-pill" data-tool="pen"><i class="fas fa-pen"></i> Pen</div>
-          <div class="tool-pill" data-tool="line"><i class="fas fa-draw-polygon"></i> Line</div>
-          <div class="tool-pill" data-tool="rect"><i class="fas fa-square"></i> Rect</div>
-          <div class="tool-pill" data-tool="circle"><i class="fas fa-circle"></i> Circle</div>
-          <div class="tool-pill" data-tool="arrow"><i class="fas fa-arrow-right"></i> Arrow</div>
-          <div class="tool-pill" data-tool="text"><i class="fas fa-font"></i> Text</div>
-          <div class="tool-pill" data-tool="move"><i class="fas fa-arrows-alt"></i> Move</div>
-          <div class="tool-pill" data-tool="point_eraser"><i class="fas fa-eraser"></i> Point Eraser</div>
-          <div class="tool-pill" data-tool="eraser"><i class="fas fa-brush"></i> Eraser</div>
+          <div class="tool-pill" data-tool="pen">Pen</div>
+          <div class="tool-pill" data-tool="line">Line</div>
+          <div class="tool-pill" data-tool="rect">Rect</div>
+          <div class="tool-pill" data-tool="circle">Circle</div>
+          <div class="tool-pill" data-tool="arrow">Arrow</div>
+          <div class="tool-pill" data-tool="text">Text</div>
+          <div class="tool-pill" data-tool="move">Move</div>
+          <div class="tool-pill" data-tool="point_eraser">Point Eraser</div>
+          <div class="tool-pill" data-tool="eraser">Eraser</div>
           <input type="color" id="skColor" value="#0f172a" style="width:35px;height:35px;border-radius:50%;border:1px solid var(--line);">
-          <button class="btn outline small" id="undoSketchBtn"><i class="fas fa-undo"></i> Undo</button>
-          <button class="btn danger small" id="clearSketchBtn"><i class="fas fa-trash"></i> Clear</button>
+          <button class="btn outline small" id="undoSketchBtn">Undo</button>
+          <button class="btn danger small" id="clearSketchBtn">Clear</button>
         </div>
         <div class="visual-container"><canvas id="manualCanvas" width="800" height="500"></canvas></div>
         <div class="gp-hint" style="font-size:12px;color:var(--muted);margin-top:8px;">✏️ Tools: Pen (free draw), Line (click-drag-release), Rectangle, Circle, Arrow, Text (click to place), Move (drag shapes), Point Eraser (click on a point), Eraser brush. Color picker changes stroke/fill color. Use Undo to revert last action.</div>
@@ -518,65 +645,70 @@
 
       <div class="divider"></div>
       <h3>Boundaries & Neighbors</h3>
-      <div class="grid">
-        <div class="boundary-group north"><div class="boundary-label"><i class="fas fa-arrow-up"></i> North Boundary</div><input id="sNorth" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimNorth" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
-        <div class="boundary-group south"><div class="boundary-label"><i class="fas fa-arrow-down"></i> South Boundary</div><input id="sSouth" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimSouth" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
-        <div class="boundary-group east"><div class="boundary-label"><i class="fas fa-arrow-right"></i> East Boundary</div><input id="sEast" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimEast" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
-        <div class="boundary-group west"><div class="boundary-label"><i class="fas fa-arrow-left"></i> West Boundary</div><input id="sWest" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimWest" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
+      <div class="boundaries-grid">
+        <div class="boundary-group north"><div class="boundary-label">North Boundary</div><input id="sNorth" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimNorth" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
+        <div class="boundary-group south"><div class="boundary-label">South Boundary</div><input id="sSouth" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimSouth" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
+        <div class="boundary-group east"><div class="boundary-label">East Boundary</div><input id="sEast" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimEast" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
+        <div class="boundary-group west"><div class="boundary-label">West Boundary</div><input id="sWest" placeholder="Neighbor name"><div class="dimension-input-group"><input id="sDimWest" placeholder="Length (m)"><span class="unit-label">m</span></div></div>
       </div>
 
+      <!-- Area Calculator -->
       <div class="area-calculator">
-        <h4><i class="fas fa-calculator"></i> Area Calculator</h4>
+        <h4>Area Calculator</h4>
         <div class="grid"><div><label>Length (m)</label><input id="calcLength" placeholder="e.g., 20" oninput="calculateAreaFromText()"></div><div><label>Width (m)</label><input id="calcWidth" placeholder="e.g., 15" oninput="calculateAreaFromText()"></div></div>
         <div class="area-result" id="areaResult" style="display:none;"><div>Calculated Area</div><div class="area-value" id="calculatedArea">0 m²</div><div id="areaInFeet">0 ft²</div></div>
       </div>
 
-      <div class="grid" style="margin-top:1rem;">
-        <div><label>Total Area (m²)</label><input id="sAreaM" oninput="convertArea('m')" class="area-anchor" onclick="showSketchPreview()"></div>
-        <div><label>Total Area (ft²)</label><input id="sAreaFt" oninput="convertArea('ft')" class="area-anchor" onclick="showSketchPreview()"></div>
+      <div class="grid" style="margin-top:1rem; justify-items: center;">
+        <div style="text-align: center;"><label>Total Area (m²)</label><input id="sAreaM" oninput="convertArea('m')" class="area-anchor area-input-short" onclick="showSketchPreview()"></div>
+        <div style="text-align: center;"><label>Total Area (ft²)</label><input id="sAreaFt" oninput="convertArea('ft')" class="area-anchor area-input-short" onclick="showSketchPreview()"></div>
       </div>
-      <div class="gp-hint" style="font-size:12px;color:var(--accent);">💡 Click on the Total Area field to preview your sketch</div>
 
       <div class="divider"></div>
-      <h3><i class="fas fa-location-dot"></i> Global Positioning Coordinates</h3>
-      <div class="grid" style="margin-top:1rem;">
-        <div><label>Latitude</label><input id="sLatitude" placeholder="e.g., 9.1450°"></div>
-        <div><label>Longitude</label><input id="sLongitude" placeholder="e.g., 40.4897°"></div>
+      <h3>Global Positioning Coordinates</h3>
+      <div class="grid" style="margin-top:1rem; justify-items: center;">
+        <div class="coord-group"><label>Latitude</label><input id="sLatitude" class="coord-input" placeholder="e.g., 9.1450°"></div>
+        <div class="coord-group"><label>Longitude</label><input id="sLongitude" class="coord-input" placeholder="e.g., 40.4897°"></div>
       </div>
-      <div class="file-action-row" style="margin-top:10px;">
-        <button type="button" class="btn outline small" onclick="getCurrentCoordinates()"><i class="fas fa-location-crosshairs"></i> Use Current Location</button>
+      <div class="file-action-row" style="margin-top:10px; justify-content: center;">
+        <button type="button" class="btn btn-location small" onclick="getCurrentCoordinates()">Use Current Location</button>
       </div>
-      <div class="info-note">Latitude and longitude help create a unique geographic reference for each property or land parcel.</div>
 
       <div class="divider"></div>
       <label>Supporting Documents</label>
-      <div class="file-action-row">
-        <button type="button" class="btn outline" id="attachDocsBtn"><i class="fas fa-paperclip"></i> Attach Documents (Unlimited)</button>
+      <div class="attach-button-wrapper">
+        <button type="button" class="btn btn-attach" id="attachDocsBtn">Attach Documents (Unlimited)</button>
       </div>
       <input id="sFiles" type="file" multiple style="display:none;" onchange="handleFileSelection()">
-      <div class="info-note"><i class="fas fa-circle-info"></i> Use the attach button as many times as needed. Newly selected files are added to the existing list, so you can keep attaching multiple documents. Supporting documents are optional. End users can upload during registration and later view only. Document updates and downloads are restricted to administrators.</div>
       <div class="file-folder-system" id="folderContainer"></div>
 
-      <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+      <div class="action-buttons-column">
+        <button type="button" class="btn accent" id="submitBtn" data-action="submit" onclick="handleCompleteRegistration(event)">Complete Registration &amp; Save</button>
         <button class="btn outline" onclick="go('owner')">Cancel</button>
-        <button type="button" class="btn accent" id="submitBtn" data-action="submit" onclick="handleCompleteRegistration(event)" style="position:relative;z-index:5;pointer-events:auto;min-width:240px;">Complete Registration &amp; Save</button>
       </div>
       <div id="submitMsg" class="msg-feedback"></div>
     </div>
   </section>
 
   <section id="view-myplans" class="hidden"><div class="page-stack"><h1>Property Portfolio</h1><div id="portfolioProfileCard"></div><div id="myPlansTableContainer"></div></div></section>
-  <section id="view-admin" class="hidden"><div class="page-stack"><h1>Admin Command Center</h1><div class="dash-grid"><div><div class="stat-card"><div class="stat-label">Total Filings</div><div class="stat-value" id="aTotal">0</div></div><div class="card"><h3>Tools</h3><button class="btn outline small" onclick="adminGenerateReport()">Generate Report</button><button class="btn outline small" onclick="adminViewAuditLog()">Audit Log</button><button class="btn danger small" onclick="openMasterReset()">Master Data Reset</button></div></div><div class="card"><h2>Global Search</h2><div style="display:flex;gap:10px;"><input id="adminSearchId" placeholder="ID"><button class="btn small accent" onclick="adminSearch()">Search</button></div><div id="adminSearchResult"></div></div></div><div class="card admin-all-filings"><h2>All Filings</h2><div id="adminTableContainer"></div></div></div></section>
+  <section id="view-admin" class="hidden"><div class="page-stack"><h1>Admin Command Center</h1><div class="dash-grid"><div class="admin-cards-grid"><div class="stat-card stat-card-clickable" id="statTotalFilings" onclick="showAllFilingsDetail()"><div class="stat-label">Total Filings</div><div class="stat-value" id="aTotal">0</div></div><div class="stat-card stat-card-clickable" id="statRegisteredUsers" onclick="showRegisteredUsersDetail()"><div class="stat-label">Registered Users</div><div class="stat-value" id="registeredUsersCount">0</div></div><div class="stat-card stat-card-clickable" id="statDocuments" onclick="showDocumentsDetail()"><div class="stat-label">Documents</div><div class="stat-value" id="totalDocumentsAdmin">0</div></div>
+        <!-- Admin Tools button opens modal -->
+        <div class="card">
+          <h3>Admin Tools & Settings</h3>
+          <button class="btn small accent" onclick="openAdminSettingsModal()">Configure Admin Credentials</button>
+        </div>
+      </div><div class="card"><h2>Global Search</h2><div style="display:flex;gap:10px;"><input id="adminSearchId" placeholder="ID"><button class="btn small accent" onclick="adminSearch()">Search</button></div><div id="adminSearchResult"></div></div></div><div class="card admin-all-filings"><h2>All Filings</h2><div id="adminTableContainer"></div><div id="accordionToggle" class="accordion-toggle" style="display: none;"><button class="btn outline small" onclick="toggleAdminTable()">Show all</button></div></div></div></section>
 </main>
 
 <div id="propertyModal" class="modal-overlay" onclick="closeModal(event)"><div class="modal-content" onclick="event.stopPropagation()"><button class="close-modal" onclick="closeModal()">×</button><div id="modalBody"></div></div></div>
 <div id="certificateModal" class="modal-overlay" onclick="closeCertificateModal(event)"><div class="modal-content" style="max-width:900px;" onclick="event.stopPropagation()"><button class="close-modal" onclick="closeCertificateModal()">×</button><div id="certificateBody"></div></div></div>
-<div id="sketchModal" class="modal-overlay" onclick="closeSketchModal(event)"><div class="modal-content" style="max-width:800px;"><button class="close-modal" onclick="closeSketchModal()">×</button><h3><i class="fas fa-drafting-compass"></i> Property Sketch Preview</h3><canvas id="sketchPreviewCanvas" width="700" height="500" style="width:100%; height:auto; border:1px solid #ccc; border-radius:12px;"></canvas></div></div>
+<div id="sketchModal" class="modal-overlay" onclick="closeSketchModal(event)"><div class="modal-content" style="max-width:800px;"><button class="close-modal" onclick="closeSketchModal()">×</button><h3>Property Sketch Preview</h3><canvas id="sketchPreviewCanvas" width="700" height="500" style="width:100%; height:auto; border:1px solid #ccc; border-radius:12px;"></canvas></div></div>
 <div id="resetModal" class="modal-overlay" onclick="closeResetModal(event)"><div class="modal-content"><h2>Master Data Reset</h2><div class="reset-warning"><p>⚠️ Deletes all data. Admin password required.</p><input type="password" id="resetPassword" placeholder="Admin password"><button class="btn danger" onclick="confirmMasterReset()">Reset All</button><div id="resetMsg"></div></div></div></div>
 <div id="renameModal" class="modal-overlay" onclick="closeRenameModal(event)"><div class="modal-content" onclick="event.stopPropagation()"><button class="close-modal" onclick="closeRenameModal()">×</button><h3>Rename Document</h3><input type="text" id="renameInput" placeholder="Enter new file name" autocomplete="off"><div style="display:flex; gap:12px; justify-content:flex-end; margin-top:1.5rem;"><button class="btn outline" onclick="closeRenameModal()">Cancel</button><button class="btn accent" id="renameConfirmBtn">Save</button></div></div></div>
+<div id="adminSettingsModal" class="modal-overlay"><div class="modal-content" style="max-width:500px;"><button class="close-modal" onclick="closeAdminSettingsModal()">×</button><h3>Admin Credentials</h3><label>New Username</label><input type="text" id="modalNewAdminUsername" placeholder="Enter new username"><label>New Password</label><input type="password" id="modalNewAdminPassword" placeholder="Enter new password"><label>Current Password</label><input type="password" id="modalCurrentAdminPassword" placeholder="Required to save"><button class="btn accent" style="margin-top:1rem;" onclick="changeAdminCredentialsModal()">Update Credentials</button><div id="adminCredMsgModal" class="msg-feedback"></div></div></div>
 
 <script>
-// ------------------------- FULLY FUNCTIONAL MANUAL DRAWING ENGINE -------------------------
+// ======================== FULLY FUNCTIONAL MANUAL DRAWING ENGINE ========================
 class EnhancedSketch {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
@@ -597,14 +729,12 @@ class EnhancedSketch {
     window.addEventListener('resize', () => this.resizeCanvas());
     this.drawGrid();
   }
-  
   resizeCanvas() {
     const rect = this.canvas.parentElement.getBoundingClientRect();
     this.canvas.width = rect.width;
     this.canvas.height = rect.height;
     this.redraw();
   }
-  
   bindEvents() {
     this.canvas.addEventListener('mousedown', this.onPointerDown.bind(this));
     this.canvas.addEventListener('mousemove', this.onPointerMove.bind(this));
@@ -613,12 +743,10 @@ class EnhancedSketch {
     this.canvas.addEventListener('touchmove', (e) => { e.preventDefault(); const t = e.touches[0]; this.onPointerMove(t); });
     this.canvas.addEventListener('touchend', () => this.onPointerUp());
   }
-  
   getCoords(e) { 
     const rect = this.canvas.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
-  
   drawGrid() {
     if(!this.ctx) return;
     this.ctx.save();
@@ -639,7 +767,6 @@ class EnhancedSketch {
     }
     this.ctx.restore();
   }
-  
   onPointerDown(e) {
     const pos = this.getCoords(e);
     if(this.currentTool === 'move') {
@@ -667,7 +794,6 @@ class EnhancedSketch {
       this.moveTarget = null;
       return;
     }
-    
     this.isDrawing = true;
     if(this.currentTool === 'text') {
       const text = prompt('Enter label (numbers/letters):', 'Label');
@@ -681,7 +807,6 @@ class EnhancedSketch {
     }
     this.currentShape = this.createShapeStart(this.currentTool, pos);
   }
-  
   onPointerMove(e) {
     const pos = this.getCoords(e);
     if(this.currentTool === 'move' && this.moveTarget && this.isDrawing) {
@@ -697,7 +822,6 @@ class EnhancedSketch {
     this.updateShapeEnd(this.currentShape, pos);
     this.redraw();
   }
-  
   onPointerUp() {
     if(this.isDrawing && this.currentShape) {
       let valid = false;
@@ -707,7 +831,6 @@ class EnhancedSketch {
       else if(this.currentTool === 'rect' && 
               Math.abs(this.currentShape.start.x - this.currentShape.end.x) > 5 && Math.abs(this.currentShape.start.y - this.currentShape.end.y) > 5) valid = true;
       else if(this.currentTool === 'circle' && this.currentShape.radius > 5) valid = true;
-      
       if(valid) this.addShape(this.currentShape);
     }
     this.isDrawing = false;
@@ -716,7 +839,6 @@ class EnhancedSketch {
     this.selectedShapeIndex = -1;
     this.redraw();
   }
-  
   moveShape(shape, pos) {
     if(!shape) return;
     if(shape.type === 'rect') {
@@ -743,7 +865,6 @@ class EnhancedSketch {
       shape.params.y = pos.y - this.dragOffset.y;
     }
   }
-  
   createShapeStart(tool, pos) {
     if(tool === 'pen') return { type:'path', points:[pos], color:this.color, lineWidth:this.lineWidth };
     if(tool === 'line') return { type:'line', start:pos, end:pos, color:this.color, lineWidth:this.lineWidth };
@@ -752,7 +873,6 @@ class EnhancedSketch {
     if(tool === 'arrow') return { type:'arrow', start:pos, end:pos, color:this.color, lineWidth:this.lineWidth };
     return null;
   }
-  
   updateShapeEnd(shape, pos) {
     if(shape.type === 'path') { shape.points.push(pos); return; }
     if(shape.type === 'line') shape.end = pos;
@@ -760,18 +880,15 @@ class EnhancedSketch {
     if(shape.type === 'circle') shape.radius = Math.hypot(pos.x - shape.center.x, pos.y - shape.center.y);
     if(shape.type === 'arrow') shape.end = pos;
   }
-  
   saveHistory() {
     this.history.push(JSON.parse(JSON.stringify(this.shapes)));
     if(this.history.length > 100) this.history.shift();
   }
-
   addShape(shape) { 
     this.saveHistory();
     this.shapes.push(JSON.parse(JSON.stringify(shape))); 
     this.redraw(); 
   }
-  
   drawShape(shape) {
     this.ctx.save();
     this.ctx.strokeStyle = shape.color;
@@ -809,7 +926,6 @@ class EnhancedSketch {
     }
     this.ctx.restore();
   }
-  
   drawArrow(from, to, color) {
     this.ctx.beginPath();
     this.ctx.moveTo(from.x, from.y);
@@ -825,7 +941,6 @@ class EnhancedSketch {
     this.ctx.fillStyle = color;
     this.ctx.fill();
   }
-  
   isPointInShape(p, shape) {
     if(shape.type === 'rect') { const left=Math.min(shape.start.x, shape.end.x), right=Math.max(shape.start.x, shape.end.x), top=Math.min(shape.start.y, shape.end.y), bottom=Math.max(shape.start.y, shape.end.y); return p.x >= left && p.x <= right && p.y >= top && p.y <= bottom; }
     if(shape.type === 'circle') return Math.hypot(p.x - shape.center.x, p.y - shape.center.y) <= shape.radius + 8;
@@ -834,7 +949,6 @@ class EnhancedSketch {
     if(shape.type === 'text') return Math.abs(p.x - shape.params.x) < 50 && Math.abs(p.y - shape.params.y) < 30;
     return false;
   }
-  
   eraseNearestPoint(pos) {
     for(let i=0;i<this.shapes.length;i++) {
       let shape = this.shapes[i];
@@ -860,7 +974,6 @@ class EnhancedSketch {
       }
     }
   }
-
   eraseAt(pos, radius = 15) {
     let changed = false;
     const nextShapes = [];
@@ -895,7 +1008,6 @@ class EnhancedSketch {
       this.redraw();
     }
   }
-
   distanceToSegment(p, a, b) {
     const l2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
     if (l2 === 0) return Math.hypot(p.x - a.x, p.y - a.y);
@@ -904,7 +1016,6 @@ class EnhancedSketch {
     const proj = { x: a.x + t * (b.x - a.x), y: a.y + t * (b.y - a.y) };
     return Math.hypot(p.x - proj.x, p.y - proj.y);
   }
-  
   redraw() {
     if(!this.ctx) return;
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
@@ -912,7 +1023,6 @@ class EnhancedSketch {
     for(let shape of this.shapes) this.drawShape(shape);
     if(this.currentShape && !this.moveTarget) this.drawShape(this.currentShape);
   }
-  
   undo() { 
     if(this.history.length) {
       this.shapes = this.history.pop(); 
@@ -930,7 +1040,7 @@ class EnhancedSketch {
   setTool(tool) { this.currentTool = tool; }
 }
 
-// ------------------------- Core App (Full Implementation) -------------------------
+// ======================== CORE APPLICATION (FULL) ========================
 const STORE_KEY = "CIVIC_DB_V22";
 const SESSION_KEY = "CIVIC_SESS_V22";
 const LAST_REGISTRATION_KEY = "CIVIC_LAST_REG_V22";
@@ -959,7 +1069,18 @@ function loadStore() { let raw = localStorage.getItem(STORE_KEY); if(raw) try { 
 function saveStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); updateStatistics(); updateUserProfile(); return true; } catch(err){ console.error("Save store failed", err); return false; } }
 function loadSession() { let raw = localStorage.getItem(SESSION_KEY); try { return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
 
-function updateStatistics() { let s=loadStore(); if($("totalRegistrations")) $("totalRegistrations").innerText=s.plans.length; let cities=[...new Set(s.users.map(u=>u.city))]; if($("activeCities")) $("activeCities").innerText=cities.length; let docs=s.plans.reduce((a,p)=>a+(p.files?.length||0),0); if($("totalDocuments")) $("totalDocuments").innerText=docs; if($("aTotal")) $("aTotal").innerText=s.plans.length; }
+function updateStatistics() { 
+  let s = loadStore(); 
+  if($("totalRegistrations")) $("totalRegistrations").innerText = s.plans.length; 
+  let cities = [...new Set(s.users.map(u=>u.city))]; 
+  if($("activeCities")) $("activeCities").innerText = cities.length; 
+  let docs = s.plans.reduce((a,p)=>a + (p.files?.length || 0), 0); 
+  if($("totalDocuments")) $("totalDocuments").innerText = docs; 
+  if($("aTotal")) $("aTotal").innerText = s.plans.length; 
+  let registeredUsersCount = s.users.filter(u => u.role !== 'admin').length;
+  if($("registeredUsersCount")) $("registeredUsersCount").innerText = registeredUsersCount;
+  if($("totalDocumentsAdmin")) $("totalDocumentsAdmin").innerText = docs;
+}
 function updateOwnerStats() { let sess=loadSession(); if(!sess) return; let plans=loadStore().plans.filter(p=>p.ownerId===sess.id); if($("ownerPropertyCount")) $("ownerPropertyCount").innerText=plans.length; let docs=plans.reduce((a,p)=>a+(p.files?.length||0),0); if($("ownerDocumentCount")) $("ownerDocumentCount").innerText=docs; }
 function convertArea(from){ let m=$("sAreaM"), ft=$("sAreaFt"); if(from==='m'){ let mv=parseFloat(m.value)||0; ft.value=(mv*10.7639).toFixed(2); } else { let fv=parseFloat(ft.value)||0; m.value=(fv/10.7639).toFixed(2); } }
 function calculateAreaFromText(){ let L=parseFloat($("calcLength").value)||0, W=parseFloat($("calcWidth").value)||0, area=L*W; if(area>0){ $("areaResult").style.display="block"; $("calculatedArea").innerText=area.toFixed(2)+" m²"; $("areaInFeet").innerText=(area*10.7639).toFixed(2)+" ft²"; $("sAreaM").value=area.toFixed(2); convertArea('m'); } else $("areaResult").style.display="none"; }
@@ -967,7 +1088,7 @@ function calculateAreaFromText(){ let L=parseFloat($("calcLength").value)||0, W=
 function showMsg(id, text, cls){ let el=$(id); if(el){ el.innerText=text; el.className="msg-feedback "+cls; if(cls==='success') setTimeout(()=>{el.innerText=""; el.className="msg-feedback";},5000); } }
 
 function go(viewId){ ["home","auth","owner","submit","myplans","admin"].forEach(id=>{ let el=$("view-"+id); if(el) el.classList.add("hidden"); }); let target=$("view-"+viewId); if(target) target.classList.remove("hidden"); updateNav(); updateUserProfile(); if(viewId==="home") updateStatistics(); if(viewId==="owner"){ renderOwnerDash(); updateOwnerStats(); } if(viewId==="myplans") renderMyPortfolio(); if(viewId==="admin") renderAdmin(); if(viewId==="submit"){ resetForm(); renderEnhancedFolderView(); if(sketch) sketch.clear(); setTimeout(()=>{ if(sketch) sketch.resizeCanvas(); },100); } window.scrollTo({top:0}); }
-function updateNav(){ let sess=loadSession(); let nav=$("navLinks"); if(!sess){ $("btnLogout").classList.add("hidden"); nav.innerHTML=`<a onclick="go('home')">Overview</a><a onclick="go('auth')">Sign In</a>`; $("mobileNav").innerHTML=`<a onclick="go('home')">Overview</a><a onclick="go('auth')">Sign In</a>`; } else { $("btnLogout").classList.remove("hidden"); if(sess.role==="admin") nav.innerHTML=`<a onclick="go('home')">Home</a><a onclick="go('admin')">Admin</a>`; else nav.innerHTML=`<a onclick="go('home')">Home</a><a onclick="go('owner')">Dashboard</a><a onclick="go('myplans')">Portfolio</a>`; $("mobileNav").innerHTML=nav.innerHTML+`<a onclick="handleLogout()">Logout</a>`; } }
+function updateNav(){ let sess=loadSession(); let nav=$("navLinks"); if(!sess){ $("btnLogout").classList.add("hidden"); nav.innerHTML=`<a onclick="go('home')">Overview</a><a onclick="go('auth')">Sign In</a>`; $("mobileNav").innerHTML=`<div class="close-mobile" onclick="toggleMobileNav(event)">✕ Close</div><a onclick="go('home')">Overview</a><a onclick="go('auth')">Sign In</a>`; } else { $("btnLogout").classList.remove("hidden"); if(sess.role==="admin") nav.innerHTML=`<a onclick="go('home')">Home</a><a onclick="go('admin')">Admin</a>`; else nav.innerHTML=`<a onclick="go('home')">Home</a><a onclick="go('owner')">Dashboard</a><a onclick="go('myplans')">Portfolio</a>`; let extra = sess.role==="admin" ? `<a onclick="go('admin')">Admin</a>` : `<a onclick="go('owner')">Dashboard</a><a onclick="go('myplans')">Portfolio</a>`; $("mobileNav").innerHTML = `<div class="close-mobile" onclick="toggleMobileNav(event)">✕ Close</div><a onclick="go('home')">Home</a>${extra}<a onclick="handleLogout()">Logout</a>`; } }
 
 function saveSession(sess){ try { localStorage.setItem(SESSION_KEY, JSON.stringify(sess)); return true; } catch(err){ console.error("Save session failed", err); return false; } }
 function normalizePhone(value){ return String(value || "").replace(/\D/g, ""); }
@@ -998,34 +1119,46 @@ function editProfilePhoto(){ const sess = loadSession(); if(!sess) return; const
 
 function getUserDisplayName(user){ if(!user) return 'Unknown user'; const fullName = [user.firstName, user.middleName, user.lastName].filter(v => typeof v === 'string' && v.trim()).map(v => v.trim()).join(' ').trim(); if(fullName) return fullName; if(user.name && String(user.name).trim()) return String(user.name).trim(); if(user.username && String(user.username).trim()) return String(user.username).trim(); if(user.role === 'admin') return 'Admin User'; if(user.trackingId) return 'User ' + String(user.trackingId); return 'Unknown user'; }
 
-function updateUserProfile(){ const sess = loadSession(); const wrap = $("profileContainer"); const brandTitle = $("brandTitle"); if(brandTitle) brandTitle.textContent = sess && sess.city ? sess.city : 'CivicPlan Portal'; if(!wrap) return; if(!sess){ wrap.classList.add('hidden'); return; } wrap.classList.remove('hidden'); const name = [sess.firstName, sess.middleName, sess.lastName].filter(Boolean).join(' ').trim() || 'Administrator'; const detail = sess.role === 'admin' ? `Administrator • ${sess.city || 'Federal'}` : `Tracking ID: ${sess.trackingId || '—'} • ${sess.city || ''}`; if($("userName")) $("userName").textContent = name; if($("userDetails")) $("userDetails").textContent = detail; const photo = $("userPhoto"); const ph = $("userPhotoPlaceholder"); if(sess.passportPhoto){ if(photo){ photo.src = sess.passportPhoto; photo.style.display = 'block'; } if(ph) ph.style.display = 'none'; } else { if(photo) photo.style.display = 'none'; if(ph) ph.style.display = 'grid'; } }
+function updateUserProfile(){ const sess = loadSession(); const wrap = $("profileContainer"); const brandTitle = $("brandTitle"); if(brandTitle) brandTitle.textContent = sess && sess.city ? sess.city : 'CivicProperty Portal'; if(!wrap) return; if(!sess){ wrap.classList.add('hidden'); return; } wrap.classList.remove('hidden'); const name = [sess.firstName, sess.middleName, sess.lastName].filter(Boolean).join(' ').trim() || 'Administrator'; const detail = sess.role === 'admin' ? `Administrator • ${sess.city || 'Federal'}` : `Tracking ID: ${sess.trackingId || '—'} • ${sess.city || ''}`; if($("userName")) $("userName").textContent = name; if($("userDetails")) $("userDetails").textContent = detail; const photo = $("userPhoto"); const ph = $("userPhotoPlaceholder"); if(sess.passportPhoto){ if(photo){ photo.src = sess.passportPhoto; photo.style.display = 'block'; } if(ph) ph.style.display = 'none'; } else { if(photo) photo.style.display = 'none'; if(ph) ph.style.display = 'grid'; } }
 function collectRegistrationDraft(){ return { city: $("regCity")?.value?.trim() || "", firstName: $("regFirst")?.value?.trim() || "", middleName: $("regMiddle")?.value?.trim() || "", lastName: $("regLast")?.value?.trim() || "", rawPhone: $("regPhone")?.value?.trim() || "", phone: normalizePhone($("regPhone")?.value?.trim() || ""), email: $("regEmail")?.value?.trim() || "", pass: $("regPass")?.value || "", passportPhoto: passportPhoto || null }; }
 function persistRegistrationDraft(){ const draft = collectRegistrationDraft(); const hasValue = Object.values(draft).some(v => !!v); if(hasValue) saveLastRegistration(draft); }
 function bindRegistrationDraftPersistence(){ ["regCity","regFirst","regMiddle","regLast","regPhone","regEmail","regPass"].forEach(id => { const el = $(id); if(el) el.addEventListener("input", persistRegistrationDraft); }); }
-function registerOwner(){ const city = $("regCity").value.trim(); const firstName = $("regFirst").value.trim(); const middleName = $("regMiddle").value.trim(); const lastName = $("regLast").value.trim(); const rawPhone = $("regPhone").value.trim(); const phone = normalizePhone(rawPhone); const email = $("regEmail").value.trim(); const passInput = $("regPass"); let pass = passInput ? passInput.value.trim() : ""; const registerBtn = document.querySelector('#form-register button.btn.accent.hero-btn'); if(registerBtn){ registerBtn.disabled = true; registerBtn.dataset.originalHtml = registerBtn.dataset.originalHtml || registerBtn.innerHTML; registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Citizen ID...'; } try { if(!city || !firstName || !lastName || !rawPhone){ showMsg('regMsg','Please complete city, first name, last name, and phone.','error'); return; } if(phone.length < 8){ showMsg('regMsg','Please enter a valid phone number or login ID with at least 8 digits.','error'); return; } if(!pass) pass = phone.slice(-4); if(pass.length < 4){ showMsg('regMsg','Password must contain at least 4 characters.','error'); return; } const store = loadStore(); const duplicateUser = (store.users || []).find(u => normalizePhone(u.phone) === phone || normalizePhone(u.rawPhone) === phone); if(duplicateUser){ showMsg('regMsg','This phone/login ID is already registered. Please sign in instead.','error'); return; } let citizenId = generateTrackingId(); while((store.users || []).some(u => String(u.trackingId) === String(citizenId))){ citizenId = generateTrackingId(); } const user = { id: 'u_'+Date.now()+'_'+Math.floor(Math.random()*1000), role: 'owner', city, firstName, middleName, lastName, phone, rawPhone, email, pass, trackingId: String(citizenId), registeredAt: nowISO(), passportPhoto: passportPhoto || null }; const registrationSnapshot = { city, firstName, middleName, lastName, rawPhone, phone, email, pass, passportPhoto: passportPhoto || null, trackingId: String(citizenId), registeredAt: user.registeredAt }; store.users.unshift(user); store.audit.unshift({ id:'a_'+Date.now(), userId:user.id, action:'USER_REGISTERED', details:`Registered ${firstName} ${lastName} with Citizen ID ${citizenId}`, timestamp:nowISO() }); const savedStore = saveStore(store); const savedSession = saveSession(user); const savedSnapshot = saveLastRegistration(registrationSnapshot); const verifyStore = loadStore(); const persistedUser = (verifyStore.users || []).find(u => u.id === user.id && String(u.trackingId) === String(citizenId)); if(!savedStore || !savedSession || !savedSnapshot || !persistedUser){ showMsg('regMsg','Registration could not be saved in browser storage. Try removing some large attachments or use the Master Reset if browser storage is full.','error'); return; } fillRegistrationForm(registrationSnapshot); const tempPassNote = passInput && passInput.value.trim() ? '' : ` Temporary password: ${pass}.`; showMsg('regMsg',`Saved successfully. Your unique 8-digit Citizen ID is ${citizenId}.${tempPassNote} Your completed registration details were kept in browser storage and on the form.`,'success'); updateUserProfile(); updateOwnerStats(); setTimeout(()=>go('owner'), 1200); } finally { if(registerBtn){ registerBtn.disabled = false; registerBtn.innerHTML = registerBtn.dataset.originalHtml || '<i class="fas fa-fingerprint"></i> Generate Tracking ID'; } } }
+function registerOwner(){ const city = $("regCity").value.trim(); const firstName = $("regFirst").value.trim(); const middleName = $("regMiddle").value.trim(); const lastName = $("regLast").value.trim(); const rawPhone = $("regPhone").value.trim(); const phone = normalizePhone(rawPhone); const email = $("regEmail").value.trim(); const passInput = $("regPass"); let pass = passInput ? passInput.value.trim() : ""; const registerBtn = document.querySelector('#form-register button.btn.accent.hero-btn'); if(registerBtn){ registerBtn.disabled = true; registerBtn.dataset.originalHtml = registerBtn.dataset.originalHtml || registerBtn.innerHTML; registerBtn.innerHTML = 'Generating Citizen ID...'; } try { if(!city || !firstName || !lastName || !rawPhone){ showMsg('regMsg','Please complete city, first name, last name, and phone.','error'); return; } if(phone.length < 8){ showMsg('regMsg','Please enter a valid phone number or login ID with at least 8 digits.','error'); return; } if(!pass) pass = phone.slice(-4); if(pass.length < 4){ showMsg('regMsg','Password must contain at least 4 characters.','error'); return; } const store = loadStore(); const duplicateUser = (store.users || []).find(u => normalizePhone(u.phone) === phone || normalizePhone(u.rawPhone) === phone); if(duplicateUser){ showMsg('regMsg','This phone/login ID is already registered. Please sign in instead.','error'); return; } let citizenId = generateTrackingId(); while((store.users || []).some(u => String(u.trackingId) === String(citizenId))){ citizenId = generateTrackingId(); } const user = { id: 'u_'+Date.now()+'_'+Math.floor(Math.random()*1000), role: 'owner', city, firstName, middleName, lastName, phone, rawPhone, email, pass, trackingId: String(citizenId), registeredAt: nowISO(), passportPhoto: passportPhoto || null }; const registrationSnapshot = { city, firstName, middleName, lastName, rawPhone, phone, email, pass, passportPhoto: passportPhoto || null, trackingId: String(citizenId), registeredAt: user.registeredAt }; store.users.unshift(user); store.audit.unshift({ id:'a_'+Date.now(), userId:user.id, action:'USER_REGISTERED', details:`Registered ${firstName} ${lastName} with Citizen ID ${citizenId}`, timestamp:nowISO() }); const savedStore = saveStore(store); const savedSession = saveSession(user); const savedSnapshot = saveLastRegistration(registrationSnapshot); const verifyStore = loadStore(); const persistedUser = (verifyStore.users || []).find(u => u.id === user.id && String(u.trackingId) === String(citizenId)); if(!savedStore || !savedSession || !savedSnapshot || !persistedUser){ showMsg('regMsg','Registration could not be saved in browser storage. Try removing some large attachments or use the Master Reset if browser storage is full.','error'); return; } fillRegistrationForm(registrationSnapshot); const tempPassNote = passInput && passInput.value.trim() ? '' : ` Temporary password: ${pass}.`; showMsg('regMsg',`Saved successfully. Your unique 8-digit Citizen ID is ${citizenId}.${tempPassNote} Your completed registration details were kept in browser storage and on the form.`,'success'); updateUserProfile(); updateOwnerStats(); setTimeout(()=>go('owner'), 1200); } finally { if(registerBtn){ registerBtn.disabled = false; registerBtn.innerHTML = registerBtn.dataset.originalHtml || 'Generate Tracking ID'; } } }
 function login(){ const phoneInput = $("loginPhone").value.trim(); const pass = $("loginPass").value.trim(); if(!phoneInput || !pass){ showMsg('loginMsg','Enter your login ID and password.','error'); return; } const phone = normalizePhone(phoneInput); const store = loadStore(); const user = store.users.find(u => { const storedPhone = normalizePhone(u.phone || ''); const storedRaw = normalizePhone(u.rawPhone || ''); const phoneMatch = phoneInput.toLowerCase() === String(u.phone || '').toLowerCase() || storedPhone === phone || storedRaw === phone; const fallbackPass = storedRaw.slice(-4) || storedPhone.slice(-4); const passMatch = String(u.pass || '') === pass || (!!fallbackPass && fallbackPass === pass); return phoneMatch && passMatch; }); if(!user){ showMsg('loginMsg','Invalid credentials. Use your registered phone number and password, or the last 4 digits of the phone as the default password.','error'); return; } if((!user.pass || String(user.pass).trim() === '') && phone){ user.pass = phone.slice(-4); const saveStoreRef = loadStore(); const target = saveStoreRef.users.find(u => u.id === user.id); if(target) target.pass = user.pass; saveStore(saveStoreRef); } saveSession(user); updateUserProfile(); showMsg('loginMsg',`Welcome ${user.firstName || 'back'}!`,'success'); if(user.role === 'admin') go('admin'); else { updateOwnerStats(); go('owner'); } }
 function handleLogout(){ clearSession(); updateNav(); updateUserProfile(); go('home'); }
 function displayActionNotice(targetId){ const target = $(targetId); if(!target) return; const notice = consumeActionNotice(); if(!notice || !notice.message){ target.innerHTML = ''; return; } target.innerHTML = `<div class="msg-feedback ${notice.type||'success'}" style="margin-bottom:1rem;">${notice.message}</div>`; }
 function renderOwnerDash(){ const sess = loadSession(); if(!sess) return; if($("kpiCitizenId")) $("kpiCitizenId").textContent = sess.trackingId || '—'; if($("ownerSearchResult")) $("ownerSearchResult").innerHTML = '<div class="info-note">Search with your Tracking ID or Plan ID to quickly open a property record.</div>'; displayActionNotice("ownerNotice"); }
-function renderMyPortfolio(){ const sess = loadSession(); const wrap = $("myPlansTableContainer"); const profileWrap = $("portfolioProfileCard"); if(!wrap) return; if(!sess){ if(profileWrap) profileWrap.innerHTML = ''; wrap.innerHTML = '<div class="card">Please sign in first.</div>'; return; } const store = loadStore(); const owner = (store.users || []).find(u => u.id === sess.id) || sess; const plans = store.plans.filter(p => p.ownerId === sess.id || String(p.ownerTrackingId||'') === String(sess.trackingId||'')); if(profileWrap){ const photoHtml = owner.passportPhoto ? `<img src="${owner.passportPhoto}" alt="Passport photo" style="width:110px;height:135px;object-fit:cover;border-radius:12px;border:1px solid var(--line);">` : `<div style="width:110px;height:135px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--muted);font-weight:700;">No Photo</div>`; profileWrap.innerHTML = `<div class="card" style="margin-bottom:1rem;"><h2><i class="fas fa-address-card"></i> Registration Details</h2><div class="certificate-detail-grid" style="align-items:start;"><div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">${photoHtml}<div><div><strong>Tracking ID:</strong> ${owner.trackingId || '—'}</div><div><strong>First Name:</strong> ${owner.firstName || ''}</div><div><strong>Middle Name:</strong> ${owner.middleName || '—'}</div><div><strong>Last Name:</strong> ${owner.lastName || ''}</div><div><strong>City:</strong> ${owner.city || '—'}</div></div></div><div><div><strong>Phone / Login ID:</strong> ${owner.rawPhone || owner.phone || '—'}</div><div><strong>Email:</strong> ${owner.email || '—'}</div><div><strong>Registered:</strong> ${owner.registeredAt ? fmtDate(owner.registeredAt) : '—'}</div><div><strong>Total Properties:</strong> ${plans.length}</div></div></div><div class="info-note" style="margin-top:1rem;">This section shows the user registration data saved in browser storage. The default login password is always the last 4 digits of the current login phone number.</div><div class="file-action-row" style="margin-top:1rem;"><button class="btn outline small" onclick="openAccountAccess('${owner.id}')"><i class="fas fa-id-badge"></i> View / Edit Login Access</button></div></div>`; } if(!plans.length){ wrap.innerHTML = '<div class="card">No property records yet.</div>'; return; } wrap.innerHTML = `<div class="card"><div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Type</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Updated</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>`<tr><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.type}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${fmtDate(p.lastUpdated||p.createdAt)}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`).join('')}</tbody></table></div></div>`; }
-function ownerSearch(){ const q = $("ownerSearchId").value.trim(); const target = $("ownerSearchResult"); const sess = loadSession(); if(!target) return; if(!q){ target.innerHTML = '<div class="info-note">Enter your Tracking ID or a Plan ID.</div>'; return; } const plans = loadStore().plans.filter(p => (p.ownerId === sess?.id || String(p.ownerTrackingId||'') === String(sess?.trackingId||'')) && (String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q))); if(!plans.length){ target.innerHTML = '<div class="info-note">No matching record found.</div>'; return; } target.innerHTML = plans.map(p => `<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">View record</button></div></div>`).join(''); }
-function renderAdmin(){ const wrap = $("adminTableContainer"); if(!wrap) return; const store = loadStore(); const plans = store.plans; if(!plans.length){ wrap.innerHTML = '<div class="info-note">No filings yet.</div>'; return; } wrap.innerHTML = `<div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Tracking ID</th><th style="text-align:left;padding:12px;">Owner</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Docs</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>{ const owner = store.users.find(u=>u.id===p.ownerId) || {}; return `<tr class="${isTransferredPlan(p)?'record-transferred':''}"><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.ownerTrackingId || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${[owner.firstName, owner.lastName].filter(Boolean).join(' ') || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.files?.length||0}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`; }).join('')}</tbody><table></div>`; }
+function renderMyPortfolio(){ const sess = loadSession(); const wrap = $("myPlansTableContainer"); const profileWrap = $("portfolioProfileCard"); if(!wrap) return; if(!sess){ if(profileWrap) profileWrap.innerHTML = ''; wrap.innerHTML = '<div class="card">Please sign in first.</div>'; return; } const store = loadStore(); const owner = (store.users || []).find(u => u.id === sess.id) || sess; const plans = store.plans.filter(p => p.ownerId === sess.id || String(p.ownerTrackingId||'') === String(sess.trackingId||'')); if(profileWrap){ const photoHtml = owner.passportPhoto ? `<div class="profile-photo-top"><img src="${owner.passportPhoto}" alt="Passport photo" style="width:110px;height:135px;object-fit:cover;border-radius:12px;border:1px solid var(--line);"></div>` : `<div class="profile-photo-top"><div style="width:110px;height:135px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--muted);font-weight:700;">No Photo</div></div>`; profileWrap.innerHTML = `<div class="card" style="margin-bottom:1rem;"><div class="portfolio-profile-layout">${photoHtml}<h2>Registration Details</h2><div class="details-2col"><div><strong>Tracking ID:</strong> ${owner.trackingId || '—'}</div><div><strong>First Name:</strong> ${owner.firstName || ''}</div><div><strong>Middle Name:</strong> ${owner.middleName || '—'}</div><div><strong>Last Name:</strong> ${owner.lastName || ''}</div><div><strong>City:</strong> ${owner.city || '—'}</div><div><strong>Phone / Login ID:</strong> ${owner.rawPhone || owner.phone || '—'}</div><div><strong>Email:</strong> ${owner.email || '—'}</div><div><strong>Registered:</strong> ${owner.registeredAt ? fmtDate(owner.registeredAt) : '—'}</div><div><strong>Total Properties:</strong> ${plans.length}</div></div></div><div class="file-action-row" style="margin-top:1rem;"><button class="btn outline small" onclick="openAccountAccess('${owner.id}')">View / Edit Login Access</button></div></div></div>`; } if(!plans.length){ wrap.innerHTML = '<div class="card">No property records yet.</div>'; return; } wrap.innerHTML = `<div class="card"><div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Type</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Updated</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>`<tr><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.type}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${fmtDate(p.lastUpdated||p.createdAt)}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn btn-open small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`).join('')}</tbody></table></div></div>`; }
+function ownerSearch(){ const q = $("ownerSearchId").value.trim(); const target = $("ownerSearchResult"); const sess = loadSession(); if(!target) return; if(!q){ target.innerHTML = '<div class="info-note">Enter your Tracking ID or a Plan ID.</div>'; return; } const plans = loadStore().plans.filter(p => (p.ownerId === sess?.id || String(p.ownerTrackingId||'') === String(sess?.trackingId||'')) && (String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q))); if(!plans.length){ target.innerHTML = '<div class="info-note">No matching record found.</div>'; return; } target.innerHTML = plans.map(p => `<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn btn-open small" onclick="showPropertyDetail('${p.id}')">View record</button></div></div>`).join(''); }
+function renderAdmin(){ const wrap = $("adminTableContainer"); if(!wrap) return; const store = loadStore(); const plans = store.plans; if(!plans.length){ wrap.innerHTML = '<div class="info-note">No filings yet.</div>'; document.getElementById("accordionToggle").style.display = 'none'; return; } const tableHtml = `<div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Tracking ID</th><th style="text-align:left;padding:12px;">Owner</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Docs</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>{ const owner = store.users.find(u=>u.id===p.ownerId) || {}; return `<tr class="${isTransferredPlan(p)?'record-transferred':''}"><td style="padding:12px;border-top:1px solid var(--line);"><span class="cell-link" onclick="showPropertyDetail('${p.id}')" style="cursor:pointer; color:#0165fc; font-weight:bold;">#${p.planNumber}</span></td><td style="padding:12px;border-top:1px solid var(--line);">${p.ownerTrackingId || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${[owner.firstName, owner.lastName].filter(Boolean).join(' ') || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.files?.length||0}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`; }).join('')}</tbody></table></div>`; wrap.innerHTML = tableHtml; const rowCount = plans.length; const toggleDiv = document.getElementById("accordionToggle"); if (rowCount > 3) { if (!wrap.querySelector('.admin-table-wrapper')) { const wrapper = document.createElement('div'); wrapper.className = 'admin-table-wrapper collapsed'; wrapper.innerHTML = wrap.innerHTML; wrap.innerHTML = ''; wrap.appendChild(wrapper); toggleDiv.style.display = 'block'; toggleDiv.querySelector('button').innerText = 'Show all'; } } else { toggleDiv.style.display = 'none'; if (wrap.querySelector('.admin-table-wrapper')) { const inner = wrap.querySelector('.admin-table-wrapper').innerHTML; wrap.innerHTML = inner; } } }
+function toggleAdminTable() { const wrapper = document.querySelector('.admin-table-wrapper'); if (wrapper) { wrapper.classList.toggle('collapsed'); const btn = document.querySelector('#accordionToggle button'); btn.innerText = wrapper.classList.contains('collapsed') ? 'Show all' : 'Show less'; } }
 function adminSearch(){ const q = $("adminSearchId").value.trim(); const target = $("adminSearchResult"); if(!target) return; if(!q){ target.innerHTML = '<div class="info-note">Enter a Tracking ID or Plan ID.</div>'; return; } const store = loadStore(); const plans = store.plans.filter(p => String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q)); if(!plans.length){ target.innerHTML = '<div class="info-note">No result found.</div>'; return; } target.innerHTML = plans.map(p=>`<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open record</button></div></div>`).join(''); }
-function adminGenerateReport(){ const store = loadStore(); const totalUsers = store.users.filter(u => u.role !== 'admin').length; const totalPlans = store.plans.length; const totalDocs = store.plans.reduce((sum,p)=>sum + (p.files?.length || 0), 0); $("modalBody").innerHTML = `<h2>Administrative Summary Report</h2><div class="grid"><div class="stat-card"><div class="stat-label">Registered Users</div><div class="stat-value">${totalUsers}</div></div><div class="stat-card"><div class="stat-label">Property Filings</div><div class="stat-value">${totalPlans}</div></div><div class="stat-card"><div class="stat-label">Documents</div><div class="stat-value">${totalDocs}</div></div></div><div class="info-note" style="margin-top:1rem;">This report is generated from the browser data store for local testing.</div>`; $("propertyModal").style.display = 'flex'; }
+function adminGenerateReport(){ const store = loadStore(); const totalUsers = store.users.filter(u => u.role !== 'admin').length; const totalPlans = store.plans.length; const totalDocs = store.plans.reduce((sum,p)=>sum + (p.files?.length || 0), 0); $("modalBody").innerHTML = `<h2>Administrative Summary Report</h2><div class="grid"><div class="stat-card stat-card-clickable" onclick="showAllFilingsDetail()"><div class="stat-label">Total Filings</div><div class="stat-value">${totalPlans}</div></div><div class="stat-card stat-card-clickable" onclick="showRegisteredUsersDetail()"><div class="stat-label">Registered Users</div><div class="stat-value">${totalUsers}</div></div><div class="stat-card stat-card-clickable" onclick="showDocumentsDetail()"><div class="stat-label">Documents</div><div class="stat-value">${totalDocs}</div></div></div><div class="info-note" style="margin-top:1rem;">Click on any card to view detailed list.</div>`; $("propertyModal").style.display = 'flex'; }
 function adminViewAuditLog(){ const rows = loadStore().audit.slice(0,50); $("modalBody").innerHTML = `<h2>Audit Log</h2>${rows.length ? `<div style="display:grid;gap:12px;">${rows.map(a=>`<div class="card"><strong>${a.action}</strong><div>${a.details}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${fmtDate(a.timestamp)}</div></div>`).join('')}</div>` : '<div class="info-note">No audit entries yet.</div>'}`; $("propertyModal").style.display = 'flex'; }
-function buildCertificateHtml(plan, owner){ if(!plan || !owner) return ''; ensureCertificateStats(plan); const ownerName = [owner.firstName, owner.middleName, owner.lastName].filter(Boolean).join(' '); const photoHtml = owner.passportPhoto ? `<div class="certificate-profile"><img src="${owner.passportPhoto}" alt="Passport photo"></div>` : `<div class="certificate-profile" style="display:flex;align-items:center;justify-content:center;background:#f5f8ff;color:#5b6780;font-size:12px;text-align:center;">No Photo</div>`; const sketchHtml = plan.manualDrawingImage ? `<div class="certificate-sketch"><img src="${plan.manualDrawingImage}" alt="Manual sketch"></div>` : ''; const neighborHtml = `<div class="certificate-neighbor-grid">
-        <div class="neighbor-box north"><strong><i class="fas fa-arrow-up"></i> North</strong> ${plan.neighbors?.n || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.n || 0} m</span></div>
-        <div class="neighbor-box south"><strong><i class="fas fa-arrow-down"></i> South</strong> ${plan.neighbors?.s || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.s || 0} m</span></div>
-        <div class="neighbor-box east"><strong><i class="fas fa-arrow-right"></i> East</strong> ${plan.neighbors?.e || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.e || 0} m</span></div>
-        <div class="neighbor-box west"><strong><i class="fas fa-arrow-left"></i> West</strong> ${plan.neighbors?.w || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.w || 0} m</span></div>
-      </div>`; return `<div class="certificate-container compact-certificate" id="certificatePrintableArea"><div class="certificate-header"><div><h1 style="margin:0;">Property Registration Certificate</h1><div class="certificate-subtitle">Official property record summary for local review and printing.</div></div>${photoHtml}</div><div class="divider"></div><div class="certificate-detail-grid"><div><p><strong>Owner:</strong> ${ownerName}</p><p><strong>Tracking ID:</strong> ${plan.ownerTrackingId}</p><p><strong>Plan ID:</strong> #${plan.planNumber}</p><p><strong>Address:</strong> ${plan.address}</p><p><strong>Status:</strong> ${plan.status || 'ACTIVE'}</p></div><div><p><strong>Category:</strong> ${plan.type}</p><p><strong>Area:</strong> ${Number(plan.area||0).toFixed(2)} m²</p><p><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</p><p><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</p><p><strong>Created:</strong> ${fmtDate(plan.createdAt)}</p><p><strong>Last Edited:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}</p><p><strong>Edited By:</strong> ${plan.lastEditedByName || ownerName}</p></div></div>${neighborHtml}${sketchHtml}<div class="certificate-actions"><button class="btn outline" onclick="downloadCertificate('${plan.id}')"><i class="fas fa-download"></i> Download Certificate</button><button class="btn accent" onclick="printCertificate('${plan.id}')"><i class="fas fa-print"></i> Print Certificate</button></div></div>`; }
+function showAllFilingsDetail(){ const store = loadStore(); const plans = store.plans; if(!plans.length){ $("modalBody").innerHTML = '<div class="info-note">No filings.</div>'; $("propertyModal").style.display = 'flex'; return; } let list = plans.map(p => `<div class="card"><strong>#${p.planNumber}</strong> - ${p.address}<br><small>Owner: ${p.ownerTrackingId} | Status: ${p.status}</small></div>`).join(''); $("modalBody").innerHTML = `<h2>All Filings (${plans.length})</h2>${list}`; $("propertyModal").style.display = 'flex'; }
+function showRegisteredUsersDetail(){ const store = loadStore(); const users = store.users.filter(u => u.role !== 'admin'); if(!users.length){ $("modalBody").innerHTML = '<div class="info-note">No registered users.</div>'; $("propertyModal").style.display = 'flex'; return; } let list = users.map(u => `<div class="card"><strong>${u.firstName} ${u.lastName}</strong><br>Tracking ID: ${u.trackingId}<br>City: ${u.city}<br>Registered: ${fmtDate(u.registeredAt)}</div>`).join(''); $("modalBody").innerHTML = `<h2>Registered Users (${users.length})</h2>${list}`; $("propertyModal").style.display = 'flex'; }
+function showDocumentsDetail(){ const store = loadStore(); let docs = []; store.plans.forEach(p => { if(p.files) p.files.forEach(f => { docs.push({ planNumber: p.planNumber, fileName: f.name, size: f.size }); }); }); if(!docs.length){ $("modalBody").innerHTML = '<div class="info-note">No documents.</div>'; $("propertyModal").style.display = 'flex'; return; } let list = docs.map(d => `<div class="card"><strong>Plan #${d.planNumber}</strong> - ${d.fileName}<br><small>Size: ${(d.size/1024).toFixed(1)} KB</small></div>`).join(''); $("modalBody").innerHTML = `<h2>All Documents (${docs.length})</h2>${list}`; $("propertyModal").style.display = 'flex'; }
+
+function buildCertificateHtml(plan, owner){ 
+  if(!plan || !owner) return ''; 
+  ensureCertificateStats(plan); 
+  const ownerName = [owner.firstName, owner.middleName, owner.lastName].filter(Boolean).join(' '); 
+  const photoHtml = owner.passportPhoto ? `<div class="certificate-profile"><img src="${owner.passportPhoto}" alt="Passport photo"></div>` : `<div class="certificate-profile" style="display:flex;align-items:center;justify-content:center;background:#f5f8ff;color:#5b6780;font-size:12px;text-align:center;">No Photo</div>`; 
+  const sketchHtml = plan.manualDrawingImage ? `<div class="certificate-sketch"><img src="${plan.manualDrawingImage}" alt="Manual sketch"></div>` : ''; 
+  const neighborHtml = `<div class="certificate-neighbor-grid"><div class="neighbor-box north"><strong>North</strong> ${plan.neighbors?.n || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.n || 0} m</span></div><div class="neighbor-box south"><strong>South</strong> ${plan.neighbors?.s || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.s || 0} m</span></div><div class="neighbor-box east"><strong>East</strong> ${plan.neighbors?.e || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.e || 0} m</span></div><div class="neighbor-box west"><strong>West</strong> ${plan.neighbors?.w || '—'}<br><span style="font-size:0.85rem;">Length: ${plan.dims?.w || 0} m</span></div></div>`;
+  const leftCard = `<div class="certificate-detail-card"><p><strong>Owner:</strong> ${ownerName}</p><p><strong>Tracking ID:</strong> ${plan.ownerTrackingId}</p><p><strong>Plan ID:</strong> #${plan.planNumber}</p><p><strong>Address:</strong> ${plan.address}</p><p><strong>Status:</strong> ${plan.status || 'ACTIVE'}</p><p><strong>Category:</strong> ${plan.type}</p></div>`;
+  const rightCard = `<div class="certificate-detail-card"><p><strong>Area:</strong> ${Number(plan.area||0).toFixed(2)} m²</p><p><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</p><p><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</p><p><strong>Created:</strong> ${fmtDate(plan.createdAt)}</p><p><strong>Last Edited:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}</p><p><strong>Edited By:</strong> ${plan.lastEditedByName || ownerName}</p></div>`;
+  const cityLine = plan.city ? `<div class="certificate-city">City/Town - ${plan.city}</div>` : '';
+  return `<div class="certificate-container compact-certificate" id="certificatePrintableArea"><div class="certificate-header">${photoHtml}<div>${cityLine}<h1 style="margin:0;">Property Registration Certificate</h1><div class="certificate-subtitle">Official property record summary for local review and printing.</div></div></div><div class="divider"></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">${leftCard}${rightCard}</div>${neighborHtml}${sketchHtml}<div class="certificate-actions"><button class="btn outline" onclick="downloadCertificate('${plan.id}')">Download Certificate</button><button class="btn accent" onclick="printCertificate('${plan.id}')">Print Certificate</button></div></div>`;
+}
+
 function refreshCertificateCounters(plan){ return; }
 function showCertificate(id){ const store = loadStore(); const plan = store.plans.find(p=>p.id===id); if(!plan) return; normalizePlanFiles(plan); const owner = store.users.find(u=>u.id===plan.ownerId) || {}; $("certificateBody").innerHTML = buildCertificateHtml(plan, owner); refreshCertificateCounters(plan); $("certificateModal").style.display = 'flex'; }
 function updateCertificateRequestCount(planId, type){ const store = loadStore(); const plan = store.plans.find(p=>p.id===planId); if(!plan) return null; const stats = ensureCertificateStats(plan); if(type === 'download') stats.downloads += 1; if(type === 'print') stats.prints += 1; const sess = loadSession(); const actorName = getUserDisplayName(sess || {}); store.audit.unshift({ id:'a_'+Date.now(), userId:sess?.id || 'guest', action:type === 'download' ? 'CERTIFICATE_DOWNLOADED' : 'CERTIFICATE_PRINT_REQUESTED', details:`${type === 'download' ? 'Downloaded' : 'Printed'} certificate for #${plan.planNumber} by ${actorName || 'Unknown user'}`, timestamp:nowISO() }); saveStore(store); refreshCertificateCounters(plan); return plan; }
-function buildCertificateStandaloneDocument(plan, owner, mode='print'){ const printableHtml = buildCertificateHtml(plan, owner).replace(/<div class="certificate-actions">[\s\S]*?<\/div>\s*<\/div>$/, '</div>'); return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate #${plan.planNumber}</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><style>@page{size:A4 portrait;margin:8mm}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#eef3f8;color:#0f172a;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}body{padding:10px}.print-shell{max-width:190mm;margin:0 auto}.certificate-container{background:#fff;padding:14px 16px;border-radius:16px;border:2px solid #5fdcf7;box-shadow:0 8px 24px rgba(15,23,42,.08);page-break-inside:avoid;break-inside:avoid}.certificate-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:2px solid #5fdcf7;margin-bottom:12px;padding-bottom:10px}.certificate-profile{width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid #5fdcf7;background:#f0f0f0;flex:0 0 80px}.certificate-profile img{width:100%;height:100%;object-fit:cover;display:block}.certificate-subtitle{margin-top:6px;font-size:12px;color:#475569}.certificate-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:10px 0}.certificate-detail-grid p{margin:0 0 7px 0;line-height:1.35;font-size:14px}.certificate-sketch{text-align:center;margin:12px 0 0}.certificate-sketch img{max-width:100%;max-height:88mm;border:1px solid #dbe4f0;border-radius:10px;background:#fafafa;display:inline-block}.divider{height:1px;background:#e2e8f0;margin:12px 0}.certificate-actions,.certificate-counter-grid,.info-note{display:none!important}h1{font-size:24px;line-height:1.15}p,strong{font-size:14px}.certificate-neighbor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.5rem 0}.neighbor-box{background:#f8fafc;border-radius:16px;padding:1rem;text-align:center;border-left:6px solid}.neighbor-box.north{border-left-color:#f87171}.neighbor-box.south{border-left-color:#60a5fa}.neighbor-box.east{border-left-color:#34d399}.neighbor-box.west{border-left-color:#a78bfa}.neighbor-box strong{display:block;font-size:1rem;margin-bottom:6px}@media (max-width:700px){body{padding:0}.print-shell{max-width:none}.certificate-container{padding:12px}.certificate-header{flex-direction:column-reverse;align-items:center;text-align:center}.certificate-detail-grid{grid-template-columns:1fr}.certificate-sketch img{max-height:60mm}.certificate-neighbor-grid{grid-template-columns:1fr}}@media print{html,body{background:#fff!important;width:210mm;height:297mm;overflow:hidden}body{padding:0}.print-shell{max-width:none}.certificate-container{min-height:0;border:none;border-radius:0;box-shadow:none;padding:10mm 8mm 8mm;overflow:hidden}}</style></head><body><div class="print-shell">${printableHtml}</div>${mode==='print' ? `<script>window.addEventListener('load',()=>{const imgs=Array.from(document.images);Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=img.onerror=()=>resolve();}))).then(()=>setTimeout(()=>window.print(),300));});window.addEventListener('afterprint',()=>window.close());<\/script>` : ''}</body></html>`; }
+function buildCertificateStandaloneDocument(plan, owner, mode='print'){ const printableHtml = buildCertificateHtml(plan, owner).replace(/<div class="certificate-actions">[\s\S]*?<\/div>\s*<\/div>$/, '</div>'); return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate #${plan.planNumber}</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"><style>@page{size:A4 portrait;margin:8mm}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#eef3f8;color:#0f172a;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}body{padding:10px}.print-shell{max-width:190mm;margin:0 auto}.certificate-container{background:#fff;padding:14px 16px;border-radius:16px;border:2px solid #5fdcf7;box-shadow:0 8px 24px rgba(15,23,42,.08);page-break-inside:avoid;break-inside:avoid}.certificate-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:2px solid #5fdcf7;margin-bottom:12px;padding-bottom:10px}.certificate-profile{width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid #5fdcf7;background:#f0f0f0;flex:0 0 80px}.certificate-profile img{width:100%;height:100%;object-fit:cover;display:block}.certificate-subtitle{margin-top:6px;font-size:12px;color:#475569}.certificate-city{font-size:1rem;font-weight:600;color:#64748b;margin-bottom:0.25rem}.certificate-detail-card{background:#f8fafc;border-radius:16px;padding:1rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.03);break-inside:avoid}.certificate-detail-card p{margin:0.5rem 0;font-size:0.9rem}.divider{height:1px;background:#e2e8f0;margin:12px 0}.certificate-actions,.certificate-counter-grid,.info-note{display:none!important}h1{font-size:24px;line-height:1.15}p,strong{font-size:14px}.certificate-neighbor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.5rem 0}.neighbor-box{background:#f8fafc;border-radius:16px;padding:1rem;text-align:center;border-left:6px solid}.neighbor-box.north{border-left-color:#f87171}.neighbor-box.south{border-left-color:#60a5fa}.neighbor-box.east{border-left-color:#34d399}.neighbor-box.west{border-left-color:#a78bfa}.neighbor-box strong{display:block;font-size:1rem;margin-bottom:6px}@media (max-width:700px){body{padding:0}.print-shell{max-width:none}.certificate-container{padding:12px}.certificate-header{flex-direction:column-reverse;align-items:center;text-align:center}.certificate-detail-card{grid-template-columns:1fr}.certificate-sketch img{max-height:60mm}.certificate-neighbor-grid{grid-template-columns:1fr}}@media print{html,body{background:#fff!important;width:210mm;height:297mm;overflow:hidden}body{padding:0}.print-shell{max-width:none}.certificate-container{min-height:0;border:none;border-radius:0;box-shadow:none;padding:10mm 8mm 8mm;overflow:hidden}.certificate-profile{position:relative;margin:0 auto 1rem auto;width:80px;height:80px;}.certificate-header{display:flex;flex-direction:column;align-items:center;text-align:center;}}</style></head><body><div class="print-shell">${printableHtml}</div>${mode==='print' ? `<script>window.addEventListener('load',()=>{const imgs=Array.from(document.images);Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=img.onerror=()=>resolve();}))).then(()=>setTimeout(()=>window.print(),300));});window.addEventListener('afterprint',()=>window.close());<\/script>` : ''}</body></html>`; }
 function downloadCertificate(planId){ const store = loadStore(); const plan = store.plans.find(p=>p.id===planId); if(!plan) return; const updatedPlan = updateCertificateRequestCount(planId, 'download') || plan; const owner = loadStore().users.find(u=>u.id===updatedPlan.ownerId) || {}; const html = buildCertificateStandaloneDocument(updatedPlan, owner, 'download'); const blob = new Blob([html], { type:'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `property-certificate-${updatedPlan.planNumber}.html`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 30000); }
 function printCertificate(planId){ const store = loadStore(); const existingPlan = store.plans.find(p=>p.id===planId); if(!existingPlan) return; const updatedPlan = updateCertificateRequestCount(planId, 'print') || existingPlan; const owner = loadStore().users.find(u=>u.id===updatedPlan.ownerId) || {}; const printWindow = window.open('', '_blank', 'width=1024,height=900'); if(!printWindow){ alert('Please allow pop-ups to preview and print the certificate.'); return; } printWindow.document.open(); printWindow.document.write(buildCertificateStandaloneDocument(updatedPlan, owner, 'print')); printWindow.document.close(); }
-function openAccountAccess(userId){ const store = loadStore(); const user = (store.users || []).find(u=>u.id===userId); if(!user) return; const defaultPass = getDefaultPhonePassword(user); $("modalBody").innerHTML = `<h2><i class="fas fa-id-badge"></i> Account Access</h2><div class="info-note">The login password is automatically synced to the last 4 digits of the current login phone number. Use the edit button below to change the phone number.</div><div class="account-access-grid"><div class="credential-box"><div><strong>Registered Name</strong></div><div class="credential-value">${[user.firstName,user.middleName,user.lastName].filter(Boolean).join(' ') || '—'}</div></div><div class="credential-box"><div><strong>Current Login Phone / ID</strong></div><div class="credential-value">${user.rawPhone || user.phone || '—'}</div></div><div class="credential-box"><div><strong>Default Login Password</strong></div><div class="credential-value">${defaultPass}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">Last 4 digits of the login phone number.</div></div><div class="credential-box"><div><strong>Masked View</strong></div><div class="credential-value">${maskPhoneValue(user.rawPhone || user.phone || '')}</div></div></div><div class="file-action-row" style="margin-top:1.25rem;"><button class="btn outline" onclick="alert('Login phone / ID: ${String(user.rawPhone || user.phone || '—').replace(/'/g, "\\'")}')"><i class="fas fa-eye"></i> View Login ID</button><button class="btn accent" onclick="editLoginAccess('${user.id}')"><i class="fas fa-pen-to-square"></i> Edit Login ID</button></div>`; $("propertyModal").style.display = 'flex'; }
+function openAccountAccess(userId){ const store = loadStore(); const user = (store.users || []).find(u=>u.id===userId); if(!user) return; const defaultPass = getDefaultPhonePassword(user); $("modalBody").innerHTML = `<h2>Account Access</h2><div class="info-note">The login password is automatically synced to the last 4 digits of the current login phone number. Use the edit button below to change the phone number.</div><div class="account-access-grid"><div class="credential-box"><div><strong>Registered Name</strong></div><div class="credential-value">${[user.firstName,user.middleName,user.lastName].filter(Boolean).join(' ') || '—'}</div></div><div class="credential-box"><div><strong>Current Login Phone / ID</strong></div><div class="credential-value">${user.rawPhone || user.phone || '—'}</div></div><div class="credential-box"><div><strong>Default Login Password</strong></div><div class="credential-value">${defaultPass}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">Last 4 digits of the login phone number.</div></div><div class="credential-box"><div><strong>Masked View</strong></div><div class="credential-value">${maskPhoneValue(user.rawPhone || user.phone || '')}</div></div></div><div class="file-action-row" style="margin-top:1.25rem;"><button class="btn outline" onclick="alert('Login phone / ID: ${String(user.rawPhone || user.phone || '—').replace(/'/g, "\\'")}')">View Login ID</button><button class="btn accent" onclick="editLoginAccess('${user.id}')">Edit Login ID</button></div>`; $("propertyModal").style.display = 'flex'; }
 function editLoginAccess(userId){ const store = loadStore(); const user = (store.users || []).find(u=>u.id===userId); if(!user) return; const nextRaw = prompt('Enter the new login phone number / member phone ID', user.rawPhone || user.phone || ''); if(nextRaw === null) return; const trimmed = nextRaw.trim(); const normalized = normalizePhone(trimmed); if(!trimmed || normalized.length < 8){ alert('Please enter a valid login phone number with at least 8 digits.'); return; } const duplicate = (store.users || []).find(u => u.id !== userId && (normalizePhone(u.rawPhone || '') === normalized || normalizePhone(u.phone || '') === normalized)); if(duplicate){ alert('That phone / login ID is already being used by another account.'); return; } user.rawPhone = trimmed; user.phone = normalized; user.pass = normalized.slice(-4); store.audit.unshift({ id:'a_'+Date.now(), userId:user.id, action:'LOGIN_ACCESS_UPDATED', details:`Updated login phone for ${[user.firstName,user.lastName].filter(Boolean).join(' ') || user.trackingId}; password reset to last 4 digits`, timestamp:nowISO() }); saveStore(store); const sess = loadSession(); if(sess && sess.id === user.id){ sess.rawPhone = user.rawPhone; sess.phone = user.phone; sess.pass = user.pass; saveSession(sess); updateUserProfile(); } renderMyPortfolio(); renderAdmin(); openAccountAccess(userId); alert(`Login phone updated successfully. New default password: ${user.pass}`); }
 function closeCertificateModal(event){ if(!event || event.target === $("certificateModal")) $("certificateModal").style.display = 'none'; }
 function showSketchPreview(){ if(!sketch) return; const modal = $("sketchModal"); const preview = $("sketchPreviewCanvas"); if(!modal || !preview) return; const ctx = preview.getContext('2d'); const img = new Image(); img.onload = () => { ctx.clearRect(0,0,preview.width,preview.height); const scale = Math.min(preview.width / img.width, preview.height / img.height); const w = img.width * scale; const h = img.height * scale; const x = (preview.width - w) / 2; const y = (preview.height - h) / 2; ctx.drawImage(img, x, y, w, h); modal.style.display = 'flex'; }; img.src = sketch.getImageData(); }
@@ -1034,18 +1167,24 @@ function openMasterReset(){ $("resetModal").style.display = 'flex'; }
 function closeResetModal(event){ if(!event || event.target === $("resetModal")) { $("resetModal").style.display = 'none'; showMsg('resetMsg','', ''); } }
 function confirmMasterReset(){ const pass = $("resetPassword").value; if(pass !== ADMIN_RESET_PASS){ showMsg('resetMsg','Incorrect master reset password.','error'); return; } localStorage.removeItem(STORE_KEY); localStorage.removeItem(SESSION_KEY); passportPhoto = null; pendingFiles = []; currentEditingPlanId = null; $("resetPassword").value = ''; closeResetModal(); loadStore(); updateStatistics(); updateNav(); updateUserProfile(); go('home'); }
 
-function resetForm(){ pendingFiles=[]; currentEditingPlanId=null; ["sAddress","sAreaM","sAreaFt","sDimNorth","sDimSouth","sDimEast","sDimWest","sNorth","sSouth","sEast","sWest","calcLength","calcWidth","sLatitude","sLongitude"].forEach(id=>{ let el=$(id); if(el) el.value=""; }); $("sType").value="RESIDENTIAL"; $("areaResult").style.display="none"; renderEnhancedFolderView(); if(sketch) sketch.clear(); let btn=$("submitBtn"); if(btn){ btn.innerHTML='<i class="fas fa-check-circle"></i> Complete Registration &amp; Save'; btn.dataset.action='submit'; btn.disabled=false; btn.style.pointerEvents='auto'; } showMsg('submitMsg','',''); }
+function resetForm(){ pendingFiles=[]; currentEditingPlanId=null; ["sAddress","sAreaM","sAreaFt","sDimNorth","sDimSouth","sDimEast","sDimWest","sNorth","sSouth","sEast","sWest","calcLength","calcWidth","sLatitude","sLongitude"].forEach(id=>{ let el=$(id); if(el) el.value=""; }); $("sType").value="RESIDENTIAL"; $("areaResult").style.display="none"; renderEnhancedFolderView(); if(sketch) sketch.clear(); let btn=$("submitBtn"); if(btn){ btn.innerHTML='Complete Registration &amp; Save'; btn.dataset.action='submit'; btn.disabled=false; btn.style.pointerEvents='auto'; } showMsg('submitMsg','',''); }
 function fileSizeLabel(size){ if(!size && size!==0) return '—'; const units=['B','KB','MB','GB']; let s=size, idx=0; while(s>=1024 && idx<units.length-1){ s/=1024; idx++; } return (idx===0?Math.round(s):s.toFixed(1))+' '+units[idx]; }
 function normalizePlanFiles(plan){ if(!plan.files) plan.files=[]; plan.files=plan.files.map(f=>({ downloadCount:0, visibility:'owner-view', ...f })); if(!plan.editHistory) plan.editHistory=[]; if(!Array.isArray(plan.transferHistory)) plan.transferHistory=[]; if(!plan.ownershipSequence) plan.ownershipSequence=1; if(!plan.rootPlanNumber) plan.rootPlanNumber=plan.planNumber; ensureCertificateStats(plan); return plan.files; }
 function canAdminManage(){ let sess=loadSession(); return !!(sess && sess.role==='admin'); }
-function renderEnhancedFolderView(){ let c=$("folderContainer"); if(!c) return; if(pendingFiles.length===0){ c.innerHTML='<div class="empty-folder"><i class="fas fa-folder-open"></i><p>No documents</p></div>'; return; } let html=`<div class="folder-header-main"><i class="fas fa-archive"></i> Documents (${pendingFiles.length})</div><div class="folder-grid">`; let groups={}; pendingFiles.forEach((f,i)=>{ let cat=(f.type||'').includes("pdf")?"PDF":(f.type||'').includes("image")?"Images":"Other"; if(!groups[cat]) groups[cat]=[]; groups[cat].push({...f,idx:i}); }); for(let cat in groups){ html+=`<div class="folder-card"><div class="folder-card-header"><i class="fas fa-folder"></i> ${cat}</div><div class="folder-card-content">`; groups[cat].forEach(f=>{ html+=`<div class="folder-file-item"><div><i class="fas fa-file"></i> ${f.name}<div style="font-size:12px;color:var(--muted);margin-top:4px;">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div></div><div style="display:flex;gap:8px;align-items:center;"><button class="btn outline small" onclick="renamePending(${f.idx})"><i class="fas fa-i-cursor"></i> Rename</button><button class="dots-btn" onclick="removePending(${f.idx})" title="Remove">✖</button></div></div>`; }); html+=`</div></div>`; } html+=`</div>`; c.innerHTML=html; }
+
+function closeAllFileMenus() { document.querySelectorAll('.file-popup-menu').forEach(m => m.style.display = 'none'); }
+function showFileMenu(event, fileId) { event.stopPropagation(); closeAllFileMenus(); const menu = document.getElementById(`file-menu-${fileId}`); if (menu) { menu.style.display = 'block'; setTimeout(() => { document.addEventListener('click', function closeMenu(e) { if (!menu.contains(e.target) && e.target !== event.target) { menu.style.display = 'none'; document.removeEventListener('click', closeMenu); } }); }, 0); } }
+
+function renderEnhancedFolderView(){ let c=$("folderContainer"); if(!c) return; if(pendingFiles.length===0){ c.innerHTML='<div class="empty-folder">No documents</div>'; return; } let html=`<div class="folder-header-main">Documents (${pendingFiles.length})</div><div class="documents-grid">`; pendingFiles.forEach((f,i)=>{ html+=`<div class="doc-card"><div class="doc-name">${f.name}</div><div class="doc-meta">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div><div class="doc-actions"><div class="file-menu-container"><button class="dots-btn" onclick="showFileMenu(event, 'pending_${i}')">⋮</button><div id="file-menu-pending_${i}" class="file-popup-menu" style="display:none;"><button onclick="renamePending(${i}); closeAllFileMenus();">Rename</button><button onclick="removePending(${i}); closeAllFileMenus();">Remove</button></div></div></div></div>`; }); html+=`</div>`; c.innerHTML=html; }
+
 function renamePending(idx){ const file=pendingFiles[idx]; if(!file) return; renameCallback = (newName) => { pendingFiles[idx].name = newName; renderEnhancedFolderView(); renameCallback = null; }; $("renameInput").value = file.name; $("renameModal").style.display = 'flex'; }
 function removePending(idx){ pendingFiles.splice(idx,1); renderEnhancedFolderView(); }
 async function handleFileSelection(){ let input=$("sFiles"); let files=Array.from(input.files||[]); if(!files.length) return; let timestamp=Date.now(); let newFiles=files.map((f,index)=>({ id:"f_"+timestamp+"_"+index+"_"+Math.random().toString(16).slice(2), name:f.name, type:f.type||'application/octet-stream', status:"active", uploadedAt:nowISO(), size:f.size, downloadCount:0, visibility:'owner-view', storage:'indexeddb', hasBlob:true, fileObject:f })); pendingFiles.push(...newFiles); input.value=''; renderEnhancedFolderView(); }
+
 async function submitPlan(){
   const btn = $("submitBtn");
   try {
-    if(btn){ btn.disabled = true; btn.style.pointerEvents = "none"; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...'; }
+    if(btn){ btn.disabled = true; btn.style.pointerEvents = "none"; btn.innerHTML = 'Saving...'; }
     const sess = loadSession(); const store = loadStore();
     if(!sess){ showMsg("submitMsg","Login first","error"); return false; }
     const addr = $("sAddress").value.trim();
@@ -1082,11 +1221,12 @@ async function submitPlan(){
     setTimeout(() => { resetForm(); go("myplans"); }, 900);
     return true;
   } catch(err){ console.error("Submit registration failed", err); showMsg("submitMsg","An unexpected error blocked saving. Check the browser console and try again.","error"); return false; }
-  finally { if(btn){ btn.disabled = false; btn.style.pointerEvents = "auto"; if((btn.dataset.action || 'submit') === 'update'){ btn.innerHTML = '<i class="fas fa-save"></i> Update Property'; } else { btn.innerHTML = '<i class="fas fa-check-circle"></i> Complete Registration &amp; Save'; } } }
+  finally { if(btn){ btn.disabled = false; btn.style.pointerEvents = "auto"; if((btn.dataset.action || 'submit') === 'update'){ btn.innerHTML = 'Update Property'; } else { btn.innerHTML = 'Complete Registration &amp; Save'; } } }
 }
 function handleCompleteRegistration(event){ if(event) event.preventDefault(); if(event && typeof event.stopPropagation === "function") event.stopPropagation(); return submitPlan(); }
 
 function statusBadgeLabel(status){ const normalized = String(status || 'ACTIVE').toUpperCase(); if(normalized.startsWith('TRANSFERRED')) return status; if(normalized === 'DEACTIVATED') return 'DEACTIVATED'; return 'ACTIVE'; }
+
 function showPropertyDetail(id){
   let store = loadStore(), plan = store.plans.find(p=>p.id===id), owner = store.users.find(u=>u.id===plan?.ownerId);
   if(!plan || !owner) return;
@@ -1095,16 +1235,33 @@ function showPropertyDetail(id){
   let admin = canAdminManage();
   let ownerCanEdit = !!sess && (admin || (sess.role === 'owner' && sess.id === plan.ownerId));
   let history = (plan.editHistory||[]).slice(0,5);
+  // Two-row property details (5 items first row, 4 items second row)
+  const detailsFirstRow = [
+    { label: "Owner", value: `${owner.firstName} ${owner.lastName}` },
+    { label: "Tracking ID", value: plan.ownerTrackingId },
+    { label: "Plan ID", value: `#${plan.planNumber}` },
+    { label: "Address", value: plan.address },
+    { label: "Category", value: plan.type }
+  ];
+  const detailsSecondRow = [
+    { label: "Area", value: `${Number(plan.area).toFixed(2)} m²` },
+    { label: "Status", value: statusBadgeLabel(plan.status) },
+    { label: "City", value: plan.city },
+    { label: "Ownership Order", value: getOwnershipOrdinal(plan.ownershipSequence || 1) }
+  ];
+  let detailsHtml = `<div class="property-details-two-rows">` + detailsFirstRow.map(d => `<div class="property-detail-item"><strong>${d.label}</strong><span>${d.value}</span></div>`).join('') + detailsSecondRow.map(d => `<div class="property-detail-item"><strong>${d.label}</strong><span>${d.value}</span></div>`).join('') + `</div>`;
+  
   let docsHtml = (plan.files&&plan.files.length)
-    ? plan.files.map((f,idx)=>`<div class="folder-file-item"><div><i class="fas fa-file"></i> ${f.name}<div style="font-size:12px;color:var(--muted);margin-top:4px;">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;">${admin?`<button class="btn outline small" onclick="downloadPlanFile('${plan.id}',${idx})"><i class="fas fa-download"></i> Download</button><button class="btn outline small" onclick="renamePlanFile('${plan.id}',${idx})"><i class="fas fa-i-cursor"></i> Rename</button><button class="btn danger small" onclick="removePlanFile('${plan.id}',${idx})"><i class="fas fa-trash"></i> Remove</button>`:`<button class="btn outline small" onclick="previewPlanFile('${plan.id}',${idx})"><i class="fas fa-eye"></i> View</button>`}</div></div>`).join('')
+    ? `<div class="documents-grid">` + plan.files.map((f,idx)=>`<div class="doc-card"><div class="doc-name">${f.name}</div><div class="doc-meta">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div><div class="doc-actions"><div class="file-menu-container"><button class="dots-btn" onclick="showFileMenu(event, 'existing_${idx}')">⋮</button><div id="file-menu-existing_${idx}" class="file-popup-menu" style="display:none;">${admin?`<button onclick="downloadPlanFile('${plan.id}',${idx}); closeAllFileMenus();">Download</button><button onclick="renamePlanFile('${plan.id}',${idx}); closeAllFileMenus();">Rename</button><button onclick="removePlanFile('${plan.id}',${idx}); closeAllFileMenus();">Delete</button>`:`<button onclick="previewPlanFile('${plan.id}',${idx}); closeAllFileMenus();">View</button>`}</div></div></div></div>`).join('') + `</div>`
     : `<div>No documents uploaded.</div>`;
   let historyHtml = history.length
     ? history.map(item=>`<div class="card" style="padding:12px;"><strong>${item.action}</strong><div>${item.summary||''}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${item.editorName||'Unknown user'} · ${fmtDate(item.timestamp)}</div></div>`).join('')
     : '<div class="info-note">No edit history yet.</div>';
-  let statusMenu = admin ? `<div style="position:relative; display:inline-block;"><button class="btn outline small" onclick="toggleStatusMenu(event, '${plan.id}')"><i class="fas fa-ellipsis-vertical"></i> Status Options</button><div class="popup-menu" id="statusMenu_${plan.id}" style="display:none; position:absolute; right:0; top:100%;"><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','ACTIVE')"><i class="fas fa-circle-check"></i> Active</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','DEACTIVATED')"><i class="fas fa-ban"></i> Deactivated</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="promptTransferPlan('${plan.id}')"><i class="fas fa-right-left"></i> Transfer to new owner</button></div></div>` : '';
-  $("modalBody").innerHTML = `<h2>${plan.address}</h2><div class="certificate-detail-grid"><div><strong>Owner:</strong> ${owner.firstName} ${owner.lastName}<br><strong>Tracking ID:</strong> ${plan.ownerTrackingId}<br><strong>Plan ID:</strong> #${plan.planNumber}<br><strong>Ownership Order:</strong> ${getOwnershipOrdinal(plan.ownershipSequence || 1)} owner record<br><strong>Category:</strong> ${plan.type}<br><strong>Area:</strong> ${Number(plan.area).toFixed(2)} m²</div><div><strong>Status:</strong> ${statusBadgeLabel(plan.status)}<br><strong>Created:</strong> ${fmtDate(plan.createdAt)}<br><strong>Last Updated:</strong> ${fmtDate(plan.lastUpdated||plan.createdAt)}<br><strong>Last Edited By:</strong> ${plan.lastEditedByName||owner.firstName+' '+owner.lastName}<br><strong>City:</strong> ${plan.city}</div></div>${plan.transferredFromPlanId ? `<div class="info-note" style="margin-top:12px;">Transferred from previous owner record #${plan.transferredFromPlanNumber || '—'}.</div>` : ''}<div class="divider"></div><h3><i class="fas fa-location-dot"></i> Coordinates</h3><div class="grid"><div class="card" style="padding:12px;"><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</div><div class="card" style="padding:12px;"><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</div></div><div class="divider"></div><h3><i class="fas fa-folder-open"></i> Attached Documents</h3><div class="info-note">${admin?'Admin can add, rename, remove, and download documents.':'End users can preview documents only. Downloads are restricted to administrators.'}</div>${admin?`<div class="file-action-row"><button class="btn accent small" onclick="openAdminAttachmentPicker('${plan.id}')"><i class="fas fa-paperclip"></i> Add / Update Documents</button><input id="adminFilePicker" type="file" multiple style="display:none" onchange="handleAdminFileSelection('${plan.id}', event)"></div>`:''}<div class="folder-grid" style="margin-top:1rem;">${docsHtml}</div><div class="divider"></div><h3>Edit Traceability</h3><div class="info-note">Every property update stores the edit date and who performed it.</div><div style="display:grid;gap:10px;margin-top:12px;">${historyHtml}${plan.deactivatedAt ? `<div class="info-note">Deactivated by ${plan.deactivatedByName || 'Unknown'} on ${fmtDate(plan.deactivatedAt)}.</div>` : ''}${plan.reactivatedAt ? `<div class="info-note">Reactivated by ${plan.reactivatedByName || 'Unknown'} on ${fmtDate(plan.reactivatedAt)}.</div>` : ''}${Array.isArray(plan.transferHistory) && plan.transferHistory.length ? `<div class="info-note">Latest transfer: ${plan.transferHistory[0].toOwnerName || '—'} · ${plan.transferHistory[0].by || 'Unknown'} · ${fmtDate(plan.transferHistory[0].timestamp)}</div>` : ''}</div><div class="divider"></div><h3>Neighbors</h3><div class="grid"><div class="boundary-group north"><strong>North:</strong> ${plan.neighbors.n}<br><strong>Length:</strong> ${plan.dims.n}m</div><div class="boundary-group south"><strong>South:</strong> ${plan.neighbors.s}<br><strong>Length:</strong> ${plan.dims.s}m</div><div class="boundary-group east"><strong>East:</strong> ${plan.neighbors.e}<br><strong>Length:</strong> ${plan.dims.e}m</div><div class="boundary-group west"><strong>West:</strong> ${plan.neighbors.w}<br><strong>Length:</strong> ${plan.dims.w}m</div></div><div class="divider"></div><div class="file-action-row">${ownerCanEdit?`<button class="btn outline" onclick="editProperty('${id}')"><i class="fas fa-pen-to-square"></i> Edit Property</button>`:''}${statusMenu}<button class="btn accent" onclick="showCertificate('${id}')"><i class="fas fa-certificate"></i> Certificate</button><button class="btn outline" onclick="openAccountAccess('${owner.id}')"><i class="fas fa-id-badge"></i> Login Access</button></div>${isTransferredPlan(plan) ? `<div class="divider"></div><div class="info-note">This is a previous owner record and has been grayed out for traceability. The newest transfer creates a separate active owner record.</div>` : ''}<div class="divider"></div><div class="certificate-sketch"><h4>Manual Sketch</h4>${plan.manualDrawingImage?`<img src="${plan.manualDrawingImage}" style="max-width:100%;border:1px solid #ddd;border-radius:12px;">`:'<div>No sketch uploaded.</div>'}</div>`;
+  let statusMenu = admin ? `<div style="position:relative; display:inline-block;"><button class="btn outline small" onclick="toggleStatusMenu(event, '${plan.id}')">Status Options</button><div class="popup-menu" id="statusMenu_${plan.id}" style="display:none; position:absolute; right:0; top:100%;"><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','ACTIVE')">Active</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','DEACTIVATED')">Deactivated</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="promptTransferPlan('${plan.id}')">Transfer to new owner</button></div></div>` : '';
+  $("modalBody").innerHTML = `<h2>${plan.address}</h2>${detailsHtml}${plan.transferredFromPlanId ? `<div class="info-note" style="margin-top:12px;">Transferred from previous owner record #${plan.transferredFromPlanNumber || '—'}.</div>` : ''}<div class="divider"></div><h3>Coordinates</h3><div class="grid"><div class="card" style="padding:12px;"><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</div><div class="card" style="padding:12px;"><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</div></div><div class="divider"></div><h3>Attached Documents</h3><div class="info-note">${admin?'Admin can add, rename, remove, and download documents.':'End users can preview documents only. Downloads are restricted to administrators.'}</div>${admin?`<div class="file-action-row"><button class="btn accent small" onclick="openAdminAttachmentPicker('${plan.id}')">Add / Update Documents</button><input id="adminFilePicker" type="file" multiple style="display:none" onchange="handleAdminFileSelection('${plan.id}', event)"></div>`:''}<div class="documents-grid" style="margin-top:1rem;">${docsHtml}</div><div class="divider"></div><h3>Edit Traceability</h3><div style="display:grid;gap:10px;margin-top:12px;">${historyHtml}${plan.deactivatedAt ? `<div class="info-note">Deactivated by ${plan.deactivatedByName || 'Unknown'} on ${fmtDate(plan.deactivatedAt)}.</div>` : ''}${plan.reactivatedAt ? `<div class="info-note">Reactivated by ${plan.reactivatedByName || 'Unknown'} on ${fmtDate(plan.reactivatedAt)}.</div>` : ''}${Array.isArray(plan.transferHistory) && plan.transferHistory.length ? `<div class="info-note">Latest transfer: ${plan.transferHistory[0].toOwnerName || '—'} · ${plan.transferHistory[0].by || 'Unknown'} · ${fmtDate(plan.transferHistory[0].timestamp)}</div>` : ''}</div><div class="divider"></div><h3>Neighbors</h3><div class="grid"><div class="boundary-group north"><strong>North:</strong> ${plan.neighbors.n}<br><strong>Length:</strong> ${plan.dims.n}m</div><div class="boundary-group south"><strong>South:</strong> ${plan.neighbors.s}<br><strong>Length:</strong> ${plan.dims.s}m</div><div class="boundary-group east"><strong>East:</strong> ${plan.neighbors.e}<br><strong>Length:</strong> ${plan.dims.e}m</div><div class="boundary-group west"><strong>West:</strong> ${plan.neighbors.w}<br><strong>Length:</strong> ${plan.dims.w}m</div></div><div class="divider"></div><div class="modal-actions">${ownerCanEdit?`<button class="btn outline" onclick="editProperty('${id}')">Edit Property</button>`:''}${statusMenu}<button class="btn accent" onclick="showCertificate('${id}')">Certificate</button><button class="btn outline" onclick="openAccountAccess('${owner.id}')">Login Access</button></div>${isTransferredPlan(plan) ? `<div class="divider"></div><div class="info-note">This is a previous owner record and has been grayed out for traceability. The newest transfer creates a separate active owner record.</div>` : ''}<div class="divider"></div><div class="certificate-sketch"><h4>Manual Sketch</h4>${plan.manualDrawingImage?`<img src="${plan.manualDrawingImage}" style="max-width:100%;border:1px solid #ddd;border-radius:12px;">`:'<div>No sketch uploaded.</div>'}</div>`;
   $("propertyModal").style.display = "flex";
 }
+
 function toggleStatusMenu(event, planId){ if(event) event.stopPropagation(); closeAllPopups(event); const menu=$("statusMenu_"+planId); if(menu){ const isVisible = menu.style.display === 'block'; menu.style.display = isVisible ? 'none' : 'block'; } }
 function setPlanStatus(planId, nextStatus, transferName=''){
   const sess = loadSession();
@@ -1225,7 +1382,7 @@ function editProperty(planId){
   const btn = $("submitBtn");
   if(btn){
     btn.dataset.action = 'update';
-    btn.innerHTML = '<i class="fas fa-save"></i> Update Property';
+    btn.innerHTML = 'Update Property';
   }
   showMsg('submitMsg', `Editing plan #${plan.planNumber}. Update any field and save to keep the same plan ID.`, 'success');
 }
@@ -1274,13 +1431,62 @@ function openSupportingDocumentsPicker(){ const input=$("sFiles"); if(input) inp
 function bindSubmitAndAttachmentButtons(){ const attachBtn=$("attachDocsBtn"); if(attachBtn) attachBtn.onclick=openSupportingDocumentsPicker; const submitBtn=$("submitBtn"); if(submitBtn){ submitBtn.onclick=async ()=>{ if(submitBtn.disabled) return; const action=submitBtn.dataset.action||'submit'; if(action==='update') return updatePlan(); return submitPlan(); }; } }
 function getCurrentCoordinates(){ if(!navigator.geolocation){ showMsg('submitMsg','Geolocation is not supported by this browser.','error'); return; } navigator.geolocation.getCurrentPosition( position => { if($("sLatitude")) $("sLatitude").value = asDegree(Number(position.coords.latitude).toFixed(6)); if($("sLongitude")) $("sLongitude").value = asDegree(Number(position.coords.longitude).toFixed(6)); showMsg('submitMsg','Coordinates captured successfully.','success'); }, () => showMsg('submitMsg','Unable to capture your current coordinates. Please allow location access or enter them manually.','error'), { enableHighAccuracy:true, timeout:10000, maximumAge:0 } ); }
 function closeModal(e){ if(!e || e.target===$("propertyModal")) $("propertyModal").style.display="none"; }
-function closeAllPopups(e){ if(e && e.target.closest && (e.target.closest('.popup-menu') || e.target.closest('.dots-btn'))) return; document.querySelectorAll(".popup-menu").forEach(p=>p.style.display="none"); }
+function closeAllPopups(e){ if(e && e.target.closest && (e.target.closest('.popup-menu') || e.target.closest('.dots-btn') || e.target.closest('.file-popup-menu'))) return; document.querySelectorAll(".popup-menu").forEach(p=>p.style.display="none"); closeAllFileMenus(); }
 function toggleMobileNav(e){ if(e) e.stopPropagation(); $("mobileNav").classList.toggle("show"); }
 function closeRenameModal(e){ if(e && e.target !== $("renameModal") && e.target !== $("renameModal").querySelector('.modal-content')) return; $("renameModal").style.display = 'none'; renameCallback = null; }
 function confirmRename(){ let newName = $("renameInput").value.trim(); if(newName && renameCallback){ renameCallback(newName); } closeRenameModal(); }
 
-// init sketch and tools
-window.onload=()=>{ loadStore(); let sess=loadSession(); if(sess){ if(sess.role==="admin") go("admin"); else go("owner"); } else go("home"); updateStatistics(); sketch=new EnhancedSketch("manualCanvas"); 
+// Admin settings modal functions
+function openAdminSettingsModal() {
+  document.getElementById("adminSettingsModal").style.display = "flex";
+}
+function closeAdminSettingsModal() {
+  document.getElementById("adminSettingsModal").style.display = "none";
+}
+function changeAdminCredentialsModal() {
+  let newUser = document.getElementById("modalNewAdminUsername").value.trim();
+  let newPass = document.getElementById("modalNewAdminPassword").value.trim();
+  let currentPass = document.getElementById("modalCurrentAdminPassword").value.trim();
+  let currentCreds = getAdminCredentials();
+  if (currentPass !== currentCreds.password) {
+    showMsg('adminCredMsgModal', 'Current password is incorrect', 'error');
+    return;
+  }
+  if (!newUser || !newPass) {
+    showMsg('adminCredMsgModal', 'Username and password cannot be empty', 'error');
+    return;
+  }
+  setAdminCredentials(newUser, newPass);
+  document.getElementById("modalNewAdminUsername").value = '';
+  document.getElementById("modalNewAdminPassword").value = '';
+  document.getElementById("modalCurrentAdminPassword").value = '';
+  showMsg('adminCredMsgModal', 'Admin credentials updated successfully. Please log in again.', 'success');
+  handleLogout();
+  closeAdminSettingsModal();
+}
+function getAdminCredentials() {
+  let creds = localStorage.getItem("ADMIN_CREDS_V2");
+  if (creds) {
+    try {
+      return JSON.parse(creds);
+    } catch(e) {}
+  }
+  return { username: "admin", password: "admin2121" };
+}
+function setAdminCredentials(username, password) {
+  localStorage.setItem("ADMIN_CREDS_V2", JSON.stringify({ username, password }));
+  // Also update the admin user in store
+  let store = loadStore();
+  let adminUser = store.users.find(u => u.role === 'admin');
+  if (adminUser) {
+    adminUser.phone = username;
+    adminUser.pass = password;
+    saveStore(store);
+  }
+}
+function changeAdminCredentials(){ /* legacy */ }
+
+window.onload=()=>{ loadStore(); updateStatistics(); let sess=loadSession(); if(sess){ if(sess.role==="admin") go("admin"); else go("owner"); } else go("home"); sketch=new EnhancedSketch("manualCanvas"); 
   const lastRegistration = loadLastRegistration();
   if(lastRegistration) fillRegistrationForm(lastRegistration);
   bindRegistrationDraftPersistence();
