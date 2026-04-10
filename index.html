@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CivicProperty Multi-City Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
+  <title>CivicProperty · Multi‑City Portal</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* ========== GLOBAL VARIABLES & RESETS ========== */
+    /* ========== GLOBAL VARIABLES & RESETS (preserved) ========== */
     :root {
       --bg: #f8fafc;
       --card: rgba(255, 255, 255, 0.98);
@@ -44,14 +43,13 @@
       font-size: 16px;
       border: 8px solid #e2e8f0;
     }
-    /* Hide all icons (keep text only) */
+    /* Hide all icons (keep text only) – as original */
     .brand i, .btn i, .nav a i, .card h1 i, .card h2 i, .card h3 i, .card h4 i, .boundary-label i, .folder-card-header i, .certificate-actions i, .tool-pill i, .stat-card i, .info-note i, .msg-feedback i {
       display: none;
     }
     .btn, .tool-pill, .auth-tab {
       gap: 0;
     }
-    /* Blue buttons (solid) */
     .btn:not(.outline):not(.danger):not(.btn-attach):not(.btn-location):not(.btn-fancy) {
       background: #0165fc;
       color: white;
@@ -79,7 +77,6 @@
       transform: translateY(-3px);
       box-shadow: 0 28px 40px -12px rgba(27,161,226,0.5);
     }
-    /* Admin cards grid with gap */
     .admin-cards-grid {
       display: flex;
       flex-direction: column;
@@ -90,7 +87,6 @@
       border-radius: var(--radius-lg);
       margin: 0;
     }
-    /* Boundaries grid */
     .boundaries-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -176,7 +172,6 @@
     .btn-location:hover {
       background: #4cc8e3;
     }
-    /* Certificate */
     .certificate-profile {
       position: absolute;
       top: 1rem;
@@ -271,159 +266,189 @@
       cursor: crosshair;
       background: #ffffff;
     }
-    /* Three-dots menu for documents */
-    .file-menu-container {
+    /* Accordion styles for files (NEW) */
+    .accordion-files {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: white;
+    }
+    .accordion-item {
+      border-bottom: 1px solid var(--line);
+    }
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1.2rem;
+      background: #ffffff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .accordion-header:hover {
+      background: #f8fafc;
+    }
+    .accordion-icon {
+      transition: transform 0.2s;
+      color: var(--primary, #0165fc);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background: #fefefe;
+      padding: 0 1.2rem;
+    }
+    .accordion-content.open {
+      max-height: 180px;
+      padding: 0.8rem 1.2rem 1rem;
+      border-top: 1px solid var(--line);
+    }
+    /* Fancy status dropdown */
+    .fancy-dropdown {
       position: relative;
       display: inline-block;
     }
-    .dots-btn {
-      background: none;
-      border: none;
+    .status-trigger {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 40px;
+      padding: 8px 18px;
+      font-weight: 600;
       cursor: pointer;
-      color: var(--muted);
-      padding: 5px;
-      border-radius: 6px;
-      font-size: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
     }
-    .file-popup-menu {
+    .status-trigger:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+    .status-menu {
       position: absolute;
       right: 0;
-      top: 100%;
+      top: 110%;
       background: white;
-      min-width: 120px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
+      min-width: 210px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
       z-index: 1000;
+      overflow: hidden;
       display: none;
+      border: 1px solid var(--line);
     }
-    .file-popup-menu button {
-      display: block;
+    .status-menu button {
       width: 100%;
-      padding: 8px 12px;
       text-align: left;
+      padding: 12px 20px;
       background: none;
       border: none;
+      font-weight: 500;
       cursor: pointer;
-      font-size: 0.85rem;
-    }
-    .file-popup-menu button:hover {
-      background: var(--accent-light);
-    }
-    /* Two-column document grid (fancy cards) */
-    .documents-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .doc-card {
-      background: white;
-      border-radius: 16px;
-      padding: 0.8rem;
-      border: 1px solid var(--line);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .doc-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    .doc-card .doc-name {
-      font-weight: 600;
-      word-break: break-word;
-      margin-bottom: 0.25rem;
-    }
-    .doc-card .doc-meta {
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-bottom: 0.5rem;
-    }
-    .doc-card .doc-actions {
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      transition: background 0.15s;
     }
-    /* For the folder container in submission page, use same grid */
-    .folder-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      padding: 1rem;
+    .status-menu button i { display: inline-block !important; width: 22px; }
+    .status-menu button:hover {
+      background: var(--accent-light);
+      color: var(--brand);
+    }
+    /* Responsive drawing tools (three-dots) */
+    .toolbar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
       background: #f8fafc;
-      border-radius: 12px;
+      border-radius: 60px;
+      padding: 8px 16px;
       border: 1px solid var(--line);
+      margin: 1rem 0;
+      position: relative;
     }
-    @media (max-width: 640px) {
-      .documents-grid, .folder-grid {
-        grid-template-columns: 1fr;
+    .tools-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .tools-toggle-btn {
+      display: none;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 40px;
+      padding: 8px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      align-items: center;
+      gap: 8px;
+    }
+    .tool-pill {
+      background: white;
+      border-radius: 40px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid #dee6ef;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .tool-pill.active {
+      background: #0165fc;
+      color: white;
+      border-color: #0165fc;
+    }
+    @media (max-width: 720px) {
+      .tools-list {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 24px;
+        padding: 16px;
+        box-shadow: var(--shadow-lg);
+        z-index: 60;
+        border: 1px solid var(--line);
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .tools-list.show {
+        display: flex;
+      }
+      .tools-toggle-btn {
+        display: inline-flex;
       }
     }
-    /* Rest of base styles */
-    header {
-      background: var(--header-color);
-      color: white;
-      height: 80px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      padding: 0 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .topbar {
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-    .brand {
-      font-weight: 900;
-      font-size: clamp(1.2rem, 5vw, 1.8rem);
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    /* preserve all original grid, card, modal, etc. styles */
+    .file-menu-container { position: relative; display: inline-block; }
+    .dots-btn { background: none; border: none; cursor: pointer; color: var(--muted); padding: 5px; border-radius: 6px; font-size: 1.2rem; }
+    .file-popup-menu { position: absolute; right: 0; top: 100%; background: white; min-width: 120px; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); z-index: 1000; display: none; }
+    .file-popup-menu button { display: block; width: 100%; padding: 8px 12px; text-align: left; background: none; border: none; cursor: pointer; font-size: 0.85rem; }
+    .file-popup-menu button:hover { background: var(--accent-light); }
+    .documents-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
+    .doc-card { background: white; border-radius: 16px; padding: 0.8rem; border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
+    .doc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .folder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--line); }
+    @media (max-width: 640px) { .documents-grid, .folder-grid { grid-template-columns: 1fr; } }
+    header { background: var(--header-color); color: white; height: 80px; position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; padding: 0 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .topbar { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; }
+    .brand { font-weight: 900; font-size: clamp(1.2rem, 5vw, 1.8rem); letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
     .spacer { flex: 1; }
     .nav { display: flex; align-items: center; gap: 1.5rem; }
     .nav a { color: white; text-decoration: none; font-weight: 600; cursor: pointer; padding: 8px 0; position: relative; }
     .nav a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: white; transition: width 0.3s; }
     .nav a:hover::after { width: 100%; }
     .hamburger { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    .mobile-nav { 
-      display: none; 
-      position: absolute; 
-      top: 80px; 
-      right: 0; 
-      background: white; 
-      z-index: 999; 
-      box-shadow: var(--shadow-lg); 
-      border-radius: 0 0 12px 12px; 
-      overflow: hidden; 
-      min-width: 200px;
-    }
+    .mobile-nav { display: none; position: absolute; top: 80px; right: 0; background: white; z-index: 999; box-shadow: var(--shadow-lg); border-radius: 0 0 12px 12px; overflow: hidden; min-width: 200px; }
     .mobile-nav.show { display: block; }
-    .mobile-nav a { 
-      display: block; 
-      color: var(--brand); 
-      text-decoration: none; 
-      padding: 1rem 1.5rem; 
-      font-weight: 600; 
-      border-bottom: 1px solid var(--line);
-      position: relative;
-    }
-    .mobile-nav .close-mobile {
-      display: block;
-      text-align: right;
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid var(--line);
-      cursor: pointer;
-      font-weight: bold;
-      color: var(--brand);
-    }
+    .mobile-nav a { display: block; color: var(--brand); text-decoration: none; padding: 1rem 1.5rem; font-weight: 600; border-bottom: 1px solid var(--line); }
     .profile-container { background: var(--card); border-bottom: 1px solid var(--line); padding: 1rem 0; }
     .profile-content { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
     .user-photo-container { width: 120px; height: 150px; border-radius: 8px; overflow: hidden; border: 3px solid white; box-shadow: var(--shadow); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer; }
@@ -486,59 +511,20 @@
     .admin-table-wrapper { max-height: 300px; overflow-y: auto; transition: max-height 0.3s ease; }
     .admin-table-wrapper.collapsed { max-height: 200px; overflow-y: hidden; }
     .accordion-toggle { margin-top: 10px; text-align: center; }
-    .toolbar-compact { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 1rem 0; padding: 12px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--line); }
-    .tool-pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 40px; background: white; border: 1px solid var(--line); font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-    .tool-pill.active { background: var(--accent-light); border-color: var(--accent); color: var(--brand); box-shadow: 0 2px 6px rgba(95,220,247,0.3); }
     .certificate-neighbor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
     .neighbor-box { background: #f8fafc; border-radius: 16px; padding: 1rem; text-align: center; border-left: 6px solid; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
     .neighbor-box.north { border-left-color: var(--north); }
     .neighbor-box.south { border-left-color: var(--south); }
     .neighbor-box.east { border-left-color: var(--east); }
     .neighbor-box.west { border-left-color: var(--west); }
-    .neighbor-box strong { display: block; font-size: 1.1rem; margin-bottom: 6px; }
-    .portfolio-profile-layout {
-      display: flex;
-      flex-direction: column;
-    }
-    .profile-photo-top {
-      margin-bottom: 1rem;
-    }
-    .details-2col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .modal-actions {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin: 1rem 0;
-    }
-    /* Two-row property details */
-    .property-details-two-rows {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .property-detail-item {
-      background: #f8fafc;
-      padding: 0.75rem;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-    }
-    .property-detail-item strong {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-    }
-    .property-detail-item span {
-      font-weight: 600;
-    }
+    .portfolio-profile-layout { display: flex; flex-direction: column; }
+    .profile-photo-top { margin-bottom: 1rem; }
+    .details-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    .modal-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+    .property-details-two-rows { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem; }
+    .property-detail-item { background: #f8fafc; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--line); }
+    .property-detail-item strong { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+    .property-detail-item span { font-weight: 600; }
     @media (max-width: 768px) {
       .dash-grid { grid-template-columns: 1fr; }
       .hamburger { display: block; }
@@ -556,24 +542,8 @@
       .certificate-container, .certificate-container * { visibility: visible; }
       .certificate-container { position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 20px; }
       .btn, .close-modal { display: none !important; }
-      .certificate-profile {
-        position: relative;
-        margin: 0 auto 1rem auto;
-        width: 80px;
-        height: 80px;
-        top: 0;
-        left: 0;
-      }
-      .certificate-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-      .certificate-detail-card {
-        background: #f8fafc;
-        break-inside: avoid;
-      }
+      .certificate-profile { position: relative; margin: 0 auto 1rem auto; width: 80px; height: 80px; top: 0; left: 0; }
+      .certificate-header { display: flex; flex-direction: column; align-items: center; text-align: center; }
     }
   </style>
 </head>
@@ -625,19 +595,22 @@
 
       <div style="margin:2rem 0;">
         <h3>Property Sketch (Manual Drawing)</h3>
-        <div class="toolbar-compact" id="drawingToolsBar">
-          <div class="tool-pill" data-tool="pen">Pen</div>
-          <div class="tool-pill" data-tool="line">Line</div>
-          <div class="tool-pill" data-tool="rect">Rect</div>
-          <div class="tool-pill" data-tool="circle">Circle</div>
-          <div class="tool-pill" data-tool="arrow">Arrow</div>
-          <div class="tool-pill" data-tool="text">Text</div>
-          <div class="tool-pill" data-tool="move">Move</div>
-          <div class="tool-pill" data-tool="point_eraser">Point Eraser</div>
-          <div class="tool-pill" data-tool="eraser">Eraser</div>
-          <input type="color" id="skColor" value="#0f172a" style="width:35px;height:35px;border-radius:50%;border:1px solid var(--line);">
-          <button class="btn outline small" id="undoSketchBtn">Undo</button>
-          <button class="btn danger small" id="clearSketchBtn">Clear</button>
+        <div class="toolbar-wrapper" id="drawingToolsBar">
+          <div class="tools-toggle-btn" id="toolsToggleBtn"><i class="fas fa-ellipsis-h"></i> Drawing Tools</div>
+          <div class="tools-list" id="toolsList">
+            <div class="tool-pill" data-tool="pen">Pen</div>
+            <div class="tool-pill" data-tool="line">Line</div>
+            <div class="tool-pill" data-tool="rect">Rect</div>
+            <div class="tool-pill" data-tool="circle">Circle</div>
+            <div class="tool-pill" data-tool="arrow">Arrow</div>
+            <div class="tool-pill" data-tool="text">Text</div>
+            <div class="tool-pill" data-tool="move">Move</div>
+            <div class="tool-pill" data-tool="point_eraser">Point Eraser</div>
+            <div class="tool-pill" data-tool="eraser">Eraser</div>
+            <input type="color" id="skColor" value="#0f172a" style="width:35px;height:35px;border-radius:50%;border:1px solid var(--line);">
+            <button class="btn outline small" id="undoSketchBtn">Undo</button>
+            <button class="btn danger small" id="clearSketchBtn">Clear</button>
+          </div>
         </div>
         <div class="visual-container"><canvas id="manualCanvas" width="800" height="500"></canvas></div>
         <div class="gp-hint" style="font-size:12px;color:var(--muted);margin-top:8px;">✏️ Tools: Pen (free draw), Line (click-drag-release), Rectangle, Circle, Arrow, Text (click to place), Move (drag shapes), Point Eraser (click on a point), Eraser brush. Color picker changes stroke/fill color. Use Undo to revert last action.</div>
@@ -692,7 +665,6 @@
 
   <section id="view-myplans" class="hidden"><div class="page-stack"><h1>Property Portfolio</h1><div id="portfolioProfileCard"></div><div id="myPlansTableContainer"></div></div></section>
   <section id="view-admin" class="hidden"><div class="page-stack"><h1>Admin Command Center</h1><div class="dash-grid"><div class="admin-cards-grid"><div class="stat-card stat-card-clickable" id="statTotalFilings" onclick="showAllFilingsDetail()"><div class="stat-label">Total Filings</div><div class="stat-value" id="aTotal">0</div></div><div class="stat-card stat-card-clickable" id="statRegisteredUsers" onclick="showRegisteredUsersDetail()"><div class="stat-label">Registered Users</div><div class="stat-value" id="registeredUsersCount">0</div></div><div class="stat-card stat-card-clickable" id="statDocuments" onclick="showDocumentsDetail()"><div class="stat-label">Documents</div><div class="stat-value" id="totalDocumentsAdmin">0</div></div>
-        <!-- Admin Tools button opens modal -->
         <div class="card">
           <h3>Admin Tools & Settings</h3>
           <button class="btn small accent" onclick="openAdminSettingsModal()">Configure Admin Credentials</button>
@@ -708,7 +680,7 @@
 <div id="adminSettingsModal" class="modal-overlay"><div class="modal-content" style="max-width:500px;"><button class="close-modal" onclick="closeAdminSettingsModal()">×</button><h3>Admin Credentials</h3><label>New Username</label><input type="text" id="modalNewAdminUsername" placeholder="Enter new username"><label>New Password</label><input type="password" id="modalNewAdminPassword" placeholder="Enter new password"><label>Current Password</label><input type="password" id="modalCurrentAdminPassword" placeholder="Required to save"><button class="btn accent" style="margin-top:1rem;" onclick="changeAdminCredentialsModal()">Update Credentials</button><div id="adminCredMsgModal" class="msg-feedback"></div></div></div>
 
 <script>
-// ======================== FULLY FUNCTIONAL MANUAL DRAWING ENGINE ========================
+// ======================== FULLY FUNCTIONAL MANUAL DRAWING ENGINE (PRESERVED) ========================
 class EnhancedSketch {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
@@ -1128,7 +1100,7 @@ function login(){ const phoneInput = $("loginPhone").value.trim(); const pass = 
 function handleLogout(){ clearSession(); updateNav(); updateUserProfile(); go('home'); }
 function displayActionNotice(targetId){ const target = $(targetId); if(!target) return; const notice = consumeActionNotice(); if(!notice || !notice.message){ target.innerHTML = ''; return; } target.innerHTML = `<div class="msg-feedback ${notice.type||'success'}" style="margin-bottom:1rem;">${notice.message}</div>`; }
 function renderOwnerDash(){ const sess = loadSession(); if(!sess) return; if($("kpiCitizenId")) $("kpiCitizenId").textContent = sess.trackingId || '—'; if($("ownerSearchResult")) $("ownerSearchResult").innerHTML = '<div class="info-note">Search with your Tracking ID or Plan ID to quickly open a property record.</div>'; displayActionNotice("ownerNotice"); }
-function renderMyPortfolio(){ const sess = loadSession(); const wrap = $("myPlansTableContainer"); const profileWrap = $("portfolioProfileCard"); if(!wrap) return; if(!sess){ if(profileWrap) profileWrap.innerHTML = ''; wrap.innerHTML = '<div class="card">Please sign in first.</div>'; return; } const store = loadStore(); const owner = (store.users || []).find(u => u.id === sess.id) || sess; const plans = store.plans.filter(p => p.ownerId === sess.id || String(p.ownerTrackingId||'') === String(sess.trackingId||'')); if(profileWrap){ const photoHtml = owner.passportPhoto ? `<div class="profile-photo-top"><img src="${owner.passportPhoto}" alt="Passport photo" style="width:110px;height:135px;object-fit:cover;border-radius:12px;border:1px solid var(--line);"></div>` : `<div class="profile-photo-top"><div style="width:110px;height:135px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--muted);font-weight:700;">No Photo</div></div>`; profileWrap.innerHTML = `<div class="card" style="margin-bottom:1rem;"><div class="portfolio-profile-layout">${photoHtml}<h2>Registration Details</h2><div class="details-2col"><div><strong>Tracking ID:</strong> ${owner.trackingId || '—'}</div><div><strong>First Name:</strong> ${owner.firstName || ''}</div><div><strong>Middle Name:</strong> ${owner.middleName || '—'}</div><div><strong>Last Name:</strong> ${owner.lastName || ''}</div><div><strong>City:</strong> ${owner.city || '—'}</div><div><strong>Phone / Login ID:</strong> ${owner.rawPhone || owner.phone || '—'}</div><div><strong>Email:</strong> ${owner.email || '—'}</div><div><strong>Registered:</strong> ${owner.registeredAt ? fmtDate(owner.registeredAt) : '—'}</div><div><strong>Total Properties:</strong> ${plans.length}</div></div></div><div class="file-action-row" style="margin-top:1rem;"><button class="btn outline small" onclick="openAccountAccess('${owner.id}')">View / Edit Login Access</button></div></div></div>`; } if(!plans.length){ wrap.innerHTML = '<div class="card">No property records yet.</div>'; return; } wrap.innerHTML = `<div class="card"><div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Type</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Updated</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>`<tr><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.type}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${fmtDate(p.lastUpdated||p.createdAt)}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn btn-open small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`).join('')}</tbody></table></div></div>`; }
+function renderMyPortfolio(){ const sess = loadSession(); const wrap = $("myPlansTableContainer"); const profileWrap = $("portfolioProfileCard"); if(!wrap) return; if(!sess){ if(profileWrap) profileWrap.innerHTML = ''; wrap.innerHTML = '<div class="card">Please sign in first.</div>'; return; } const store = loadStore(); const owner = (store.users || []).find(u => u.id === sess.id) || sess; const plans = store.plans.filter(p => p.ownerId === sess.id || String(p.ownerTrackingId||'') === String(sess.trackingId||'')); if(profileWrap){ const photoHtml = owner.passportPhoto ? `<div class="profile-photo-top"><img src="${owner.passportPhoto}" alt="Passport photo" style="width:110px;height:135px;object-fit:cover;border-radius:12px;border:1px solid var(--line);"></div>` : `<div class="profile-photo-top"><div style="width:110px;height:135px;border-radius:12px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc;color:var(--muted);font-weight:700;">No Photo</div></div>`; profileWrap.innerHTML = `<div class="card" style="margin-bottom:1rem;"><div class="portfolio-profile-layout">${photoHtml}<h2>Registration Details</h2><div class="details-2col"><div><strong>Tracking ID:</strong> ${owner.trackingId || '—'}</div><div><strong>First Name:</strong> ${owner.firstName || ''}</div><div><strong>Middle Name:</strong> ${owner.middleName || '—'}</div><div><strong>Last Name:</strong> ${owner.lastName || ''}</div><div><strong>City:</strong> ${owner.city || '—'}</div><div><strong>Phone / Login ID:</strong> ${owner.rawPhone || owner.phone || '—'}</div><div><strong>Email:</strong> ${owner.email || '—'}</div><div><strong>Registered:</strong> ${owner.registeredAt ? fmtDate(owner.registeredAt) : '—'}</div><div><strong>Total Properties:</strong> ${plans.length}</div></div></div><div class="file-action-row" style="margin-top:1rem;"><button class="btn outline small" onclick="openAccountAccess('${owner.id}')">View / Edit Login Access</button></div></div></div>`; } if(!plans.length){ wrap.innerHTML = '<div class="card">No property records yet.</div>'; return; } wrap.innerHTML = `<div class="card"><div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Type</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Updated</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>`<tr><td style="padding:12px;border-top:1px solid var(--line);">#${p.planNumber}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.type}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${fmtDate(p.lastUpdated||p.createdAt)}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn btn-open small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`).join('')}</tbody>}</table></div></div>`; }
 function ownerSearch(){ const q = $("ownerSearchId").value.trim(); const target = $("ownerSearchResult"); const sess = loadSession(); if(!target) return; if(!q){ target.innerHTML = '<div class="info-note">Enter your Tracking ID or a Plan ID.</div>'; return; } const plans = loadStore().plans.filter(p => (p.ownerId === sess?.id || String(p.ownerTrackingId||'') === String(sess?.trackingId||'')) && (String(p.ownerTrackingId).includes(q) || String(p.planNumber).includes(q))); if(!plans.length){ target.innerHTML = '<div class="info-note">No matching record found.</div>'; return; } target.innerHTML = plans.map(p => `<div class="card" style="margin-top:12px;"><strong>#${p.planNumber}</strong><div>${p.address}</div><div style="margin-top:8px;"><button class="btn btn-open small" onclick="showPropertyDetail('${p.id}')">View record</button></div></div>`).join(''); }
 function renderAdmin(){ const wrap = $("adminTableContainer"); if(!wrap) return; const store = loadStore(); const plans = store.plans; if(!plans.length){ wrap.innerHTML = '<div class="info-note">No filings yet.</div>'; document.getElementById("accordionToggle").style.display = 'none'; return; } const tableHtml = `<div style="overflow:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:12px;">Plan ID</th><th style="text-align:left;padding:12px;">Tracking ID</th><th style="text-align:left;padding:12px;">Owner</th><th style="text-align:left;padding:12px;">Address</th><th style="text-align:left;padding:12px;">Status</th><th style="text-align:left;padding:12px;">Docs</th><th style="text-align:left;padding:12px;">Action</th></tr></thead><tbody>${plans.map(p=>{ const owner = store.users.find(u=>u.id===p.ownerId) || {}; return `<tr class="${isTransferredPlan(p)?'record-transferred':''}"><td style="padding:12px;border-top:1px solid var(--line);"><span class="cell-link" onclick="showPropertyDetail('${p.id}')" style="cursor:pointer; color:#0165fc; font-weight:bold;">#${p.planNumber}</span></td><td style="padding:12px;border-top:1px solid var(--line);">${p.ownerTrackingId || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${[owner.firstName, owner.lastName].filter(Boolean).join(' ') || '—'}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.address}</td><td style="padding:12px;border-top:1px solid var(--line);">${statusBadgeLabel(p.status)}</td><td style="padding:12px;border-top:1px solid var(--line);">${p.files?.length||0}</td><td style="padding:12px;border-top:1px solid var(--line);"><button class="btn outline small" onclick="showPropertyDetail('${p.id}')">Open</button></td></tr>`; }).join('')}</tbody></table></div>`; wrap.innerHTML = tableHtml; const rowCount = plans.length; const toggleDiv = document.getElementById("accordionToggle"); if (rowCount > 3) { if (!wrap.querySelector('.admin-table-wrapper')) { const wrapper = document.createElement('div'); wrapper.className = 'admin-table-wrapper collapsed'; wrapper.innerHTML = wrap.innerHTML; wrap.innerHTML = ''; wrap.appendChild(wrapper); toggleDiv.style.display = 'block'; toggleDiv.querySelector('button').innerText = 'Show all'; } } else { toggleDiv.style.display = 'none'; if (wrap.querySelector('.admin-table-wrapper')) { const inner = wrap.querySelector('.admin-table-wrapper').innerHTML; wrap.innerHTML = inner; } } }
 function toggleAdminTable() { const wrapper = document.querySelector('.admin-table-wrapper'); if (wrapper) { wrapper.classList.toggle('collapsed'); const btn = document.querySelector('#accordionToggle button'); btn.innerText = wrapper.classList.contains('collapsed') ? 'Show all' : 'Show less'; } }
@@ -1175,11 +1147,65 @@ function canAdminManage(){ let sess=loadSession(); return !!(sess && sess.role==
 function closeAllFileMenus() { document.querySelectorAll('.file-popup-menu').forEach(m => m.style.display = 'none'); }
 function showFileMenu(event, fileId) { event.stopPropagation(); closeAllFileMenus(); const menu = document.getElementById(`file-menu-${fileId}`); if (menu) { menu.style.display = 'block'; setTimeout(() => { document.addEventListener('click', function closeMenu(e) { if (!menu.contains(e.target) && e.target !== event.target) { menu.style.display = 'none'; document.removeEventListener('click', closeMenu); } }); }, 0); } }
 
-function renderEnhancedFolderView(){ let c=$("folderContainer"); if(!c) return; if(pendingFiles.length===0){ c.innerHTML='<div class="empty-folder">No documents</div>'; return; } let html=`<div class="folder-header-main">Documents (${pendingFiles.length})</div><div class="documents-grid">`; pendingFiles.forEach((f,i)=>{ html+=`<div class="doc-card"><div class="doc-name">${f.name}</div><div class="doc-meta">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div><div class="doc-actions"><div class="file-menu-container"><button class="dots-btn" onclick="showFileMenu(event, 'pending_${i}')">⋮</button><div id="file-menu-pending_${i}" class="file-popup-menu" style="display:none;"><button onclick="renamePending(${i}); closeAllFileMenus();">Rename</button><button onclick="removePending(${i}); closeAllFileMenus();">Remove</button></div></div></div></div>`; }); html+=`</div>`; c.innerHTML=html; }
+// ========== ACCORDION RENDERER FOR FILES (NEW) ==========
+function renderFilesAccordionOrGrid(files, actionRenderer) {
+  if (!files || files.length === 0) return '<div class="info-note">No documents attached.</div>';
+  if (files.length <= 2) {
+    let grid = `<div class="documents-grid">` + files.map((f, idx) => `<div class="doc-card"><div class="doc-name">📄 ${f.name}</div><div class="doc-meta">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div><div class="doc-actions">${actionRenderer(idx, f)}</div></div>`).join('') + `</div>`;
+    return grid;
+  }
+  let accordion = `<div class="accordion-files">`;
+  files.forEach((f, idx) => {
+    accordion += `<div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)"><span class="file-name">📄 ${f.name}</span><span class="file-meta">${fileSizeLabel(f.size)}</span><span class="accordion-icon">▼</span></div><div class="accordion-content"><div class="file-actions">${actionRenderer(idx, f)}</div></div></div>`;
+  });
+  accordion += `</div>`;
+  return accordion;
+}
 
-function renamePending(idx){ const file=pendingFiles[idx]; if(!file) return; renameCallback = (newName) => { pendingFiles[idx].name = newName; renderEnhancedFolderView(); renameCallback = null; }; $("renameInput").value = file.name; $("renameModal").style.display = 'flex'; }
-function removePending(idx){ pendingFiles.splice(idx,1); renderEnhancedFolderView(); }
-async function handleFileSelection(){ let input=$("sFiles"); let files=Array.from(input.files||[]); if(!files.length) return; let timestamp=Date.now(); let newFiles=files.map((f,index)=>({ id:"f_"+timestamp+"_"+index+"_"+Math.random().toString(16).slice(2), name:f.name, type:f.type||'application/octet-stream', status:"active", uploadedAt:nowISO(), size:f.size, downloadCount:0, visibility:'owner-view', storage:'indexeddb', hasBlob:true, fileObject:f })); pendingFiles.push(...newFiles); input.value=''; renderEnhancedFolderView(); }
+window.toggleAccordion = function(header) {
+  let content = header.nextElementSibling;
+  let icon = header.querySelector('.accordion-icon');
+  content.classList.toggle('open');
+  icon.innerHTML = content.classList.contains('open') ? '▲' : '▼';
+};
+
+function renderEnhancedFolderView(){
+  let c=$("folderContainer");
+  if(!c) return;
+  if(pendingFiles.length===0){
+    c.innerHTML='<div class="empty-folder">No documents</div>';
+    return;
+  }
+  let actions = (idx, f) => `<div class="file-menu-container"><button class="dots-btn" onclick="showFileMenu(event, 'pending_${idx}')">⋮</button><div id="file-menu-pending_${idx}" class="file-popup-menu" style="display:none;"><button onclick="renamePending(${idx}); closeAllFileMenus();">Rename</button><button onclick="removePending(${idx}); closeAllFileMenus();">Remove</button></div></div>`;
+  let html = renderFilesAccordionOrGrid(pendingFiles, actions);
+  c.innerHTML = `<div class="folder-header-main">Documents (${pendingFiles.length})</div>${html}`;
+}
+
+function renamePending(idx){
+  const file=pendingFiles[idx];
+  if(!file) return;
+  renameCallback = (newName) => {
+    pendingFiles[idx].name = newName;
+    renderEnhancedFolderView();
+    renameCallback = null;
+  };
+  $("renameInput").value = file.name;
+  $("renameModal").style.display = 'flex';
+}
+function removePending(idx){
+  pendingFiles.splice(idx,1);
+  renderEnhancedFolderView();
+}
+async function handleFileSelection(){
+  let input=$("sFiles");
+  let files=Array.from(input.files||[]);
+  if(!files.length) return;
+  let timestamp=Date.now();
+  let newFiles=files.map((f,index)=>({ id:"f_"+timestamp+"_"+index+"_"+Math.random().toString(16).slice(2), name:f.name, type:f.type||'application/octet-stream', status:"active", uploadedAt:nowISO(), size:f.size, downloadCount:0, visibility:'owner-view', storage:'indexeddb', hasBlob:true, fileObject:f }));
+  pendingFiles.push(...newFiles);
+  input.value='';
+  renderEnhancedFolderView();
+}
 
 async function submitPlan(){
   const btn = $("submitBtn");
@@ -1227,6 +1253,93 @@ function handleCompleteRegistration(event){ if(event) event.preventDefault(); if
 
 function statusBadgeLabel(status){ const normalized = String(status || 'ACTIVE').toUpperCase(); if(normalized.startsWith('TRANSFERRED')) return status; if(normalized === 'DEACTIVATED') return 'DEACTIVATED'; return 'ACTIVE'; }
 
+// ========== FANCY STATUS DROPDOWN + SECOND CLOSE ==========
+function closeAllPopups(e) {
+  if(e && e.target.closest && (e.target.closest('.fancy-dropdown') || e.target.closest('.popup-menu') || e.target.closest('.dots-btn'))) return;
+  document.querySelectorAll(".status-menu").forEach(m => m.style.display = "none");
+  closeAllFileMenus();
+}
+
+window.toggleStatusMenu = function(planId, event) {
+  if(event) event.stopPropagation();
+  let menu = document.getElementById(`statusMenu_${planId}`);
+  if(menu) {
+    let isVisible = menu.style.display === 'block';
+    menu.style.display = isVisible ? 'none' : 'block';
+  }
+};
+
+window.setPlanStatus = async function(planId, newStatus) {
+  const sess = loadSession();
+  if(!sess || sess.role !== 'admin'){ alert('Only admin can update status.'); return; }
+  let store = loadStore(), plan = store.plans.find(p=>p.id===planId);
+  if(!plan) return;
+  const stamp = nowISO();
+  const editorName = getUserDisplayName(sess);
+  plan.status = newStatus;
+  plan.lastUpdated = stamp;
+  plan.lastEditedBy = sess.id;
+  plan.lastEditedByName = editorName;
+  if(!Array.isArray(plan.editHistory)) plan.editHistory = [];
+  plan.editHistory.unshift({ userId:sess.id, editorName, action:'STATUS_UPDATED', timestamp:stamp, summary:`Status changed to ${newStatus}` });
+  store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'STATUS_UPDATED', details:`${editorName} changed status to ${newStatus} for #${plan.planNumber}`, timestamp:stamp });
+  saveStore(store);
+  closeAllPopups();
+  showPropertyDetail(planId);
+  renderAdmin();
+  renderMyPortfolio();
+};
+
+// ========== TRANSFER TO NEW OWNER (FIXED) ==========
+window.transferPlan = async function(planId) {
+  const sess = loadSession();
+  if(!sess || sess.role !== 'admin'){ alert('Only admin can transfer ownership'); return; }
+  let store = loadStore();
+  let plan = store.plans.find(p=>p.id===planId);
+  if(!plan) return;
+  const newOwnerName = prompt("Enter new owner full name (e.g., John Doe):");
+  if(!newOwnerName || !newOwnerName.trim()) return;
+  const stamp = nowISO();
+  const editorName = getUserDisplayName(sess);
+  const newPlanNumber = Math.floor(10000000 + Math.random()*90000000).toString();
+  const newTrackingId = "TR_" + newPlanNumber.slice(-6);
+  const newOwnerId = "u_transfer_" + Date.now();
+  const newOwner = {
+    id: newOwnerId, role:"owner", firstName: newOwnerName.split(' ')[0] || newOwnerName,
+    lastName: newOwnerName.split(' ').slice(1).join(' ') || "", phone: newTrackingId,
+    rawPhone: newTrackingId, pass: newTrackingId.slice(-4), city: plan.city || "General",
+    trackingId: newTrackingId, registeredAt: stamp, passportPhoto: null
+  };
+  store.users.push(newOwner);
+  const newPlan = JSON.parse(JSON.stringify(plan));
+  newPlan.id = "p_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+  newPlan.planNumber = newPlanNumber;
+  newPlan.ownerId = newOwnerId;
+  newPlan.ownerTrackingId = newTrackingId;
+  newPlan.status = "ACTIVE";
+  newPlan.createdAt = stamp;
+  newPlan.lastUpdated = stamp;
+  newPlan.createdByName = editorName;
+  newPlan.lastEditedByName = editorName;
+  newPlan.ownershipSequence = (plan.ownershipSequence || 1) + 1;
+  newPlan.rootPlanNumber = plan.rootPlanNumber || plan.planNumber;
+  newPlan.transferredFromPlanId = plan.id;
+  newPlan.transferHistory = [{ fromPlanId: plan.id, toOwnerName: newOwnerName, by: editorName, timestamp: stamp }];
+  plan.status = `TRANSFERRED · ${newOwnerName}`;
+  plan.deactivatedAt = stamp;
+  plan.lastUpdated = stamp;
+  plan.transferredTo = newOwnerName;
+  if(!plan.transferHistory) plan.transferHistory = [];
+  plan.transferHistory.unshift({ toOwner: newOwnerName, by: editorName, timestamp: stamp });
+  store.plans.unshift(newPlan);
+  saveStore(store);
+  alert(`✅ Property transferred to ${newOwnerName}. New active record #${newPlanNumber} created.`);
+  renderAdmin();
+  renderMyPortfolio();
+  showPropertyDetail(newPlan.id);
+  closeAllPopups();
+};
+
 function showPropertyDetail(id){
   let store = loadStore(), plan = store.plans.find(p=>p.id===id), owner = store.users.find(u=>u.id===plan?.ownerId);
   if(!plan || !owner) return;
@@ -1235,7 +1348,6 @@ function showPropertyDetail(id){
   let admin = canAdminManage();
   let ownerCanEdit = !!sess && (admin || (sess.role === 'owner' && sess.id === plan.ownerId));
   let history = (plan.editHistory||[]).slice(0,5);
-  // Two-row property details (5 items first row, 4 items second row)
   const detailsFirstRow = [
     { label: "Owner", value: `${owner.firstName} ${owner.lastName}` },
     { label: "Tracking ID", value: plan.ownerTrackingId },
@@ -1251,108 +1363,13 @@ function showPropertyDetail(id){
   ];
   let detailsHtml = `<div class="property-details-two-rows">` + detailsFirstRow.map(d => `<div class="property-detail-item"><strong>${d.label}</strong><span>${d.value}</span></div>`).join('') + detailsSecondRow.map(d => `<div class="property-detail-item"><strong>${d.label}</strong><span>${d.value}</span></div>`).join('') + `</div>`;
   
-  let docsHtml = (plan.files&&plan.files.length)
-    ? `<div class="documents-grid">` + plan.files.map((f,idx)=>`<div class="doc-card"><div class="doc-name">${f.name}</div><div class="doc-meta">${fileSizeLabel(f.size)} · Downloads: ${f.downloadCount||0}</div><div class="doc-actions"><div class="file-menu-container"><button class="dots-btn" onclick="showFileMenu(event, 'existing_${idx}')">⋮</button><div id="file-menu-existing_${idx}" class="file-popup-menu" style="display:none;">${admin?`<button onclick="downloadPlanFile('${plan.id}',${idx}); closeAllFileMenus();">Download</button><button onclick="renamePlanFile('${plan.id}',${idx}); closeAllFileMenus();">Rename</button><button onclick="removePlanFile('${plan.id}',${idx}); closeAllFileMenus();">Delete</button>`:`<button onclick="previewPlanFile('${plan.id}',${idx}); closeAllFileMenus();">View</button>`}</div></div></div></div>`).join('') + `</div>`
-    : `<div>No documents uploaded.</div>`;
-  let historyHtml = history.length
-    ? history.map(item=>`<div class="card" style="padding:12px;"><strong>${item.action}</strong><div>${item.summary||''}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${item.editorName||'Unknown user'} · ${fmtDate(item.timestamp)}</div></div>`).join('')
-    : '<div class="info-note">No edit history yet.</div>';
-  let statusMenu = admin ? `<div style="position:relative; display:inline-block;"><button class="btn outline small" onclick="toggleStatusMenu(event, '${plan.id}')">Status Options</button><div class="popup-menu" id="statusMenu_${plan.id}" style="display:none; position:absolute; right:0; top:100%;"><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','ACTIVE')">Active</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="setPlanStatus('${plan.id}','DEACTIVATED')">Deactivated</button><button class="btn outline small" style="width:100%;justify-content:flex-start;border:none;border-radius:0;" onclick="promptTransferPlan('${plan.id}')">Transfer to new owner</button></div></div>` : '';
-  $("modalBody").innerHTML = `<h2>${plan.address}</h2>${detailsHtml}${plan.transferredFromPlanId ? `<div class="info-note" style="margin-top:12px;">Transferred from previous owner record #${plan.transferredFromPlanNumber || '—'}.</div>` : ''}<div class="divider"></div><h3>Coordinates</h3><div class="grid"><div class="card" style="padding:12px;"><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</div><div class="card" style="padding:12px;"><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</div></div><div class="divider"></div><h3>Attached Documents</h3><div class="info-note">${admin?'Admin can add, rename, remove, and download documents.':'End users can preview documents only. Downloads are restricted to administrators.'}</div>${admin?`<div class="file-action-row"><button class="btn accent small" onclick="openAdminAttachmentPicker('${plan.id}')">Add / Update Documents</button><input id="adminFilePicker" type="file" multiple style="display:none" onchange="handleAdminFileSelection('${plan.id}', event)"></div>`:''}<div class="documents-grid" style="margin-top:1rem;">${docsHtml}</div><div class="divider"></div><h3>Edit Traceability</h3><div style="display:grid;gap:10px;margin-top:12px;">${historyHtml}${plan.deactivatedAt ? `<div class="info-note">Deactivated by ${plan.deactivatedByName || 'Unknown'} on ${fmtDate(plan.deactivatedAt)}.</div>` : ''}${plan.reactivatedAt ? `<div class="info-note">Reactivated by ${plan.reactivatedByName || 'Unknown'} on ${fmtDate(plan.reactivatedAt)}.</div>` : ''}${Array.isArray(plan.transferHistory) && plan.transferHistory.length ? `<div class="info-note">Latest transfer: ${plan.transferHistory[0].toOwnerName || '—'} · ${plan.transferHistory[0].by || 'Unknown'} · ${fmtDate(plan.transferHistory[0].timestamp)}</div>` : ''}</div><div class="divider"></div><h3>Neighbors</h3><div class="grid"><div class="boundary-group north"><strong>North:</strong> ${plan.neighbors.n}<br><strong>Length:</strong> ${plan.dims.n}m</div><div class="boundary-group south"><strong>South:</strong> ${plan.neighbors.s}<br><strong>Length:</strong> ${plan.dims.s}m</div><div class="boundary-group east"><strong>East:</strong> ${plan.neighbors.e}<br><strong>Length:</strong> ${plan.dims.e}m</div><div class="boundary-group west"><strong>West:</strong> ${plan.neighbors.w}<br><strong>Length:</strong> ${plan.dims.w}m</div></div><div class="divider"></div><div class="modal-actions">${ownerCanEdit?`<button class="btn outline" onclick="editProperty('${id}')">Edit Property</button>`:''}${statusMenu}<button class="btn accent" onclick="showCertificate('${id}')">Certificate</button><button class="btn outline" onclick="openAccountAccess('${owner.id}')">Login Access</button></div>${isTransferredPlan(plan) ? `<div class="divider"></div><div class="info-note">This is a previous owner record and has been grayed out for traceability. The newest transfer creates a separate active owner record.</div>` : ''}<div class="divider"></div><div class="certificate-sketch"><h4>Manual Sketch</h4>${plan.manualDrawingImage?`<img src="${plan.manualDrawingImage}" style="max-width:100%;border:1px solid #ddd;border-radius:12px;">`:'<div>No sketch uploaded.</div>'}</div>`;
+  let docsActions = (idx, f) => admin ? `<button class="btn-outline btn-sm" onclick="downloadPlanFile('${plan.id}',${idx}); closeAllFileMenus();">Download</button><button class="btn-outline btn-sm" onclick="renamePlanFile('${plan.id}',${idx}); closeAllFileMenus();">Rename</button><button class="btn-danger btn-sm" onclick="removePlanFile('${plan.id}',${idx}); closeAllFileMenus();">Delete</button>` : `<button class="btn-outline btn-sm" onclick="previewPlanFile('${plan.id}',${idx}); closeAllFileMenus();">Preview</button>`;
+  let docsHtml = plan.files?.length ? renderFilesAccordionOrGrid(plan.files, docsActions) : '<div>No documents uploaded.</div>';
+  
+  let statusMenu = admin ? `<div class="fancy-dropdown"><button class="status-trigger" onclick="event.stopPropagation(); toggleStatusMenu('${plan.id}', event)">⚙️ Status Options</button><div id="statusMenu_${plan.id}" class="status-menu"><button onclick="setPlanStatus('${plan.id}','ACTIVE')">✅ Active</button><button onclick="setPlanStatus('${plan.id}','DEACTIVATED')">⛔ Deactivated</button><button onclick="transferPlan('${plan.id}')">🔄 Transfer to new owner</button></div></div>` : '';
+  
+  $("modalBody").innerHTML = `<h2>${plan.address}</h2>${detailsHtml}${plan.transferredFromPlanId ? `<div class="info-note" style="margin-top:12px;">Transferred from previous owner record #${plan.transferredFromPlanNumber || '—'}.</div>` : ''}<div class="divider"></div><h3>Coordinates</h3><div class="grid"><div class="card" style="padding:12px;"><strong>Latitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.latitude)}</div><div class="card" style="padding:12px;"><strong>Longitude:</strong> ${formatCoordinateDisplay(plan.coordinates?.longitude)}</div></div><div class="divider"></div><h3>Attached Documents</h3><div class="info-note">${admin?'Admin can add, rename, remove, and download documents.':'End users can preview documents only.'}</div>${admin?`<div class="file-action-row"><button class="btn accent small" onclick="openAdminAttachmentPicker('${plan.id}')">Add / Update Documents</button><input id="adminFilePicker" type="file" multiple style="display:none" onchange="handleAdminFileSelection('${plan.id}', event)"></div>`:''}<div class="documents-grid" style="margin-top:1rem;">${docsHtml}</div><div class="divider"></div><h3>Edit Traceability</h3><div style="display:grid;gap:10px;margin-top:12px;">${history.map(item=>`<div class="card" style="padding:12px;"><strong>${item.action}</strong><div>${item.summary||''}</div><div style="font-size:12px;color:var(--muted);margin-top:6px;">${item.editorName||'Unknown user'} · ${fmtDate(item.timestamp)}</div></div>`).join('')}${plan.deactivatedAt ? `<div class="info-note">Deactivated by ${plan.deactivatedByName || 'Unknown'} on ${fmtDate(plan.deactivatedAt)}.</div>` : ''}${plan.reactivatedAt ? `<div class="info-note">Reactivated by ${plan.reactivatedByName || 'Unknown'} on ${fmtDate(plan.reactivatedAt)}.</div>` : ''}${Array.isArray(plan.transferHistory) && plan.transferHistory.length ? `<div class="info-note">Latest transfer: ${plan.transferHistory[0].toOwnerName || plan.transferHistory[0].toOwner || '—'} · ${plan.transferHistory[0].by || 'Unknown'} · ${fmtDate(plan.transferHistory[0].timestamp)}</div>` : ''}</div><div class="divider"></div><h3>Neighbors</h3><div class="grid"><div class="boundary-group north"><strong>North:</strong> ${plan.neighbors.n}<br><strong>Length:</strong> ${plan.dims.n}m</div><div class="boundary-group south"><strong>South:</strong> ${plan.neighbors.s}<br><strong>Length:</strong> ${plan.dims.s}m</div><div class="boundary-group east"><strong>East:</strong> ${plan.neighbors.e}<br><strong>Length:</strong> ${plan.dims.e}m</div><div class="boundary-group west"><strong>West:</strong> ${plan.neighbors.w}<br><strong>Length:</strong> ${plan.dims.w}m</div></div><div class="divider"></div><div class="modal-actions">${ownerCanEdit?`<button class="btn outline" onclick="editProperty('${id}')">Edit Property</button>`:''}${statusMenu}<button class="btn accent" onclick="showCertificate('${id}')">Certificate</button><button class="btn outline" onclick="openAccountAccess('${owner.id}')">Login Access</button></div>${isTransferredPlan(plan) ? `<div class="divider"></div><div class="info-note">This is a previous owner record and has been grayed out for traceability. The newest transfer creates a separate active owner record.</div>` : ''}<div class="divider"></div><div class="certificate-sketch"><h4>Manual Sketch</h4>${plan.manualDrawingImage?`<img src="${plan.manualDrawingImage}" style="max-width:100%;border:1px solid #ddd;border-radius:12px;">`:'<div>No sketch uploaded.</div>'}</div>`;
   $("propertyModal").style.display = "flex";
-}
-
-function toggleStatusMenu(event, planId){ if(event) event.stopPropagation(); closeAllPopups(event); const menu=$("statusMenu_"+planId); if(menu){ const isVisible = menu.style.display === 'block'; menu.style.display = isVisible ? 'none' : 'block'; } }
-function setPlanStatus(planId, nextStatus, transferName=''){
-  const sess = loadSession();
-  if(!sess || sess.role !== 'admin'){ alert('Only admin can update status.'); return; }
-  let store = loadStore(), plan = store.plans.find(p=>p.id===planId);
-  if(!plan) return;
-  const actionLabel = nextStatus === 'ACTIVE' ? 'reactivate record' : (nextStatus === 'DEACTIVATED' ? 'deactivate record' : 'transfer record');
-  if(!verifyStatusChangePass(actionLabel)) return;
-  const stamp = nowISO();
-  const editorName = getUserDisplayName(sess);
-  if(nextStatus === 'TRANSFERRED'){
-    const ownerName = String(transferName || '').trim();
-    if(!ownerName){ alert('Please enter the new owner name.'); return; }
-    plan.status = `TRANSFERRED · ${ownerName}`;
-    plan.transferredTo = ownerName;
-    plan.deactivatedAt = stamp;
-    plan.deactivatedBy = sess.id;
-    plan.deactivatedByName = editorName;
-    plan.transferHistory = Array.isArray(plan.transferHistory) ? plan.transferHistory : [];
-    const nextSeq = Number(plan.ownershipSequence || 1) + 1;
-    const newPlanNumber = Math.floor(10000000 + Math.random()*90000000).toString();
-    const newPlanId = 'p_' + Date.now() + '_' + Math.random().toString(16).slice(2,6);
-    const newOwnerTrackingId = 'TR-' + newPlanNumber.slice(-6);
-    const nameParts = ownerName.split(/\s+/).filter(Boolean);
-    const newOwnerId = 'u_transfer_' + Date.now();
-    store.users.unshift({ id:newOwnerId, role:'owner', firstName:nameParts[0] || ownerName, middleName:nameParts.length > 2 ? nameParts.slice(1,-1).join(' ') : '', lastName:nameParts.length > 1 ? nameParts[nameParts.length-1] : '', phone:'', rawPhone:'', pass:'', city:plan.city || '—', trackingId:newOwnerTrackingId, email:'', registeredAt:stamp, passportPhoto:null, isTransferredPlaceholder:true });
-    const newPlan = JSON.parse(JSON.stringify(plan));
-    newPlan.id = newPlanId;
-    newPlan.planNumber = newPlanNumber;
-    newPlan.ownerId = newOwnerId;
-    newPlan.ownerTrackingId = newOwnerTrackingId;
-    newPlan.status = 'ACTIVE';
-    newPlan.createdAt = stamp;
-    newPlan.lastUpdated = stamp;
-    newPlan.createdBy = sess.id;
-    newPlan.createdByName = editorName;
-    newPlan.lastEditedBy = sess.id;
-    newPlan.lastEditedByName = editorName;
-    newPlan.ownershipSequence = nextSeq;
-    newPlan.rootPlanNumber = plan.rootPlanNumber || plan.planNumber;
-    newPlan.transferredFromPlanId = plan.id;
-    newPlan.transferredFromPlanNumber = plan.planNumber;
-    newPlan.transferHistory = Array.isArray(plan.transferHistory) ? JSON.parse(JSON.stringify(plan.transferHistory)) : [];
-    newPlan.transferHistory.unshift({ fromPlanId: plan.id, fromPlanNumber: plan.planNumber, toOwnerName: ownerName, by: editorName, timestamp: stamp, sequence: nextSeq });
-    newPlan.editHistory = Array.isArray(plan.editHistory) ? JSON.parse(JSON.stringify(plan.editHistory)) : [];
-    newPlan.editHistory.unshift({ userId:sess.id, editorName, action:'TRANSFERRED_IN', timestamp:stamp, summary:`Activated as ${getOwnershipOrdinal(nextSeq)} owner record for ${ownerName}` });
-    plan.transferHistory.unshift({ fromPlanId: plan.id, fromPlanNumber: plan.planNumber, toOwnerName: ownerName, by: editorName, timestamp: stamp, sequence: nextSeq, newPlanId, newPlanNumber });
-    if(!Array.isArray(plan.editHistory)) plan.editHistory = [];
-    plan.editHistory.unshift({ userId:sess.id, editorName, action:'TRANSFERRED_OUT', timestamp:stamp, summary:`Transferred to ${ownerName}; new active record #${newPlanNumber}` });
-    plan.lastUpdated = stamp;
-    plan.lastEditedBy = sess.id;
-    plan.lastEditedByName = editorName;
-    store.plans.unshift(newPlan);
-    store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'TRANSFERRED_OUT', details:`Transferred #${plan.planNumber} to ${ownerName}; activated ${getOwnershipOrdinal(nextSeq)} owner record #${newPlanNumber}`, timestamp:stamp });
-    saveStore(store);
-    closeAllPopups();
-    showPropertyDetail(newPlanId);
-    renderAdmin();
-    renderMyPortfolio();
-    return;
-  }
-  plan.status = nextStatus;
-  if(nextStatus === 'DEACTIVATED'){
-    plan.deactivatedAt = stamp;
-    plan.deactivatedBy = sess.id;
-    plan.deactivatedByName = editorName;
-  }
-  if(nextStatus === 'ACTIVE'){
-    plan.reactivatedAt = stamp;
-    plan.reactivatedBy = sess.id;
-    plan.reactivatedByName = editorName;
-  }
-  plan.lastUpdated = stamp;
-  plan.lastEditedBy = sess.id;
-  plan.lastEditedByName = editorName;
-  if(!Array.isArray(plan.editHistory)) plan.editHistory = [];
-  const summary = nextStatus === 'DEACTIVATED' ? `Deactivated by ${editorName}` : `Reactivated by ${editorName}`;
-  plan.editHistory.unshift({ userId:sess.id, editorName, action:'STATUS_UPDATED', timestamp:stamp, summary });
-  store.audit.unshift({ id:'a_'+Date.now(), userId:sess.id, action:'STATUS_UPDATED', details:`${summary} for #${plan.planNumber}`, timestamp:stamp });
-  saveStore(store);
-  closeAllPopups();
-  showPropertyDetail(planId);
-  renderAdmin();
-  renderMyPortfolio();
-}
-function promptTransferPlan(planId){
-  const transferName = prompt('Enter the new owner name for transfer', '');
-  if(transferName === null) return;
-  const cleaned = transferName.trim();
-  if(!cleaned){ alert('Please enter the new owner name.'); return; }
-  setPlanStatus(planId, 'TRANSFERRED', cleaned);
 }
 
 function editProperty(planId){
@@ -1431,7 +1448,6 @@ function openSupportingDocumentsPicker(){ const input=$("sFiles"); if(input) inp
 function bindSubmitAndAttachmentButtons(){ const attachBtn=$("attachDocsBtn"); if(attachBtn) attachBtn.onclick=openSupportingDocumentsPicker; const submitBtn=$("submitBtn"); if(submitBtn){ submitBtn.onclick=async ()=>{ if(submitBtn.disabled) return; const action=submitBtn.dataset.action||'submit'; if(action==='update') return updatePlan(); return submitPlan(); }; } }
 function getCurrentCoordinates(){ if(!navigator.geolocation){ showMsg('submitMsg','Geolocation is not supported by this browser.','error'); return; } navigator.geolocation.getCurrentPosition( position => { if($("sLatitude")) $("sLatitude").value = asDegree(Number(position.coords.latitude).toFixed(6)); if($("sLongitude")) $("sLongitude").value = asDegree(Number(position.coords.longitude).toFixed(6)); showMsg('submitMsg','Coordinates captured successfully.','success'); }, () => showMsg('submitMsg','Unable to capture your current coordinates. Please allow location access or enter them manually.','error'), { enableHighAccuracy:true, timeout:10000, maximumAge:0 } ); }
 function closeModal(e){ if(!e || e.target===$("propertyModal")) $("propertyModal").style.display="none"; }
-function closeAllPopups(e){ if(e && e.target.closest && (e.target.closest('.popup-menu') || e.target.closest('.dots-btn') || e.target.closest('.file-popup-menu'))) return; document.querySelectorAll(".popup-menu").forEach(p=>p.style.display="none"); closeAllFileMenus(); }
 function toggleMobileNav(e){ if(e) e.stopPropagation(); $("mobileNav").classList.toggle("show"); }
 function closeRenameModal(e){ if(e && e.target !== $("renameModal") && e.target !== $("renameModal").querySelector('.modal-content')) return; $("renameModal").style.display = 'none'; renameCallback = null; }
 function confirmRename(){ let newName = $("renameInput").value.trim(); if(newName && renameCallback){ renameCallback(newName); } closeRenameModal(); }
@@ -1475,7 +1491,6 @@ function getAdminCredentials() {
 }
 function setAdminCredentials(username, password) {
   localStorage.setItem("ADMIN_CREDS_V2", JSON.stringify({ username, password }));
-  // Also update the admin user in store
   let store = loadStore();
   let adminUser = store.users.find(u => u.role === 'admin');
   if (adminUser) {
@@ -1485,6 +1500,31 @@ function setAdminCredentials(username, password) {
   }
 }
 function changeAdminCredentials(){ /* legacy */ }
+
+// Responsive drawing tools: three-dots dropdown
+function initResponsiveTools() {
+  const wrapper = document.querySelector('.toolbar-wrapper');
+  const toolsList = document.querySelector('.tools-list');
+  const toggleBtn = document.querySelector('#toolsToggleBtn');
+  if(!wrapper || !toolsList) return;
+  if(window.innerWidth <= 720) {
+    if(toggleBtn) {
+      toggleBtn.onclick = (e) => {
+        e.stopPropagation();
+        toolsList.classList.toggle('show');
+      };
+    }
+    document.body.addEventListener('click', (e) => {
+      if(!toolsList.contains(e.target) && e.target !== toggleBtn) {
+        toolsList.classList.remove('show');
+      }
+    });
+  } else {
+    if(toggleBtn) toggleBtn.onclick = null;
+    toolsList.classList.remove('show');
+  }
+}
+window.addEventListener('resize', initResponsiveTools);
 
 window.onload=()=>{ loadStore(); updateStatistics(); let sess=loadSession(); if(sess){ if(sess.role==="admin") go("admin"); else go("owner"); } else go("home"); sketch=new EnhancedSketch("manualCanvas"); 
   const lastRegistration = loadLastRegistration();
@@ -1498,6 +1538,7 @@ window.onload=()=>{ loadStore(); updateStatistics(); let sess=loadSession(); if(
   $("skColor").addEventListener("input",e=>{ if(sketch) sketch.color=e.target.value; });
   bindSubmitAndAttachmentButtons();
   document.getElementById("renameConfirmBtn").onclick = confirmRename;
+  initResponsiveTools();
 };
 </script>
 </body>
